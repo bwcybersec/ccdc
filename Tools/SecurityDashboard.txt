@@ -1,0 +1,147 @@
+<dashboard>
+  <label>SecurityDashboard</label>
+  <row>
+    <panel>
+      <table>
+        <title>Blocked Pan Traffic (PALO ALTO)</title>
+        <search>
+          <query>index=* sourcetype="pan:traffic" action="blocked" | stats count values(_time) AS time values(action) AS Action values(app) AS App values(user) AS User values(dest_ip) AS Dest_IP values(dest_port) AS Dest_Port by src_ip | sort - count | eval time=strftime(time, "%I:%M:%S %P - %m/%d/%Y") | eval time=mvindex(time, -10, -1)</query>
+          <earliest>-20m@m</earliest>
+          <latest>@m</latest>
+          <refresh>1m</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">row</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>Firewall Rule Changes (PALO ALTO)</title>
+        <search>
+          <query>index=* sourcetype=pan:config eventtype=pan_config | stats count values(_time) AS time values(command) AS action values(result) AS result values(configuration_path) AS configuration_path values(sequence_number) AS sequence_number by dest, admin, _time | sort - count | eval time=strftime(time, "%I:%M:%S %P - %m/%d/%Y") | eval time=mvindex(time, -10, -1) | rename admin AS user</query>
+          <earliest>-20m</earliest>
+          <latest>now</latest>
+          <refresh>1m</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <event>
+        <title>Failed SSH Logins (Linux)</title>
+        <search>
+          <query>index=* sourcetype="*audit*" sshd AND "Failed password for invalid user"</query>
+          <earliest>-15m@m</earliest>
+          <latest>@m</latest>
+          <refresh>1m</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="list.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </event>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <event>
+        <title>UnSuccessful Sudo Shell</title>
+        <search>
+          <query>index=* sourcetype="*audit*" "sudo:auth" AND "authentication failure;"</query>
+          <earliest>-20m@m</earliest>
+          <latest>@m</latest>
+          <refresh>1m</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="list.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </event>
+    </panel>
+    <panel>
+      <event>
+        <title>Successful Sudo Shell</title>
+        <search>
+          <query>index=* sourcetype="*audit*" "sudo:session" AND "session opened for user"</query>
+          <earliest>-20m@m</earliest>
+          <latest>now</latest>
+          <refresh>1m</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="list.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </event>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>User Added (Linux)</title>
+        <search>
+          <query>index=* sourcetype="*audit*" "new user" OR "chfn" OR "groupadd" | stats count values(_time) as time values(name) AS Added_User values(host) AS User_Host_Added_On values(home) AS Users_Directory by home | sort - count | eval time=strftime(time, "%I:%M:%S %P - %m/%d/%Y") | eval time=mvindex(time, -10, -1)</query>
+          <earliest>-20m@m</earliest>
+          <latest>now</latest>
+          <refresh>1m</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>User Added (Windows)</title>
+        <search>
+          <query>index=* sourcetype="wineventlog:security" EventCode=4728 NOT (user="*$") user="*" | stats count values(action) AS Action values(name) AS Message values(src_user) AS Adding_User values(user) AS Added_User values(Group_Name) AS Group_Added_To values(Group_Domain) AS Domain_Added_To by _time | sort - count | eval time=strftime(time, "%I:%M:%S %P - %m/%d/%Y") | eval time=mvindex(time, -10, -1)</query>
+          <earliest>-20m@m</earliest>
+          <latest>now</latest>
+          <refresh>1m</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">row</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Successful Logins (Windows)</title>
+        <search>
+          <query>index=* sourcetype="wineventlog:security" EventCode=4624 NOT(user="*$") user="*" | stats count values(_time) AS time values(user) AS user values(src_nt_host) AS src_nt_host  values(dest) AS dest by src_ip | sort - count | eval time=strftime(time, "%I:%M:%S %P - %m/%d/%Y") | eval time=mvindex(time, -10, -1)</query>
+          <earliest>-20m@m</earliest>
+          <latest>@m</latest>
+          <refresh>1m</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>Failed Logins (Windows)</title>
+        <search>
+          <query>index=* sourcetype="wineventlog:security" EventCode=4625 NOT(user="*$") user="*" | stats count values(_time) AS time values(signature) AS Failure_Reason values(src_nt_host) AS src_nt_host  values(dest) AS dest by src_ip, user | sort + src_ip | eval time=strftime(time, "%I:%M:%S %P - %m/%d/%Y") | eval time=mvindex(time, -10, -1)</query>
+          <earliest>-20m</earliest>
+          <latest>@m</latest>
+          <refresh>1m</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+</dashboard>
