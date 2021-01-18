@@ -1,0 +1,119 @@
+#!/bin/bash
+cd /
+mkdir /d-a/
+if [[ "$(which dpkg)" != "" ]]
+then
+    echo "Detected Debian. Scanning files..."
+    find /var/lib/dpkg/info/ -iname '*.md5sums' -exec cat '{}' '+' | md5sum -c > /d-a/installed
+    dpkg-query -W -f='${Conffiles}' | sed -e 's/ \//\n/g' | sed -e 's/\(.*\) \(.*\)/\2  \1/g' | tr -s '\n' | md5sum -c > /d-a/conffile
+else
+    echo "Detected Redhat. Scanning files..."
+    rpm -Vav > /d-a/rmpv
+    sed -i 's/^\(........\)[^ ]/\1/g' /d-a/rmpv
+    grep '^\.\.\.\.\.\.\.. ' /d-a/rmpv | grep '^........  c ' | sed 's/^........  . .\(.*\)/\1: OK/g' > /d-a/conffile
+    grep -v '^\.\.\.\.\.\.\.. ' /d-a/rmpv | grep '^........  c ' | sed 's/^\(........\)  . .\(.*\)/\2: \1/g' >> /d-a/conffile
+    grep '^\.\.\.\.\.\.\.. ' /d-a/rmpv | grep '^........    ' | sed 's/^........  . .\(.*\)/\1: OK/g' > /d-a/installed
+    grep -v '^\.\.\.\.\.\.\.. ' /d-a/rmpv | grep '^........    ' | sed 's/^\(........\)  . .\(.*\)/\2: \1/g' >> /d-a/installed
+fi
+ps -A | sed 's/ *\([0-9]*\)\ .*/\1/g' | while read item; do [[ "$item" != "" ]] && readlink -f "/proc/$item/exe"; done | sort -u > /d-a/running
+cat /d-a/running | sed 's/^\// /g' | while read item; do if grep -qF "$item" /d-a/installed; then echo "$item: OK"; else echo "$item: NOT INSTALLED"; fi; done > /d-a/installed-running
+find / -xdev -type f -not -path '/home/*' | sed 's/^\///g' > /d-a/file-list
+cat /d-a/file-list /d-a/installed /d-a/installed /d-a/conffile /d-a/conffile | sed 's/: [A-Z0-9 a-z.]*$//g' | sort | uniq -u > /d-a/non-installed
+find /etc/cron.*/ /etc/crontab -type f | sed 's/^\///g' > /d-a/crontabs
+cat /d-a/crontabs /d-a/installed /d-a/installed /d-a/conffile /d-a/conffile | sed 's/: [A-Z0-9 a-z.]*$//g' | sort | uniq -u > /d-a/not-installed-crontabs
+find / -xdev -user root -perm -4000 | sed 's/^\///g' > /d-a/suid
+cat /d-a/suid /d-a/installed /d-a/installed | sed 's/: [A-Z0-9 a-z.]*$//g' | sort | uniq -u > /d-a/not-installed-suid
+find /etc/rc*.d/ -type f -or -type l -exec readlink -f '{}' ';' | sed 's/^\///g' | sort -u > /d-a/init-scripts
+cat /d-a/init-scripts /d-a/installed /d-a/installed /d-a/conffile /d-a/conffile | sed 's/: [A-Z0-9 a-z.]*$//g' | sort | uniq -u > /d-a/not-installed-init-scripts
+find /var/spool/cron/crontabs/ -exec cat '{}' '+' | grep -v '^#' | grep -v '^$' > /d-a/user-crontabs
+{
+    find /root/ -maxdepth 1 -type f -iname '.*'
+    find /home/ -maxdepth 2 -type f -iname '.*'
+} | while read -r item
+do
+    origFile=$(sed 's#.*/##g' <<< "$item")
+    if [[ -f "/etc/skel/$origFile" ]]
+    then
+        sFile=$(md5sum < "/etc/skel/$origFile")
+        xFile=$(md5sum < "$item")
+        if [[ "$xFile" != "$sFile" ]]
+        then
+            echo "$item: COPY BAD"
+        else
+            if ! grep -qF "etc/skel/$origFile: OK" /d-a/conffile
+            then
+                echo "$item: SKEL BAD"
+            fi
+        fi
+    else
+        echo "$item: UNKNOWN"
+    fi
+done > /d-a/user-configs
+cut -d : -f 1,3 /etc/passwd | grep ':0' | grep -v '^root:' > /d-a/root-users
+cut -d : -f 1,2 /etc/passwd | grep -v ':x$' > /d-a/passwordless-users
+cut -d : -f 1,2 /etc/shadow | grep -v ':\*$\|:!\|:$' | cut -d : -f 1 > /d-a/password-users
+cat > /d-a/report << END
+$(grep -v ': OK$' /d-a/installed | wc -l) Installed Files Corrupted
+$(grep -v ': OK$' /d-a/conffile | wc -l) Config Files Changed
+$(grep -v ': OK$' /d-a/installed-running | wc -l) Non-Installed Executables Running
+$(wc -l < /d-a/non-installed) Files Not Installed
+$(wc -l < /d-a/not-installed-crontabs) Crontabs Not Installed
+$(wc -l < /d-a/user-crontabs) User Crontabs Installed
+$(wc -l < /d-a/user-configs) Notable User Configs
+$(wc -l < /d-a/root-users) Unexpected Root Users
+$(wc -l < /d-a/passwordless-users) Passwordless Users
+$(wc -l < /d-a/password-users) Users With Password
+$(wc -l < /d-a/not-installed-suid) Not Installed Suid
+$(wc -l < /d-a/not-installed-init-scripts) Not Installed Init Scripts
+
+Running Not Installed:
+
+$(cat /d-a/installed-running | grep -v ': OK$')
+
+Not Installed Crontabs:
+
+$(cat /d-a/not-installed-crontabs)
+
+Changed Config Files:
+
+$(cat /d-a/conffile | grep -v ': OK$')
+
+Corrupted Installed Files:
+
+$(cat /d-a/installed | grep -v ': OK$')
+
+User Crontabs:
+
+$(cat /d-a/user-crontabs)
+
+User Configs:
+
+$(cat /d-a/user-configs)
+
+Sudoers File:
+
+$(cat /etc/sudoers | grep -v '^$' | grep -v '^#')
+
+Unexpected Root Users:
+
+$(cat /d-a/root-users)
+
+Passwordless Users:
+
+$(cat /d-a/passwordless-users)
+
+Users With Password:
+
+$(cat /d-a/password-users)
+
+Not Installed Suid:
+
+$(cat /d-a/not-installed-suid)
+
+Not Installed Init Scripts:
+
+$(cat /d-a/not-installed-init-scripts)
+
+END
+less /d-a/report
+

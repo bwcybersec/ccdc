@@ -1,0 +1,527 @@
+#!/bin/bash
+
+function write_config {
+cf() {
+  touch "$3"
+  chown "$1" "$3"
+  chmod "$2" "$3"
+  l="$3"
+}
+mkdir -p 'bind'
+cf 0:0 644 'bind/db.0'
+cat > "$l" <<'XAEOF'
+;
+; BIND reverse data file for broadcast zone
+;
+$TTL	604800
+@	IN	SOA	localhost. root.localhost. (
+			      1		; Serial
+			 604800		; Refresh
+			  86400		; Retry
+			2419200		; Expire
+			 604800 )	; Negative Cache TTL
+;
+@	IN	NS	localhost.
+XAEOF
+cf 0:0 644 'bind/db.local'
+cat > "$l" <<'XAEOF'
+;
+; BIND data file for local loopback interface
+;
+$TTL	604800
+@	IN	SOA	localhost. root.localhost. (
+			      2		; Serial
+			 604800		; Refresh
+			  86400		; Retry
+			2419200		; Expire
+			 604800 )	; Negative Cache TTL
+;
+@	IN	NS	localhost.
+@	IN	A	127.0.0.1
+@	IN	AAAA	::1
+XAEOF
+cf 0:0 644 'bind/bind.keys'
+cat > "$l" <<'XAEOF'
+# The bind.keys file is used to override the built-in DNSSEC trust anchors
+# which are included as part of BIND 9.  As of the current release, the only
+# trust anchors it contains are those for the DNS root zone ("."), and for
+# the ISC DNSSEC Lookaside Validation zone ("dlv.isc.org").  Trust anchors
+# for any other zones MUST be configured elsewhere; if they are configured
+# here, they will not be recognized or used by named.
+#
+# The built-in trust anchors are provided for convenience of configuration.
+# They are not activated within named.conf unless specifically switched on.
+# To use the built-in root key, set "dnssec-validation auto;" in
+# named.conf options.  To use the built-in DLV key, set
+# "dnssec-lookaside auto;".  Without these options being set,
+# the keys in this file are ignored.
+#
+# This file is NOT expected to be user-configured.
+#
+# These keys are current as of Feburary 2017.  If any key fails to
+# initialize correctly, it may have expired.  In that event you should
+# replace this file with a current version.  The latest version of
+# bind.keys can always be obtained from ISC at https://www.isc.org/bind-keys.
+
+managed-keys {
+        # ISC DLV: See https://www.isc.org/solutions/dlv for details.
+        #
+        # NOTE: The ISC DLV zone is being phased out as of February 2017;
+        # the key will remain in place but the zone will be otherwise empty.
+        # Configuring "dnssec-lookaside auto;" to activate this key is
+        # harmless, but is no longer useful and is not recommended.
+        dlv.isc.org. initial-key 257 3 5 "BEAAAAPHMu/5onzrEE7z1egmhg/WPO0+juoZrW3euWEn4MxDCE1+lLy2
+                brhQv5rN32RKtMzX6Mj70jdzeND4XknW58dnJNPCxn8+jAGl2FZLK8t+
+                1uq4W+nnA3qO2+DL+k6BD4mewMLbIYFwe0PG73Te9fZ2kJb56dhgMde5
+                ymX4BI/oQ+cAK50/xvJv00Frf8kw6ucMTwFlgPe+jnGxPPEmHAte/URk
+                Y62ZfkLoBAADLHQ9IrS2tryAe7mbBZVcOwIeU/Rw/mRx/vwwMCTgNboM
+                QKtUdvNXDrYJDSHZws3xiRXF1Rf+al9UmZfSav/4NWLKjHzpT59k/VSt
+                TDN0YUuWrBNh";
+
+        # ROOT KEYS: See https://data.iana.org/root-anchors/root-anchors.xml
+        # for current trust anchor information.
+        #
+        # These keys are activated by setting "dnssec-validation auto;"
+        # in named.conf.
+        #
+        # This key (19036) is to be phased out starting in 2017. It will
+        # remain in the root zone for some time after its successor key
+        # has been added. It will remain this file until it is removed from
+        # the root zone.
+        . initial-key 257 3 8 "AwEAAagAIKlVZrpC6Ia7gEzahOR+9W29euxhJhVVLOyQbSEW0O8gcCjF
+                FVQUTf6v58fLjwBd0YI0EzrAcQqBGCzh/RStIoO8g0NfnfL2MTJRkxoX
+                bfDaUeVPQuYEhg37NZWAJQ9VnMVDxP/VHL496M/QZxkjf5/Efucp2gaD
+                X6RS6CXpoY68LsvPVjR0ZSwzz1apAzvN9dlzEheX7ICJBBtuA6G3LQpz
+                W5hOA2hzCTMjJPJ8LbqF6dsV6DoBQzgul0sGIcGOYl7OyQdXfZ57relS
+                Qageu+ipAdTTJ25AsRTAoub8ONGcLmqrAmRLKBP1dfwhYB4N7knNnulq
+                QxA+Uk1ihz0=";
+
+        # This key (20326) is to be published in the root zone in 2017.
+        # Servers which were already using the old key (19036) should
+        # roll seamlessly to this new one via RFC 5011 rollover. Servers
+        # being set up for the first time can use the contents of this
+        # file as initializing keys; thereafter, the keys in the
+        # managed key database will be trusted and maintained
+        # automatically.
+        . initial-key 257 3 8 "AwEAAaz/tAm8yTn4Mfeh5eyI96WSVexTBAvkMgJzkKTOiW1vkIbzxeF3
+                +/4RgWOq7HrxRixHlFlExOLAJr5emLvN7SWXgnLh4+B5xQlNVz8Og8kv
+                ArMtNROxVQuCaSnIDdD5LKyWbRd2n9WGe2R8PzgCmr3EgVLrjyBxWezF
+                0jLHwVN8efS3rCj/EWgvIWgb9tarpVUDK/b58Da+sqqls3eNbuv7pr+e
+                oZG+SrDK6nWeL3c6H5Apxz7LjVc1uTIdsIXxuOLYA4/ilBmSVIzuDWfd
+                RUfhHdY6+cn8HFRm+2hM8AnXGXws9555KrUB5qihylGa8subX2Nn6UwN
+                R1AkUTV74bU=";
+};
+XAEOF
+cf 0:108 644 'bind/named.conf'
+cat > "$l" <<'XAEOF'
+// This is the primary configuration file for the BIND DNS server named.
+//
+// Please read /usr/share/doc/bind9/README.Debian.gz for information on the 
+// structure of BIND configuration files in Debian, *BEFORE* you customize 
+// this configuration file.
+//
+// If you are just adding zones, please do that in /etc/bind/named.conf.local
+
+include "/etc/bind/named.conf.options";
+include "/etc/bind/named.conf.local";
+include "/etc/bind/named.conf.default-zones";
+XAEOF
+cf 0:0 644 'bind/db.127'
+cat > "$l" <<'XAEOF'
+;
+; BIND reverse data file for local loopback interface
+;
+$TTL	604800
+@	IN	SOA	localhost. root.localhost. (
+			      1		; Serial
+			 604800		; Refresh
+			  86400		; Retry
+			2419200		; Expire
+			 604800 )	; Negative Cache TTL
+;
+@	IN	NS	localhost.
+1.0.0	IN	PTR	localhost.
+XAEOF
+cf 0:108 644 'bind/named.conf.default-zones'
+cat > "$l" <<'XAEOF'
+// prime the server with knowledge of the root servers
+zone "." {
+	type hint;
+	file "/etc/bind/db.root";
+};
+
+// be authoritative for the localhost forward and reverse zones, and for
+// broadcast zones as per RFC 1912
+
+zone "localhost" {
+	type master;
+	file "/etc/bind/db.local";
+};
+
+zone "127.in-addr.arpa" {
+	type master;
+	file "/etc/bind/db.127";
+};
+
+zone "0.in-addr.arpa" {
+	type master;
+	file "/etc/bind/db.0";
+};
+
+zone "255.in-addr.arpa" {
+	type master;
+	file "/etc/bind/db.255";
+};
+
+
+XAEOF
+cf 0:0 644 'bind/db.root'
+cat > "$l" <<'XAEOF'
+;       This file holds the information on root name servers needed to
+;       initialize cache of Internet domain name servers
+;       (e.g. reference this file in the "cache  .  <file>"
+;       configuration file of BIND domain name servers).
+;
+;       This file is made available by InterNIC 
+;       under anonymous FTP as
+;           file                /domain/named.cache
+;           on server           FTP.INTERNIC.NET
+;       -OR-                    RS.INTERNIC.NET
+;
+;       last update:    February 17, 2016
+;       related version of root zone:   2016021701
+;
+; formerly NS.INTERNIC.NET
+;
+.                        3600000      NS    A.ROOT-SERVERS.NET.
+A.ROOT-SERVERS.NET.      3600000      A     198.41.0.4
+A.ROOT-SERVERS.NET.      3600000      AAAA  2001:503:ba3e::2:30
+;
+; FORMERLY NS1.ISI.EDU
+;
+.                        3600000      NS    B.ROOT-SERVERS.NET.
+B.ROOT-SERVERS.NET.      3600000      A     192.228.79.201
+B.ROOT-SERVERS.NET.      3600000      AAAA  2001:500:84::b
+;
+; FORMERLY C.PSI.NET
+;
+.                        3600000      NS    C.ROOT-SERVERS.NET.
+C.ROOT-SERVERS.NET.      3600000      A     192.33.4.12
+C.ROOT-SERVERS.NET.      3600000      AAAA  2001:500:2::c
+;
+; FORMERLY TERP.UMD.EDU
+;
+.                        3600000      NS    D.ROOT-SERVERS.NET.
+D.ROOT-SERVERS.NET.      3600000      A     199.7.91.13
+D.ROOT-SERVERS.NET.      3600000      AAAA  2001:500:2d::d
+;
+; FORMERLY NS.NASA.GOV
+;
+.                        3600000      NS    E.ROOT-SERVERS.NET.
+E.ROOT-SERVERS.NET.      3600000      A     192.203.230.10
+;
+; FORMERLY NS.ISC.ORG
+;
+.                        3600000      NS    F.ROOT-SERVERS.NET.
+F.ROOT-SERVERS.NET.      3600000      A     192.5.5.241
+F.ROOT-SERVERS.NET.      3600000      AAAA  2001:500:2f::f
+;
+; FORMERLY NS.NIC.DDN.MIL
+;
+.                        3600000      NS    G.ROOT-SERVERS.NET.
+G.ROOT-SERVERS.NET.      3600000      A     192.112.36.4
+;
+; FORMERLY AOS.ARL.ARMY.MIL
+;
+.                        3600000      NS    H.ROOT-SERVERS.NET.
+H.ROOT-SERVERS.NET.      3600000      A     198.97.190.53
+H.ROOT-SERVERS.NET.      3600000      AAAA  2001:500:1::53
+;
+; FORMERLY NIC.NORDU.NET
+;
+.                        3600000      NS    I.ROOT-SERVERS.NET.
+I.ROOT-SERVERS.NET.      3600000      A     192.36.148.17
+I.ROOT-SERVERS.NET.      3600000      AAAA  2001:7fe::53
+;
+; OPERATED BY VERISIGN, INC.
+;
+.                        3600000      NS    J.ROOT-SERVERS.NET.
+J.ROOT-SERVERS.NET.      3600000      A     192.58.128.30
+J.ROOT-SERVERS.NET.      3600000      AAAA  2001:503:c27::2:30
+;
+; OPERATED BY RIPE NCC
+;
+.                        3600000      NS    K.ROOT-SERVERS.NET.
+K.ROOT-SERVERS.NET.      3600000      A     193.0.14.129
+K.ROOT-SERVERS.NET.      3600000      AAAA  2001:7fd::1
+;
+; OPERATED BY ICANN
+;
+.                        3600000      NS    L.ROOT-SERVERS.NET.
+L.ROOT-SERVERS.NET.      3600000      A     199.7.83.42
+L.ROOT-SERVERS.NET.      3600000      AAAA  2001:500:3::42
+;
+; OPERATED BY WIDE
+;
+.                        3600000      NS    M.ROOT-SERVERS.NET.
+M.ROOT-SERVERS.NET.      3600000      A     202.12.27.33
+M.ROOT-SERVERS.NET.      3600000      AAAA  2001:dc3::35
+; End of file
+XAEOF
+mkdir -p 'bind/zones'
+cf 0:0 644 'bind/zones/db.frog.com'
+cat > "$l" <<'XAEOF'
+;
+; BIND data file for local loopback interface
+;
+$TTL	604800
+@	IN	SOA	bind.frog.com. root.frog.com. (
+			      2		; Serial
+			 604800		; Refresh
+			  86400		; Retry
+			2419200		; Expire
+			 604800 )	; Negative Cache TTL
+;
+@			IN	NS	bind.frog.com.
+phantom.frog.com.	IN	A	172.20.240.10
+mysql.frog.com.	        IN	A	172.20.240.20
+dns.frog.com.		IN	A	172.20.242.10
+win2008.frog.com.	IN	A	172.20.242.200
+win8.frog.com.          IN      A       172.20.242.100
+splunk.frog.com.	IN	A	172.20.241.20
+ecomm.frog.com.	        IN	A	172.20.241.30
+ecom.frog.com.          IN      A       172.20.241.30
+webapps.frog.com.	IN	A	172.20.241.40
+win10.frog.com.		IN	A	172.31.34.5
+
+broobonk.frog.com.	IN	A	172.20.240.10
+thrat.frog.com.	        IN	A	172.20.240.20
+bind.frog.com.		IN	A	172.20.242.10
+ad.frog.com.	        IN	A	172.20.242.200
+thoog.frog.com.	        IN	A	172.20.241.20
+frog.com.	        IN	A	172.20.241.30
+goofclod.frog.com.      IN      A       172.20.242.100
+
+XAEOF
+cf 0:0 644 'bind/zones/db.172.20.242'
+cat > "$l" <<'XAEOF'
+;
+; BIND reverse data file for local loopback interface
+;
+$TTL	604800
+@	IN	SOA	bind.frog.com root.frog.com. (
+			      1		; Serial
+			 604800		; Refresh
+			  86400		; Retry
+			2419200		; Expire
+			 604800 )	; Negative Cache TTL
+;
+@		IN	NS	bind.frog.com.
+
+14		IN	PTR	bind.frog.com.
+200		IN	PTR	ad.frog.com.
+100		IN	PTR	win8.frog.com.
+
+; Relocated services in Containers
+14		IN	PTR	mysql.frog.com.
+14		IN	PTR	ecom.frog.com.
+14		IN	PTR	webapps.frog.com.
+XAEOF
+cf 0:0 644 'bind/zones/db.172.20.241'
+cat > "$l" <<'XAEOF'
+;
+; BIND reverse data file for local loopback interface
+;
+$TTL	604800
+@	IN	SOA	bind.frog.com root.frog.com. (
+			      1		; Serial
+			 604800		; Refresh
+			  86400		; Retry
+			2419200		; Expire
+			 604800 )	; Negative Cache TTL
+;
+@		IN	NS	bind.frog.com.
+
+20		IN	PTR	thoog.frog.com.
+30		IN	PTR	frog.com.
+40		IN	PTR	webapps.frog.com.
+XAEOF
+cf 0:0 644 'bind/zones/db.172.20.240'
+cat > "$l" <<'XAEOF'
+;
+; BIND reverse data file for local loopback interface
+;
+$TTL	604800
+@	IN	SOA	bind.frog.com root.frog.com. (
+			      1		; Serial
+			 604800		; Refresh
+			  86400		; Retry
+			2419200		; Expire
+			 604800 )	; Negative Cache TTL
+;
+@		IN	NS	bind.frog.com.
+
+10		IN	PTR	broobonk.frog.com.
+20		IN	PTR	thrat.frog.com.
+XAEOF
+cf 0:0 644 'bind/zones/db.172.31.20'
+cat > "$l" <<'XAEOF'
+;
+; BIND reverse data file for local loopback interface
+;
+$TTL	604800
+@	IN	SOA	bind.frog.com root.frog.com. (
+			      1		; Serial
+			 604800		; Refresh
+			  86400		; Retry
+			2419200		; Expire
+			 604800 )	; Negative Cache TTL
+;
+@		IN	NS	bind.frog.com.
+
+5		IN	PTR	win10.frog.com.
+XAEOF
+mkdir -p 'bind'
+cf 0:108 644 'bind/named.conf.options'
+cat > "$l" <<'XAEOF'
+options {
+	directory "/var/cache/bind";
+
+	// If there is a firewall between you and nameservers you want
+	// to talk to, you may need to fix the firewall to allow multiple
+	// ports to talk.  See http://www.kb.cert.org/vuls/id/800113
+
+	// If your ISP provided one or more IP addresses for stable 
+	// nameservers, you probably want to use them as forwarders.  
+	// Uncomment the following block, and insert the addresses replacing 
+	// the all-0's placeholder.
+
+	forwarders {
+	 	8.8.8.8;
+                8.8.4.4;
+	};
+
+	//========================================================================
+	// If BIND logs error messages about the root key being expired,
+	// you will need to update your keys.  See https://www.isc.org/bind-keys
+	//========================================================================
+	dnssec-validation auto;
+
+	auth-nxdomain no;    # conform to RFC1035
+	listen-on-v6 { any; };
+
+	allow-recursion { any; };
+};
+
+XAEOF
+cf 0:0 644 'bind/zones.rfc1918'
+cat > "$l" <<'XAEOF'
+zone "10.in-addr.arpa"      { type master; file "/etc/bind/db.empty"; };
+ 
+zone "16.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+zone "17.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+zone "18.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+zone "19.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+zone "20.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+zone "21.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+zone "22.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+zone "23.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+zone "24.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+zone "25.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+zone "26.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+zone "27.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+zone "28.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+zone "29.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+zone "30.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+zone "31.172.in-addr.arpa"  { type master; file "/etc/bind/db.empty"; };
+
+zone "168.192.in-addr.arpa" { type master; file "/etc/bind/db.empty"; };
+XAEOF
+cf 0:0 644 'bind/db.empty'
+cat > "$l" <<'XAEOF'
+; BIND reverse data file for empty rfc1918 zone
+;
+; DO NOT EDIT THIS FILE - it is used for multiple zones.
+; Instead, copy it, edit named.conf, and use that copy.
+;
+$TTL	86400
+@	IN	SOA	localhost. root.localhost. (
+			      1		; Serial
+			 604800		; Refresh
+			  86400		; Retry
+			2419200		; Expire
+			  86400 )	; Negative Cache TTL
+;
+@	IN	NS	localhost.
+XAEOF
+cf 0:108 644 'bind/named.conf.local'
+cat > "$l" <<'XAEOF'
+//
+// Do any local configuration here
+//
+
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+//include "/etc/bind/zones.rfc1918";
+
+zone "frog.com" {
+     type master;
+     file "/etc/bind/zones/db.frog.com";
+};
+
+zone "20.31.172.in-addr.arpa" {
+     type master;
+     file "/etc/bind/zones/db.172.31.20";
+};
+
+zone "240.20.172.in-addr.arpa" {
+     type master;
+     file "/etc/bind/zones/db.172.20.240";
+};
+
+zone "241.20.172.in-addr.arpa" {
+     type master;
+     file "/etc/bind/zones/db.172.20.241";
+};
+
+zone "242.20.172.in-addr.arpa" {
+     type master;
+     file "/etc/bind/zones/db.172.20.242";
+};
+XAEOF
+cf 0:0 644 'bind/db.255'
+cat > "$l" <<'XAEOF'
+;
+; BIND reverse data file for broadcast zone
+;
+$TTL	604800
+@	IN	SOA	localhost. root.localhost. (
+			      1		; Serial
+			 604800		; Refresh
+			  86400		; Retry
+			2419200		; Expire
+			 604800 )	; Negative Cache TTL
+;
+@	IN	NS	localhost.
+XAEOF
+}
+
+cd /etc/
+if [[ "$(which apt-get)" != "" ]]
+then
+    apt-get -y install bind9
+    write_config
+    chown bind bind
+    service bind9 restart
+else
+    yum install -y bind
+    write_config
+    echo 'include "/etc/bind/named.conf";' > /etc/named.conf
+    chown -R named /etc/bind/
+    mkdir /var/cache/bind
+    chown named /var/cache/bind
+    service named start
+fi
+
+
+

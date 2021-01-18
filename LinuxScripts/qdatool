@@ -1,0 +1,42 @@
+#!/bin/bash
+cd /
+mkdir /d-a/
+ps -A | sed 's/ *\([0-9]*\)\ .*/\1/g' | while read item; do [[ "$item" != "" ]] && readlink -f "/proc/$item/exe"; done | sort -u > /d-a/running
+find /etc/cron.*/ /etc/crontab -type f | sed 's/^\///g' > /d-a/crontabs
+find /var/spool/cron/crontabs/ -exec cat '{}' '+' | grep -v '^#' | grep -v '^$' > /d-a/user-crontabs
+cut -d : -f 1,3 /etc/passwd | grep ':0' | grep -v '^root:' > /d-a/root-users
+cut -d : -f 1,2 /etc/passwd | grep -v ':x$' > /d-a/passwordless-users
+cut -d : -f 1,2 /etc/shadow | grep -v ':\*$\|:!' | cut -d : -f 1 > /d-a/password-users
+cat > /d-a/report-abridged << END
+$(wc -l < /d-a/user-crontabs) User Crontabs Installed
+$(wc -l < /d-a/root-users) Unexpected Root Users
+$(wc -l < /d-a/passwordless-users) Passwordless Users
+$(wc -l < /d-a/password-users) Users With Password
+
+User Crontabs:
+
+$(cat /d-a/user-crontabs)
+
+Main Crontab:
+
+$(cat /etc/crontab | grep -v '^#' | grep -v '^$')
+
+Sudoers File:
+
+$(cat /etc/sudoers | grep -v '^$' | grep -v '^#')
+
+Unexpected Root Users:
+
+$(cat /d-a/root-users)
+
+Passwordless Users:
+
+$(cat /d-a/passwordless-users)
+
+Users With Password:
+
+$(cat /d-a/password-users)
+
+END
+less /d-a/report-abridged
+
