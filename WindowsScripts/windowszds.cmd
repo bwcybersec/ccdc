@@ -7,8 +7,8 @@ Title "CCDC Windows Script"
 set Good_host = "false"
 
 :Host_Check
-set /p box="Please type your box as follows: [ SMTP2012 AD2012 Win10]: "
-(for %%a in (SMTP2012 AD2012 Win10) do (
+set /p box="Please type your box as follows: [ 2008ad Win8 Win10]: "
+(for %%a in (2008ad Win8 Win10) do (
 	if "%box%" == "%%a" (
 	   GOTO :Passed
 	)
@@ -18,14 +18,19 @@ GOTO :Host_Check
 
 :Passed
 :: Checks for admin permissions, errorlevel indicates number of errors
-Echo Administrative permissions required. Detecting permissions.....
-Echo
-call :New_Check
+echo Administrative permissions required. Detecting permissions.....
+ECHO.
+ECHO.
+if %box% == Win10 ( call :New_Check 
+) else ( 
+	if %box% == Win8 ( call :New_Check 
+	) else ( call :Old_Check )
+)
 if not %errorLevel% == 0 (
 	Exit /B 1
 )
 
-::Makes ccdc Directories
+:: Makes ccdc directories
 set ccdcpath="c:\ccdc"
 mkdir %ccdcpath% >NUL
 icacls %ccdcpath% /inheritancelevel:e >NUL
@@ -34,8 +39,13 @@ mkdir %ccdcpath%\Config >NUL
 mkdir %ccdcpath%\Regback >NUL
 mkdir %ccdcpath%\Proof >NUL
 
-:: Sets IPs and Domain name
-call :Set_Internal_IPS
+:: Sets IPs
+if not %box% == Win10 ( 
+	call :Set_Internal_IPS 
+) else ( 
+	call :Set_External_IPS 
+)
+
 call :Set_Domain_Name
 
 :: Enables logging
@@ -50,31 +60,28 @@ netsh advfirewall set allprofiles logging allowedconnections enable
 netsh advfirewall set global statefulftp disable
 netsh advfirewall set global statefulpptp disable
 
+::call :Get_Sysinternals
+
 ::Generic Firewall rules
 netsh advfirewall firewall set rule name=all new enable=no
 netsh advfirewall firewall add rule name="Allow Pings" protocol=icmpv4:8,any dir=in action=allow enable=yes
 netsh advfirewall firewall add rule name="All the Pings!" dir=out action=allow enable=yes protocol=icmpv4:8,any
-netsh advfirewall firewall add rule name="NTP Allow" dir=out action=allow enable=yes profile=any remoteport=123 remoteip=%DNSNTP% protocol=udp
-netsh advfirewall firewall add rule name="Web Share OUT" dir=out action=allow enable=no profile=any remoteip=%OpenEMR% remoteport=80 protocol=tcp
+netsh advfirewall firewall add rule name="Web Share OUT" dir=out action=allow enable=no profile=any remoteip=%Ecomm% remoteport=80 protocol=tcp
 netsh advfirewall firewall add rule name="Splunk OUT" dir=out action=allow enable=yes profile=any remoteip=%Splunk% remoteport=8000,8089,9997 protocol=tcp
 netsh advfirewall firewall add rule name="DNS Out to Any" dir=out action=allow enable=no profile=any remoteport=53 protocol=udp
 netsh advfirewall firewall add rule name="SSH in from any" dir=in action=allow enable=no profile=any localport=22 protocol=tcp
-netsh advfirewall firewall add rule name="SSH out to IOT" dir=out action=allow enable=no profile=any remoteport=22 remoteip=%IOT% protocol=tcp
-:: netsh advfirewall firewall add rule name="SSH out to ESXi" dir=out action=allow enable=no profile=any remoteport=22 remoteip= protocol=tcp
+if not %box% == Win10 (
+	netsh advfirewall firewall add rule name="NTP Allow" dir=out action=allow enable=yes profile=any remoteport=123 remoteip=%EComm% protocol=udp
+	netsh advfirewall firewall add rule name="WinSCP/SSH Out" dir=out action=allow enable=no profile=any remoteip=%WebMail%,%Splunk%,%DNSNTP%,%EComm%,%WIN8%,%ADDNS%,%Win8% remoteport=22 protocol=tcp
+	netsh advfirewall firewall add rule name="Web Share OUT" dir=out action=allow enable=no profile=any remoteip=%Ecomm% remoteport=80 protocol=tcp
+)
 
 :: Diable IPv6 Teredo tunneling
 netsh interface teredo set state disabled
 netsh interface ipv6 6to4 set state state=disabled undoonstop=disabled
 netsh interface ipv6 isatap set state state=disabled 
 
-::Logon Banner
-REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Winlogon" /v legalnoticecaption /t REG_SZ /d "* * * * * * * * * * W A R N I N G * * * * * * * * * *" /f
-REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Winlogon" /v legalnoticetext /t REG_SZ /d "This computer system network is the property of %Dname%. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Company’s Acceptable Use of Information Technology Resources Policy ("AUP"). Users have no personal privacy rights in any materials they place, view, access, or transmit on this system. The Company complies with state and federal law regarding certain legally protected confidential information, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Company and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to such interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Company personnel. Unauthorized or improper use of this system may result in administrative disciplinary action, civil charges/criminal penalties, and/or other sanctions as set forth in the Company’s AUP. By continuing to use this system you indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF A %Dname% OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE." /f
-
 call :Damage_Reversal
-call :SMBV1_Fix
-:: call :Get_Sysinternals
-call :Config_NTP_NewWinVer
 ECHO Applying box specific rules...
 call :%box%
 call :Export_Configs
@@ -116,31 +123,83 @@ if %errorLevel% == 0 (
 EXIT /B 0
 
 
+:Old_Check
+:: ##### Pre - Win 8 #####
+AT > NUL
+if %ERRORLEVEL% EQU 0 (
+    ECHO Success: Administrative permissions confirmed.
+) else (
+    echo Failure: Not Elevated.
+    ECHO.
+    ECHO.
+    ECHO ==========YOU MUST RUN AS ADMIN!!==========
+    ECHO ==========YOU MUST RUN AS ADMIN!!==========
+    ECHO ==========YOU MUST RUN AS ADMIN!!==========
+    ECHO ==========YOU MUST RUN AS ADMIN!!==========
+    ECHO.
+    ECHO.
+    pause
+    EXIT /B 1
+)
+EXIT /B 0
+
+
+:Set_External_IPS
+:: Sets Hardcoded ip address for use in firewall rules
+set  EComm=172.25.21.11
+set  DNSNTP=172.25.21.23
+set  WebMail=172.25.21.39
+set  Splunk=172.25.21.9
+set  ADDNS=172.25.21.27
+set /P Windows10="ENTER WINDOWS 10 IP: "
+set  WIN8= 172.25.21
+set  PAMI=172.31.21.2
+set  Phantom=172.25.21.97
+set  MySql=172.25.21.20
+Echo E-Commerce Ip is now %EComm%
+Echo DNS/NTP IP is now %DNSNTP%
+Echo WebMail IP is now %WebMail%
+Echo Splunk ip is now %Splunk%
+Echo AD/DNS box ip is now %ADDNS%
+Echo MySql IP is now %MySql%
+Echo Windows10 Ip is now %Windows10%
+Echo WIN8 is now %WIN8%
+Echo PA MI is now %PAMI%
+Echo Phantom is now %Phantom%
+set /p Garbage="IS WIN10 correct? (Y/N)"
+if not %Garbage% == Y (
+	GOTO Set_External_IPS
+)
+EXIT /B 0
+
+
 :Set_Internal_IPS
 :: Sets Hardcoded ip address for use in firewall rules
-set  DHCPsubnet=172.20.242.0/24
-set  ADDNS=172.20.241.27
-set  SMTP2012=172.20.240.11
-set  OpenEMR=172.20.240.97
-set  DNSNTP=172.20.240.23
-set  PAMI=172.20.241.100
-set  UbuntuWeb=172.20.240.5
-set  IOT=172.20.241.201
-set  Onion=172.20.241.3
-set  Splunk= %UbuntuWeb%
-set  Internal= %DHCPsubnet%,%ADDNS%,%OpenEMR%,%DNSNTP%,%PAMI%,%UbuntuWeb%,%IOT%,%SMTP2012%
-
-Echo DHCP subnet is now %DHCPsubnet%
-Echo AD/DNS box ip is now %ADDNS%
-Echo SMTP2012 is now %SMTP2012%
-Echo OpenEMR Ip is now %OpenEMR%
+set  EComm=172.20.241.30
+set  DNSNTP=172.20.242.10
+set  WebMail=172.20.241.40
+set  Splunk=172.20.241.20
+set  ADDNS=172.20.242.200
+set /P Windows10="ENTER WINDOWS 10 IP: "
+set  WIN8=172.20.242.100
+set  PAMI=172.20.242.150
+set  Phantom=172.20.240.10
+set  MySql=172.20.240.20
+set  Internal=%Ecomm%,%DNSNTP%,%WebMail%,%Splunk%,%ADDNS%,%Win8%,%PAMI%,%Phantom%,%MySql%
+Echo E-Commerce Ip is now %EComm%
 Echo DNS/NTP IP is now %DNSNTP%
-Echo UbuntuWeb is now %UbuntuWeb%
-Echo IOT1 is now %IOT%
+Echo WebMail IP is now %WebMail%
 Echo Splunk ip is now %Splunk%
+Echo AD/DNS box ip is now %ADDNS%
+Echo MySql IP is now %MySql%
+Echo Windows10 Ip is now %Windows10%
+Echo WIN8 is now %WIN8%
 Echo PA MI is now %PAMI%
-Echo Onion is now %Onion%
-Echo Internal is now %Internal%
+Echo Phantom is now %Phantom%
+set /p Garbage="IS WIN10 correct? (Y/N)"
+if not %Garbage% == Y (
+	GOTO Set_Internal_IPS 
+)
 EXIT /B 0
 
 
@@ -319,71 +378,119 @@ REG query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Executio
 EXIT /B 0
 
 
-:AD2012
-:: Firewall Rules
-:: Temp web out
-netsh advfirewall firewall add rule name="Web Out Temp" dir=out action=allow enable=no profile=any remoteport=80,443 protocol=tcp
+:WIN8
+::firewall_configs
+netsh advfirewall firewall add rule name="Web out to PAN" dir=out action=allow enable=yes profile=any remoteip=%PAMI% remoteport=443 protocol=tcp
+netsh advfirewall firewall add rule name="Splunk OUT" dir=out action=allow enable=yes profile=any remoteip=%Splunk%, %EComm% remoteport=,8000,8089,9997 protocol=tcp
+netsh advfirewall firewall add rule name="SSH OUT PAN" dir=out action=allow enable=no profile=any localport=22 remoteip=%PAMI% protocol=tcp
+netsh advfirewall firewall add rule name="Web Out to WebShare" dir=out action=allow enable=yes profile=any remoteport=80,443 remoteip=%EComm%,%DNSNTP% protocol=tcp
+netsh advfirewall firewall add rule name="NTP Allow" dir=out action=allow enable=yes profile=any remoteport=123 remoteip=%Splunk% protocol=udp
+netsh advfirewall firewall add rule name="Web Out any temp" dir=out action=allow enable=no profile=any remoteport=80,443 protocol=tcp
+netsh advfirewall firewall add rule name="DNS Out to ADDNS" dir=out action=allow enable=no profile=any remoteport=53 remoteip=%ADDNS% protocol=udp
+netsh advfirewall firewall add rule name="Backup DNS Out to DNS/NTP" dir=out action=allow enable=no profile=any remoteport=53 remoteip=%DNSNTP% protocol=udp
+netsh advfirewall firewall add rule name="LDAP OUT UDP" dir=out action=allow enable=yes profile=any remoteport=389 remoteip=%ADDNS% protocol=udp
+netsh advfirewall firewall add rule name="LDAP OUT TCP" dir=out action=allow enable=yes profile=any remoteport=389 remoteip=%ADDNS% protocol=tcp
+netsh advfirewall firewall add rule name="MSRPC" dir=out action=allow enable=yes profile=any remoteport=135 remoteip=%ADDNS% protocol=tcp
+netsh advfirewall firewall add rule name="Static rpc out" dir=out action=allow enable=yes profile=any remoteport=50243,50244,50245 remoteip=%ADDNS% protocol=tcp
+netsh advfirewall firewall add rule name="Kerberos out" dir=out action=allow enable=yes profile=any remoteport=88,464 remoteip=%ADDNS% protocol=tcp
+REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Winlogon" /v legalnoticecaption /t REG_SZ /d "* * * * * * * * * * W A R N I N G * * * * * * * * * *" /f
+REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Winlogon" /v legalnoticetext /t REG_SZ /d "This computer system network is the property of %Dname%. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Company’s Acceptable Use of Information Technology Resources Policy (“AUP”). Users have no personal privacy rights in any materials they place, view, access, or transmit on this system. The Company complies with state and federal law regarding certain legally protected confidential information, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Company and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to such interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Company personnel. Unauthorized or improper use of this system may result in administrative disciplinary action, civil charges/criminal penalties, and/or other sanctions as set forth in the Company’s AUP. By continuing to use this system you indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF A %Dname% OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE." /f
+call :Config_NTP_NewWinVer
+call :SMBV1_Fix
+EXIT /B 0
 
-:: File and Printer Sharing
-netsh advfirewall firewall set rule name="File and Printer Sharing (NB-Session-In)" new enable=yes remoteip=%OpenEMR%
+
+:Win10
+netsh advfirewall firewall add rule name="Web Out Temp" dir=out action=allow enable=yes profile=any remoteport=80,443 protocol=tcp
+netsh advfirewall firewall add rule name="DNS Out UDP" dir=out action=allow enable=yes profile=any remoteport=53 protocol=udp
+netsh advfirewall firewall add rule name="DNS Out TCP" dir=out action=allow enable=yes profile=any remoteport=53 protocol=tcp
+netsh advfirewall firewall add rule name="Web OUT to Splunk Old" dir=out action=allow enable=no profile=any remoteip=%Splunk% remoteport=8000 protocol=tcp
+netsh advfirewall firewall add rule name="Web OUT to Splunk New" dir=out action=allow enable=yes profile=any remoteip=%MySql% remoteport=8000 protocol=tcp
+netsh advfirewall firewall add rule name="Web OUT to Phantom" dir=out action=allow enable=no profile=any remoteip=%Phantom% remoteport=443 protocol=tcp
+REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Winlogon" /v legalnoticecaption /t REG_SZ /d "* * * * * * * * * * W A R N I N G * * * * * * * * * *" /f
+REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Winlogon" /v legalnoticetext /t REG_SZ /d "This computer system network is the property of %Dname%. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Company’s Acceptable Use of Information Technology Resources Policy (“AUP”). Users have no personal privacy rights in any materials they place, view, access, or transmit on this system. The Company complies with state and federal law regarding certain legally protected confidential information, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Company and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to such interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Company personnel. Unauthorized or improper use of this system may result in administrative disciplinary action, civil charges/criminal penalties, and/or other sanctions as set forth in the Company’s AUP. By continuing to use this system you indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF A %Dname% OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE." /f
+call :Config_NTP_NewWinVer_External
+call :SMBV1_Fix
+EXIT /B 0
+
+
+:2008ad
+REG add "HKLM\SYSTEM\CurrentControlSet\Services\NTDS\Parameters" /v "TCP/IP Port" /t REG_DWORD /d 50243 /f
+REG add "HKLM\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters" /v "DCTcpipPort" /t REG_DWORD /d 50244 /f
+REG add "HKLM\SYSTEM\CurrentControlSet\Services\NTFRS\Parameters" /v "RPC TCP/IP Port Assignment" /t REG_DWORD /d 50245 /f
+REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v legalnoticecaption /t REG_SZ /d "* * * * * * * * * * W A R N I N G * * * * * * * * * *"
+REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v legalnoticetext /t REG_SZ /d "This computer system/network is the property of %Dname%. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Company’s Acceptable Use of Information Technology Resources Policy (“AUP”). Users have no personal privacy rights in any materials they place, view, access, or transmit on this system. The Company complies with state and federal law regarding certain legally protected confidential information, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Company and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to such interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Company personnel. Unauthorized or improper use of this system may result in administrative disciplinary action, civil charges/criminal penalties, and/or other sanctions as set forth in the Company’s AUP. By continuing to use this system you indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF A %Dname% OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE."
+
+:: Disable SMB1?
+REG add "HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" /v "SMB1" /t REG_DWORD /d 0 /f
+
+::Temp web out
+netsh advfirewall firewall add rule name="Web Out Temp" dir=out action=allow enable=no profile=any remoteport=80,443 protocol=tcp
 
 :: PAN User-Id
 netsh advfirewall firewall add rule name="PAN User-ID IN" dir=in action=allow enable=yes profile=any remoteip=%PAMI% remoteport=514 protocol=udp
 
-:: LDAP
-netsh advfirewall firewall add rule name="A - LDAP IN TCP" dir=in action=allow enable=yes profile=any localport=389 remoteip=%Internal% protocol=tcp
-netsh advfirewall firewall add rule name="A - LDAP IN UDP" dir=in action=allow enable=yes profile=any localport=389 remoteip=%Internal% protocol=udp
-:: netsh advfirewall firewall add rule name="LDAP Out UDP" dir=out action=allow enable=yes profile=any remoteport=389 protocol=udp
-:: netsh advfirewall firewall add rule name="LDAP Out TCP" dir=out action=allow enable=yes profile=any remoteport=389 protocol=tcp
-netsh advfirewall firewall add rule name="A - LDAPS IN TCP" dir=in action=allow enable=no profile=any localport=636 remoteip=%Internal% protocol=tcp
-:: netsh advfirewall firewall add rule name="LDAPS Out TCP" dir=out action=allow enable=yes profile=any remoteport=636 protocol=tcp
-netsh advfirewall firewall add rule name="A - LDAP GC IN TCP" dir=in action=allow enable=yes profile=any localport=3268 remoteip=%Internal% protocol=tcp
-netsh advfirewall firewall add rule name="A - LDAP GC SSL IN TCP" dir=in action=allow enable=yes profile=any localport=3269 remoteip=%Internal% protocol=tcp
-
 ::NetBIOS
 netsh advfirewall firewall add rule name="NetBIOS IN" dir=in action=allow enable=yes profile=any localport=137,138,139 remoteip=%Internal% protocol=udp
 
-::DHCP
-netsh advfirewall firewall add rule name="DHCP IN" dir=in action=allow enable=yes profile=any localport=67,2535 remoteip=%DHCPsubnet% protocol=udp
+::File and Printer Sharing
+netsh advfirewall firewall set rule name="File and Printer Sharing (NB-Session-In)" new enable=yes remoteip=%Ecomm%,%MySql%
 
-:: KERBEROS 88
-netsh advfirewall firewall add rule name="A - Kerberos In UDP from Internal" dir=in action=allow enable=yes profile=any localport=88,464 remoteip=%Internal% protocol=udp
-netsh advfirewall firewall add rule name="A - Kerberos In TCP from Internal" dir=in action=allow enable=yes profile=any localport=88,464 remoteip=%Internal% protocol=tcp
+:: LDAP 389
+netsh advfirewall firewall add rule name="A - LDAP IN TCP" dir=in action=allow enable=yes profile=any localport=389 remoteip=%EComm%,%MySql%,%WebMail%,%PAMI% protocol=tcp
+netsh advfirewall firewall add rule name="A - LDAP IN UDP" dir=in action=allow enable=yes profile=any localport=389 remoteip=%EComm%,%MySql%,%WebMail%,%PAMI% protocol=udp
+:: netsh advfirewall firewall add rule name="LDAP Out UDP" dir=out action=allow enable=yes profile=any remoteport=389 protocol=udp
+:: netsh advfirewall firewall add rule name="LDAP Out TCP" dir=out action=allow enable=yes profile=any remoteport=389 protocol=tcp
+
+:: LDAP 636
+netsh advfirewall firewall add rule name="A - LDAPS IN TCP" dir=in action=allow enable=no profile=any localport=636 remoteip=%EComm%,%DNSNTP%,%WebMail%,%ADNDS%,%PAMI% protocol=tcp
+:: netsh advfirewall firewall add rule name="LDAPS Out TCP" dir=out action=allow enable=yes profile=any remoteport=636 protocol=tcp
+
+:: LDAP 3268
+netsh advfirewall firewall add rule name="A - LDAP GC IN TCP" dir=in action=allow enable=yes profile=any localport=3268 remoteip=%EComm%,%DNSNTP%,%WebMail%,%ADNDS%,%PAMI% protocol=tcp
+
+:: LDAP 3269
+netsh advfirewall firewall add rule name="A - LDAP GC SSL IN TCP" dir=in action=allow enable=yes profile=any localport=3269 remoteip=%EComm%,%DNSNTP%,%WebMail%,%ADNDS%,%PAMI% protocol=tcp
+
+:: KERBEROS
+netsh advfirewall firewall add rule name="A - Kerberos In UDP from Internal" dir=in action=allow enable=yes profile=any localport=88,464 remoteip=%EComm%,%DNSNTP%,%WebMail%,%Splunk%,%ADNDS%,%PAMI%,%MySql% protocol=udp
+netsh advfirewall firewall add rule name="A - Kerberos In TCP from Internal" dir=in action=allow enable=yes profile=any localport=88,464 remoteip=%EComm%,%DNSNTP%,%WebMail%,%Splunk%,%ADNDS%,%PAMI%,%MySql% protocol=tcp
 netsh advfirewall firewall set rule group="Kerberos Key Distribution Center (TCP-In)" new enable=yes
 netsh advfirewall firewall set rule group="Kerberos Key Distribution Center (UDP-In)" new enable=yes
 
 :: DNS 53
-netsh advfirewall firewall add rule name="DNS Out UDP to DNS/NTP" dir=out action=allow enable=yes profile=any remoteport=53 remoteip=%DNSNTP% protocol=udp
-netsh advfirewall firewall add rule name="DNS Out TCP to DNS/NTP" dir=out action=allow enable=yes profile=any remoteport=53 remoteip=%DNSNTP% protocol=tcp
-netsh advfirewall firewall add rule name="DNS In UDP from Internal" dir=in action=allow enable=yes profile=any localport=53  protocol=udp remoteip=%Internal%
+netsh advfirewall firewall add rule name="DNS Out UDP" dir=out action=allow enable=yes profile=any remoteport=53 remoteip=%DNSNTP%,%Splunk% protocol=udp
+netsh advfirewall firewall add rule name="DNS Out TCP" dir=out action=allow enable=yes profile=any remoteport=53 remoteip=%DNSNTP%,%Splunk% protocol=tcp
+:: netsh advfirewall firewall add rule name="DNS In TCP" dir=in action=allow enable=yes profile=any localport=53 remoteip=%WIN8%,%WebMail%,%DNSNTP%,%ADDNS%,%Splunk%,%EComm% protocol=tcp
+netsh advfirewall firewall add rule name="DNS In UDP from Internal" dir=in action=allow enable=yes profile=any localport=53  protocol=udp remoteip=%WIN8%,%WebMail%,%Splunk%,%EComm%,%DNSNTP%,%PAMI%,%MySql%,
 netsh advfirewall firewall add rule name="DNS In UDP from ANY" dir=in action=allow enable=no profile=any localport=53  protocol=udp
 
 :: SMB AUTH 445
-netsh advfirewall firewall add rule name="PORT 445 SMB In" dir=in action=allow enable=yes profile=any localport=445 protocol=tcp remoteip=%Internal%
+netsh advfirewall firewall add rule name="PORT 445 SMB In" dir=in action=allow enable=yes profile=any localport=445 protocol=tcp remoteip=%Splunk%,%MySql%
 
 :: Replication
-REG add "HKLM\SYSTEM\CurrentControlSet\Services\NTDS\Parameters" /v "TCP/IP Port" /t REG_DWORD /d 50243 /f
-REG add "HKLM\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters" /v "DCTcpipPort" /t REG_DWORD /d 50244 /f
-REG add "HKLM\SYSTEM\CurrentControlSet\Services\NTFRS\Parameters" /v "RPC TCP/IP Port Assignment" /t REG_DWORD /d 50245 /f
-netsh advfirewall firewall add rule name="MSRPC IN" dir=in action=allow enable=yes profile=any localport=135 remoteip=%Internal% protocol=tcp
-netsh advfirewall firewall add rule name="Static RPC IN from windows" dir=in action=allow enable=yes profile=any localport=50243,50244,50245 remoteip=%Internal% protocol=tcp
+netsh advfirewall firewall add rule name="MSRPC IN from MySql,Webmail,Pami" dir=in action=allow enable=yes profile=any localport=135 remoteip=%MySql%,%Webmail%,%PAMI% protocol=tcp
+netsh advfirewall firewall add rule name="Static RPC IN from windows" dir=in action=allow enable=yes profile=any localport=50243,50244,50245 remoteip=%MySql%,%Splunk%,%PAMI% protocol=tcp
 ::netsh advfirewall firewall add rule name="Dynamic RPC IN from windows" dir=in action=allow enable=no profile=any localport=135 remoteip=%Splunk%,%PAMI% protocol=tcp
 
-:: Beta
-netsh advfirewall firewall add rule name="B - LDAP IN TCP" dir=in action=allow enable=no profile=any localport=389 remoteip=%Internal% protocol=tcp
-netsh advfirewall firewall add rule name="B - LDAP IN UDP" dir=in action=allow enable=no profile=any localport=389 remoteip=%Internal% protocol=udp
-netsh advfirewall firewall add rule name="B - LDAPS IN TCP" dir=in action=allow enable=no profile=any localport=636 remoteip=%Internal% protocol=tcp
-netsh advfirewall firewall add rule name="B - LDAP GC IN TCP" dir=in action=allow enable=no profile=any localport=3268 remoteip=%Internal% protocol=tcp
-netsh advfirewall firewall add rule name="B - LDAP GC SSL IN TCP" dir=in action=allow enable=no profile=any localport=3269 remoteip=%Internal% protocol=tcp
-netsh advfirewall firewall add rule name="B - Kerberos In TCP" dir=in action=allow enable=no profile=any localport=88 remoteip=%Internal% protocol=tcp
+::Splunk out to
+netsh advfirewall firewall add rule name="Splunk OUT" dir=out action=allow enable=yes profile=any remoteip=%Splunk%, %EComm% remoteport=,8000,8089,9997 protocol=tcp
 
-:: Charlie
-netsh advfirewall firewall add rule name="C - LDAP IN TCP" dir=in action=allow enable=no profile=any localport=389 remoteip=%Internal% protocol=tcp
-netsh advfirewall firewall add rule name="C - LDAP IN UDP" dir=in action=allow enable=no profile=any localport=389 remoteip=%Internal% protocol=udp
-netsh advfirewall firewall add rule name="C - LDAPS IN TCP" dir=in action=allow enable=no profile=any localport=636 remoteip=%Internal% protocol=tcp
-netsh advfirewall firewall add rule name="C - LDAP GC IN TCP" dir=in action=allow enable=no profile=any localport=3268 remoteip=%Internal% protocol=tcp
-netsh advfirewall firewall add rule name="C - LDAP GC SSL IN TCP" dir=in action=allow enable=no profile=any localport=3269 remoteip=%Internal% protocol=tcp
-netsh advfirewall firewall add rule name="C - Kerberos In TCP" dir=in action=allow enable=no profile=any localport=88 remoteip=%Internal% protocol=tcp
+::Beta
+netsh advfirewall firewall add rule name="B - LDAP IN TCP" dir=in action=allow enable=no profile=any localport=389 remoteip=%WIN8%,%Splunk%,%ADDNS%,%PAMI% protocol=tcp
+netsh advfirewall firewall add rule name="B - LDAP IN UDP" dir=in action=allow enable=no profile=any localport=389 remoteip=%WIN8%,%Splunk%,%ADDNS%,%PAMI% protocol=udp
+netsh advfirewall firewall add rule name="B - LDAPS IN TCP" dir=in action=allow enable=no profile=any localport=636 remoteip=%WIN8%,%Splunk%,%ADDNS%,%PAMI% protocol=tcp
+netsh advfirewall firewall add rule name="B - LDAP GC IN TCP" dir=in action=allow enable=no profile=any localport=3268 remoteip=%WIN8%,%Splunk%,%ADDNS%,%PAMI% protocol=tcp
+netsh advfirewall firewall add rule name="B - LDAP GC SSL IN TCP" dir=in action=allow enable=no profile=any localport=3269 remoteip=%WIN8%,%Splunk%,%ADDNS%,%PAMI% protocol=tcp
+netsh advfirewall firewall add rule name="B - Kerberos In TCP" dir=in action=allow enable=no profile=any localport=88 remoteip=%WIN8%,%Splunk%,%ADDNS%,%PAMI% protocol=tcp
+
+::Charlie
+netsh advfirewall firewall add rule name="C - LDAP IN TCP" dir=in action=allow enable=no profile=any localport=389 remoteip=%Ecomm%,%WebMail% protocol=tcp
+netsh advfirewall firewall add rule name="C - LDAP IN UDP" dir=in action=allow enable=no profile=any localport=389 remoteip=%Ecomm%,%WebMail% protocol=udp
+netsh advfirewall firewall add rule name="C - LDAPS IN TCP" dir=in action=allow enable=no profile=any localport=636 remoteip=%Ecomm%,%WebMail% protocol=tcp
+netsh advfirewall firewall add rule name="C - LDAP GC IN TCP" dir=in action=allow enable=no profile=any localport=3268 remoteip=%Ecomm%,%WebMail% protocol=tcp
+netsh advfirewall firewall add rule name="C - LDAP GC SSL IN TCP" dir=in action=allow enable=no profile=any localport=3269 remoteip=%Ecomm%,%WebMail% protocol=tcp
+netsh advfirewall firewall add rule name="C - Kerberos In TCP" dir=in action=allow enable=no profile=any localport=88 remoteip=%Ecomm%,%WebMail% protocol=tcp
 
 ::Add PA Groups
 dsadd group cn=Marketing,cn=users,dc=frog,dc=com -secgrp yes -samid marketing
@@ -400,62 +507,44 @@ dsadd user "cn=Michael Dorn,cn=Users,dc=frog,dc=com" -samid MDorn -fn Michael -l
 
 
 ::Create Password policy
-ECHO Setting password policy...
-start powershell.exe Set-ADDefaultDomainPasswordPolicy -Identity frog.com -ComplexityEnabled $true -MinPasswordLength 10 -MinPasswordAge 1.00:00:00 -MaxPasswordAge 30.00:00:00 -LockoutDuration 90.00:00:00 -LockoutObservationWindow 00:30:00 -LockoutThreshold 5
-start powershell.exe "Get-ADDefaultDomainPasswordPolicy >> %ccdcpath%\DomainPasswordPolicy.txt"
+::start powershell.exe -noexit Set-ADDefaultDomainPasswordPolicy -Identity frog.com -ComplexityEnabled $true -MinPasswordLength 10 -MinPasswordAge 1.00:00:00 -MaxPasswordAge 30.00:00:00 -LockoutDuration 90.00:00:00 -LockoutObservationWindow 00:30:00 -LockoutThreshold 5
+::start powershell.exe -noexit Get-ADDefaultDomainPasswordPolicy >> %ccdcpath%\DomainPasswordPolicy.txt
+
+call :Config_NTP
 EXIT /B 0
 
-
-:SMTP2012
-netsh advfirewall firewall add rule name="SMTP IN TCP" dir=in action=allow enable=yes profile=any localport=25 remoteip=any protocol=tcp
-netsh advfirewall firewall add rule name="POP3 IN TCP" dir=in action=allow enable=yes profile=any localport=110,995 remoteip=any protocol=tcp
-netsh advfirewall firewall add rule name="IMAP IN TCP" dir=in action=allow enable=no profile=any localport=143 remoteip=any protocol=tcp
-netsh advfirewall firewall add rule name="Web Out any temp" dir=out action=allow enable=no profile=any remoteport=80,443 protocol=tcp
-netsh advfirewall firewall add rule name="DNS Out to ADDNS" dir=out action=allow enable=no profile=any remoteport=53 remoteip=%ADDNS% protocol=udp
-netsh advfirewall firewall add rule name="Backup DNS Out to DNS/NTP" dir=out action=allow enable=no profile=any remoteport=53 remoteip=%DNSNTP% protocol=udp
-netsh advfirewall firewall add rule name="LDAP OUT UDP" dir=out action=allow enable=yes profile=any remoteport=389 remoteip=%ADDNS% protocol=udp
-netsh advfirewall firewall add rule name="LDAP OUT TCP" dir=out action=allow enable=yes profile=any remoteport=389 remoteip=%ADDNS% protocol=tcp
-netsh advfirewall firewall add rule name="MSRPC" dir=out action=allow enable=yes profile=any remoteport=135 remoteip=%ADDNS% protocol=tcp
-netsh advfirewall firewall add rule name="Static rpc out" dir=out action=allow enable=yes profile=any remoteport=50243,50244,50245 remoteip=%ADDNS% protocol=tcp
-netsh advfirewall firewall add rule name="Kerberos out" dir=out action=allow enable=yes profile=any remoteport=88,464 remoteip=%ADDNS% protocol=tcp
-EXIT /B 0
-
-
-:Win10
-echo > C:\Windows\System32\drivers\etc\hosts
-netsh advfirewall firewall add rule name="Web Out any temp" dir=out action=allow enable=no profile=any remoteport=80,443 protocol=tcp
-netsh advfirewall firewall add rule name="DNS Out to ADDNS" dir=out action=allow enable=no profile=any remoteport=53 remoteip=%ADDNS% protocol=udp
-netsh advfirewall firewall add rule name="Backup DNS Out to DNS/NTP" dir=out action=allow enable=no profile=any remoteport=53 remoteip=%DNSNTP% protocol=udp
-netsh advfirewall firewall add rule name="LDAP OUT UDP" dir=out action=allow enable=yes profile=any remoteport=389 remoteip=%ADDNS% protocol=udp
-netsh advfirewall firewall add rule name="LDAP OUT TCP" dir=out action=allow enable=yes profile=any remoteport=389 remoteip=%ADDNS% protocol=tcp
-netsh advfirewall firewall add rule name="MSRPC" dir=out action=allow enable=yes profile=any remoteport=135 remoteip=%ADDNS% protocol=tcp
-netsh advfirewall firewall add rule name="Static rpc out" dir=out action=allow enable=yes profile=any remoteport=50243,50244,50245 remoteip=%ADDNS% protocol=tcp
-netsh advfirewall firewall add rule name="Kerberos out" dir=out action=allow enable=yes profile=any remoteport=88,464 remoteip=%ADDNS% protocol=tcp
-netsh advfirewall firewall add rule name="Web Out to PAN" dir=out action=allow enable=yes profile=any remoteport=443 remoteip=%PAMI% protocol=tcp
-netsh advfirewall firewall add rule name="SSH Out to PAN" dir=out action=allow enable=no profile=any remoteport=22 remoteip=%PAMI% protocol=tcp
-EXIT /B 0
-
-:Clear_DNS
-copy %systemroot%\system32\drivers\etc\hosts %ccdcpath%\BeforeFlushhosts
-Ipconfig /flushdns
-echo Writing over the hosts file...
-attrib -r -s C:\WINDOWS\system32\drivers\etc\hosts
-EXIT /B 0
 
 :SMBV1_Fix
 ::since this only works for win 8 and newer we have to decide where we are and where to apply this fix, in prior verisons there is a regkey change for lanman\services for it
-ECHO Starting SMB Fix...
 powershell.exe Get-SmbServerConfiguration >> %ccdcpath%\Proof\SMBDetect.txt
 powershell.exe Set-SmbServerConfiguration -EnableSMB1Protocol $false
 powershell.exe Get-SmbServerConfiguration >> %ccdcpath%\Proof\SMBDetect.txt
 EXIT /B 0
 
 
-:Config_NTP_NewWinVer
-::Configuration for new windows versions
-ECHO Configuring NTP...
+:Config_NTP_NewWinVer_External
 net start w32time
-w32tm /config /manualpeerlist:"%DNSNTP%" /syncfromflags:manual /reliable:yes /update
+w32tm /config /manualpeerlist:"pool.ntp.org" /syncfromflags:manual /reliable:yes /update
+w32tm /resync
+net stop w32time && net start w32time
+TZUTIL /s "Eastern Standard Time"
+start powershell -Noexit w32tm /query /peers
+Exit /B 0
+
+
+:Config_NTP
+net start w32time
+w32tm /config /manualpeerlist:"%EComm%" /syncfromflags:manual /reliable:yes /update
+w32tm /resync
+net stop w32time && net start w32time
+start cmd /k echo w32tm /query /peers
+EXIT /B 0
+
+
+:Config_NTP_NewWinVer
+::Configuration  for new windows versions
+net start w32time
+w32tm /config /manualpeerlist:"%EComm%" /syncfromflags:manual /reliable:yes /update
 w32tm /resync
 net stop w32time && net start w32time
 TZUTIL /s "Eastern Standard Time"
@@ -465,15 +554,12 @@ EXIT /B 0
 
 :Export_Configs
 :: Export Hosts
-ECHO Exporting configs...
 copy %systemroot%\system32\drivers\etc\hosts %ccdcpath%\hosts
 ECHO # This is OUR hosts file! > %systemroot%\system32\drivers\etc\hosts
 :: Export Users
 wmic useraccount list brief > %ccdcpath%\Config\Users.txt
 :: Export Groups
 wmic group list brief > %ccdcpath%\Config\Groups.txt
-:: Export System information
-::systeminfo > %ccdcpath%\Config\System.txt
 :: Export Scheduled tasks
 schtasks > %ccdcpath%\ThreatHunting\ScheduledTasks.txt
 :: Export Services
@@ -492,8 +578,7 @@ EXIT /B 0
 :Get_Sysinternals
 Set /p Garbage2="Would you like to download sysinternals Autoruns and Process monitor? ###Needs DNS###  (Y/N)    "
 if "%Garbage2%" == "Y" (
-	netsh advfirewall firewall add rule name="Temp Web out to any for sysinternals" dir=out enable=yes action=allow profile=any remoteip=any remoteport=443 protocol=tcp
-	netsh advfirewall firewall add rule name="Temp DNS for sysinternals" dir=out enable=yes action=allow profile=any remoteip=any remoteport=53 protocol=udp
+	netsh advfirewall firewall add rule name="Temp Web out to any for sysinternals" dir=in enable=yes action=allow profile=any remoteip=any remoteport=443 protocol=TCP
 	bitsadmin.exe /transfer "JobName" https://download.sysinternals.com/files/Autoruns.zip "%ccdcpath%\autoruns.zip"
 	bitsadmin.exe /transfer "JobName" https://download.sysinternals.com/files/ProcessMonitor.zip "%ccdcpath%\processmonitor.zip"
 )
