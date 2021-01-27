@@ -30,7 +30,7 @@ function lxcm_completion {
            -- "$cur" ) )
    }
    
-   _lxcm_container()
+   _lxcm_container() 
    {
        COMPREPLY=( $( compgen -W '$( command ls "$lxcmHome/containers/" )' \
            -- "$cur" ) )
