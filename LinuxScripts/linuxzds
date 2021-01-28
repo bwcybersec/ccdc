@@ -1,6 +1,6 @@
 #!/bin/bash
 
-default_splunk_server="172.20.240.20"
+default_splunk_server="172.20.241.20"
 backup_dest=/usr/local/backups/
 
 if [[ ! -x /bin/autoinstalldns ]]
