@@ -637,7 +637,7 @@ function mount-filesystem {
     if [[ ! -e "/var/lib/lxc/$1/rootfs/mnt" ]]
     then
         mkdir "/var/lib/lxc/$1/rootfs/mnt"
-	chown "${sNum}00000:${sNum}00000" "/var/lib/lxc/$1/rootfs/mnt"
+        chown "${sNum}00000:${sNum}00000" "/var/lib/lxc/$1/rootfs/mnt"
     fi
     if [[ ! -e "/var/lib/lxc/$1/rootfs/extrafs" ]]
     then
@@ -878,7 +878,7 @@ function fwappend {
     if [[ "$1" == "alias" ]]
     then
         result=$(resolveName "$3")
-	if [[ "$result" != "" ]]
+        if [[ "$result" != "" ]]
         then
             echo "$result" > "/tmp/fwalias/$2"
         else
@@ -1340,8 +1340,8 @@ function backup {
     #CONTAINER BACKUP
     if [[ -e "$lxcmHome/containers/$1/backups/$2.sfs" ]]
     then
-	echo "Backup already exists."
-    	exit 1
+        echo "Backup already exists."
+        exit 1
     fi
     sNum=$(cat "$lxcmHome/containers/$1/sNum")
     bindfs -o suid,dev --uid-offset="-${sNum}00000" --gid-offset="-${sNum}00000" "$lxcmHome/containers/$1/scratchfs" "$lxcmHome/containers/$1/backup"
