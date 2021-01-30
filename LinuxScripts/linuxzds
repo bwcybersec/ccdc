@@ -228,7 +228,7 @@ function fix_packages {
             sed -i 's#deb http://.*\.debian\.org/#deb http://archive.debian.org/#g' /etc/apt/sources.list
             apt-get update
         fi
-        apt-get install -y curl wget vim ca-certificates
+        apt-get install -y curl wget vim openssh-server ca-certificates
         apt-get upgrade -y openssl
     else
         if [[ -e  /etc/centos-release ]]
@@ -284,7 +284,7 @@ yumrepo2HERE
             #yum check
             wget https://vault.centos.org/6.2/os/x86_64/Packages/mlocate-0.22.2-3.el6.x86_64.rpm
             rpm --nodeps -ivh mlocate-0.22.2-3.el6.x86_64.rpm
-            yum install -y curl wget vim epel-release yum-utils man 
+            yum install -y curl wget vim epel-release yum-utils man openssh-server
             yum update -y ca-certificates
         else 
             yum clean all
