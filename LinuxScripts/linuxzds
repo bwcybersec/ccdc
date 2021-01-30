@@ -3,11 +3,11 @@
 default_splunk_server="172.20.241.20"
 backup_dest=/usr/local/backups/
 
-if [[ ! -x /bin/autoinstalldns ]]
-then
-    cp autoinstalldns /bin
-    chmod +x /bin/autoinstalldns
-fi
+#if [[ ! -x /bin/autoinstalldns ]]
+#then
+#    cp autoinstalldns /bin
+#    chmod +x /bin/autoinstalldns
+#fi
 
 if [[ ! -x /bin/lxcm ]]
 then
@@ -15,17 +15,17 @@ then
     chmod +x /bin/lxcm
 fi
 
-if [[ ! -x /bin/datool ]]
-then
-    cp datool /bin
-    chmod +x /bin/datool
-fi
+#if [[ ! -x /bin/datool ]]
+#then
+#    cp datool /bin
+#    chmod +x /bin/datool
+#fi
 
-if [[ ! -x /bin/qdatool ]]
-then
-    cp qdatool /bin
-    chmod +x /bin/qdatool
-fi
+#if [[ ! -x /bin/qdatool ]]
+#then
+#    cp qdatool /bin
+#    chmod +x /bin/qdatool
+#fi
 
 function filecheck {
     file="$1"
@@ -963,17 +963,21 @@ function backup_mysql {
     fi
 }
 
-if [[ "$1" != "" ]]
-then
-    command="$1"
-    prompt "Username of admin account" "administrator" admin_user
-    shift
-    "$command" "$@"
-    exit
-fi
 
-ask change_root_pw "Change root password " y
+## The fun begins here...
+##
 
+#if [[ "$1" != "" ]]
+#then
+#    command="$1"
+#    prompt "Username of admin account" "administrator" admin_user
+#    shift
+#    "$command" "$@"
+#    exit
+#fi
+
+#ask change_root_pw "Change root password " y
+#
 mkdir -p /var/log/bash_hist
 chmod 700 /var/log/bash_hist
 if [[ -e /root ]]
@@ -1007,28 +1011,28 @@ chown root:root /etc/passwd
 chown root:root /etc/sudoers
 prepare_audit
 
-ask disable_ldap "Disable ldap" n
+#ask disable_ldap "Disable ldap" n
 ask backup_mysql "Backup mysql" n
-ask fix_packages "Fix packages" y
-ask install_dns_server "Install DNS server" n
-ask set_dns "Replace DNS configuration" n
+ask fix_packages "Fix packages" n
+#ask install_dns_server "Install DNS server" n
+#ask set_dns "Replace DNS configuration" n
 ask configure_ntp_server "Configure NTP Server" n
-ask secure_ssh "Secure ssh" y
-ask secure_sudoers "Secure sudoers" y
-ask find_and_disable_accounts "Disable accounts" y
-ask check_binaries "Check commands" y
-ask check_crontab "Check crontabs" y
-ask check_netstat "Check netstat" y
-ask check_software "Check software" y
-ask configure_lxcm "Configure firewall" y
-ask configure_banner "Configure banner" y
-ask check_suid "Check suid" y
-ask disable_ipv6 "Disable ipv6" y
-ask configure_backups "Configure backups" y
-ask configure_splunk "Configure Splunk" y
-ask configure_sshjail "Enable sshjail" y
-ask configure_ntp "Configure NTP" y
-ask install_rkhunter "Install rkhunter" y
-ask scan_rkhunter "Scan with rkhunter" y
-ask install_clamav "Install ClamAV" y
-ask scan_clamav "Scan with ClamAV" y
+ask secure_ssh "Secure ssh" n
+ask secure_sudoers "Secure sudoers" n
+#ask find_and_disable_accounts "Disable accounts" y
+#ask check_binaries "Check commands" y
+ask check_crontab "Check crontabs" n
+ask check_netstat "Check netstat" n
+#ask check_software "Check software" y
+#ask configure_lxcm "Configure firewall" y
+ask configure_banner "Configure banner" n
+#ask check_suid "Check suid" y
+ask disable_ipv6 "Disable ipv6" n
+ask configure_backups "Configure backups" n
+ask configure_splunk "Configure Splunk" n
+#ask configure_sshjail "Enable sshjail" y
+ask configure_ntp "Configure NTP" n
+ask install_rkhunter "Install rkhunter" n
+ask scan_rkhunter "Scan with rkhunter" n
+ask install_clamav "Install ClamAV" n
+ask scan_clamav "Scan with ClamAV" n
