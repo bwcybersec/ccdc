@@ -2,7 +2,7 @@
 - name: Doom
   become: true
   hosts: all
-  become_user: chris
+  become_user: root
 
   tasks:
   - name: Make log
