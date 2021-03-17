@@ -34,7 +34,7 @@ all:
           ansible_become_password: changeme
           ansible_host: 172.20.240.23
           ansible_port: 22
-          ansible_ssh_private_key_file: /home/chris/.ssh/ansible
+          ansible_ssh_private_key_file: /root/.ssh/ansible
           ansible_user: ansible
           ports: *id001
           splunkIp: 172.20.241.3
@@ -43,7 +43,7 @@ all:
           ansible_become_password: changeme
           ansible_host: 172.25.2<team>.10
           ansible_port: 22
-          ansible_ssh_private_key_file: /home/chris/.ssh/ansible
+          ansible_ssh_private_key_file: /root/.ssh/ansible
           ansible_user: sysadmin
           ports: *id001
           splunkIp: 172.25.<team>.67
@@ -53,7 +53,7 @@ all:
           ansible_become_password: changeme
           ansible_host: 172.25.2<team>.30
           ansible_port: 22
-          ansible_ssh_private_key_file: /home/chris/.ssh/ansible
+          ansible_ssh_private_key_file: /root/.ssh/ansible
           ansible_user: ansible
           ports: *id001
           splunkIp: 172.25.<team>.67
@@ -61,7 +61,7 @@ all:
           ansible_become_password: changeme
           ansible_host: 172.25.2<team>.40
           ansible_port: 22
-          ansible_ssh_private_key_file: /home/chris/.ssh/ansible
+          ansible_ssh_private_key_file: /root/.ssh/ansible
           ansible_user: ansible
           ports: *id001
           splunkIp: 172.25.<team>.67
@@ -69,7 +69,7 @@ all:
           ansible_become_password: changeme
           ansible_host: 172.20.240.5
           ansible_port: 22
-          ansible_ssh_private_key_file: /home/chris/.ssh/ansible
+          ansible_ssh_private_key_file: /root/.ssh/ansible
           ansible_user: ansible
           ports: *id001
           splunkIp: 172.20.241.3
@@ -88,7 +88,7 @@ all:
           ansible_become_password: changeme
           ansible_host: 172.25.2<team>.20
           ansible_port: 22
-          ansible_ssh_private_key_file: /home/chris/.ssh/ansible
+          ansible_ssh_private_key_file: /root/.ssh/ansible
           ansible_user: ansible
           ports: *id001
           splunkIp: 172.25.<team>.67
@@ -107,7 +107,7 @@ all:
               ansible_become_password: changeme
               ansible_host: 172.25.2<team>.10
               ansible_port: 22
-              ansible_ssh_private_key_file: /home/chris/.ssh/ansible
+              ansible_ssh_private_key_file: /root/.ssh/ansible
               ansible_user: ansible
               ports: *id001
               splunkIp: 172.25.<team>.67
@@ -116,7 +116,7 @@ all:
               ansible_host: 172.25.2<team>.20
               ansible_password: changemenow
               ansible_port: 22
-              ansible_ssh_private_key_file: /home/chris/.ssh/ansible
+              ansible_ssh_private_key_file: /root/.ssh/ansible
               ansible_user: ansible
               ports: *id001
               splunkIp: 172.25.<team>.67
@@ -128,7 +128,7 @@ all:
               ansible_become_password: changeme
               ansible_host: 172.20.241.3
               ansible_port: 22
-              ansible_ssh_private_key_file: /home/chris/.ssh/ansible
+              ansible_ssh_private_key_file: /root/.ssh/ansible
               ansible_user: ansible
               ports: *id001
               splunkIp: 172.20.241.3
@@ -136,7 +136,7 @@ all:
               ansible_become_password: changeme
               ansible_host: 172.20.241.201
               ansible_port: 22
-              ansible_ssh_private_key_file: /home/chris/.ssh/ansible
+              ansible_ssh_private_key_file: /root/.ssh/ansible
               ansible_user: ansible
               ports: *id001
               splunkIp: 172.20.241.3
@@ -144,7 +144,7 @@ all:
               ansible_become_password: changeme
               ansible_host: 172.20.240.97
               ansible_port: 22
-              ansible_ssh_private_key_file: /home/chris/.ssh/ansible
+              ansible_ssh_private_key_file: /root/.ssh/ansible
               ansible_user: ansible
               ports: *id001
               splunkIp: 172.20.241.3
