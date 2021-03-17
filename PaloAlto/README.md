@@ -1,5 +1,3 @@
-These are various PaloAlto configuration files.
-You may have to change IP Addresses
-They each will lock down the PaloAlto.
+These are various PaloAlto configuration files from the PA training.
 
-Run these in the console/command prompt on the PaloAlto.
+These are not used during Competition, rather for reference.
