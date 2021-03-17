@@ -20,11 +20,3 @@ docker run hello-world
 docker images
 docker container ls -a
 docker ps
-
-
-wget http://10.0.95.10/MCS/katchins/csc315/setup_mysql.sh
-chmod +x setup_mysql.sh
-wget http://10.0.95.10/MCS/katchins/csc315/setup_splunk.sh
-chmod +x setup_splunk.sh
-wget http://10.0.95.10/MCS/katchins/csc315/setup_wordpress.sh
-chmod +x setup_wordpress.sh
