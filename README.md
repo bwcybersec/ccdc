@@ -1,3 +1,3 @@
-Midwest Region CCDC Scripts
+# ccdc
 
-Most of these are only for State Qualifiers.  Regionals will be added later.
+This is BWCyberSec's CCDC repository for 2022 States.

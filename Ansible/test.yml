@@ -1,7 +1,0 @@
----
-- name: Test
-  hosts: http
-  
-  tasks:
-  - debug:
-      msg: "{{ iports }}"
