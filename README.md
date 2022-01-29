@@ -4,6 +4,7 @@ This is BWCyberSec's CCDC repository for 2022 States.
 
 
 
+
 PAConfig.txt - Used to configure PANOS from commandline
 
 ScriptV5.txt - Used to configure Windows 2012 and Windows 2016 Server
