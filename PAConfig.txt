@@ -1,0 +1,159 @@
+set deviceconfig system permitted-ip 172.20.241.0/24
+set deviceconfig system dns-setting servers primary 208.67.220.220 secondary 208.67.222.222
+set deviceconfig system service disable-telnet yes
+set deviceconfig system login-banner Authorized_Access_Only
+set network profiles zone-protection-profile Default discard-overlapping-tcp-segment-mismatch yes discard-unknown-option yes tcp-reject-non-syn yes flood tcp-syn enable yes syn-cookies maximal-rate 500 activate-rate 100 alarm-rate 100
+set network profiles zone-protection-profile Default flood icmp enable yes red activate-rate 1000 alarm-rate 1000 maximal-rate 5000
+set network profiles zone-protection-profile Default flood udp enable yes red activate-rate 1000 alarm-rate 1000 maximal-rate 5000
+set network profiles zone-protection-profile Default flood other-ip enable yes red activate-rate 1000 alarm-rate 1000 maximal-rate 5000
+set network profiles zone-protection-profile Default flood icmpv6 enable yes red activate-rate 1000 alarm-rate 1000 maximal-rate 5000
+set network profiles interface-management-profile none
+set network interface ethernet ethernet1/3 layer3 interface-management-profile none
+set network interface ethernet ethernet1/2 layer3 interface-management-profile none
+set deviceconfig system ntp-servers primary-ntp-server ntp-server-address 172.20.240.23
+set deviceconfig system ntp-servers secondary-ntp-server ntp-server-address 172.20.241.27
+set shared log-settings syslog Splunk server Splunk server 172.20.241.3 port 514 transport UDP format BSD facility LOG_USER
+set shared log-settings profiles default match-list traffic send-syslog Splunk log-type traffic filter "All Logs" send-to-panorama no
+set shared log-settings profiles default match-list auth send-syslog Splunk log-type auth filter "All Logs" send-to-panorama no
+set shared log-settings profiles default match-list data send-syslog Splunk log-type data filter "All Logs" send-to-panorama no
+set shared log-settings profiles default match-list gtp send-syslog Splunk log-type gtp filter "All Logs" send-to-panorama no
+set shared log-settings profiles default match-list threat send-syslog Splunk log-type threat filter "All Logs" send-to-panorama no
+set shared log-settings profiles default match-list tunnel send-syslog Splunk log-type tunnel filter "All Logs" send-to-panorama no
+set shared log-settings profiles default match-list url send-syslog Splunk log-type url filter "All Logs" send-to-panorama no
+set shared log-settings profiles default match-list wildfire send-syslog Splunk log-type wildfire filter "All Logs" send-to-panorama no
+set shared log-settings system match-list Splunk send-syslog Splunk filter "All Logs"
+set shared log-settings config match-list Splunk send-syslog Splunk filter "All Logs"
+set shared log-settings userid match-list Splunk send-syslog Splunk filter "All Logs"
+set shared log-settings hipmatch match-list Splunk send-syslog Splunk filter "All Logs"
+set deviceconfig setting management common-criteria-alarm-generation enable-alarm-generation yes
+delete rulebase security rules Any-Any
+delete rulebase security rules LAN2DMZ
+delete rulebase security rules DMZ2LAN
+delete rulebase security rules any2any
+set address Private1 ip-range 10.0.0.0-10.255.255.255
+set address Private2 ip-range 172.16.0.0-172.31.255.255
+set address Private3 ip-range 192.168.0.0-192.168.255.255
+set address-group All_Internal
+set address Priv_E-Commerce_172.20.240.11 ip-netmask 172.20.240.11
+set address Priv_Ubuntu_DNS_172.20.240.23 ip-netmask 172.20.240.23
+set address Priv_Debian_Email_172.20.241.39 ip-netmask 172.20.241.39
+set address Priv_2003_FTP_172.20.241.9 ip-netmask 172.20.241.9
+set address Priv_2012_Web_172.20.241.3 ip-netmask 172.20.241.3
+set address Priv_2008_R2_AD_172.20.241.27 ip-netmask 172.20.241.27
+set address Priv_PAN_Management_172.20.241.100 ip-netmask 172.20.241.100
+set address-group All_Internal static Priv_E-Commerce_172.20.240.11
+set address-group All_Internal static Priv_Ubuntu_DNS_172.20.240.23
+set address-group All_Internal static Priv_Debian_Email_172.20.241.39
+set address-group All_Internal static Priv_2003_FTP_172.20.241.9
+set address-group All_Internal static Priv_2012_Web_172.20.241.3
+set address-group All_Internal static Priv_2008_R2_AD_172.20.241.27
+set address-group All_Internal static Priv_PAN_Management_172.20.241.100
+set address Pub_E-Commerce ip-netmask 172.25.20.11
+set address Pub_Ubuntu_DNS ip-netmask 172.25.20.23
+set address Pub_Debian_Email ip-netmask 172.25.20.39
+set address Pub_2003_FTP ip-netmask 172.25.20.9
+set address Pub_2012_Web ip-netmask 172.25.20.3
+set address Pub_2008_R2_AD ip-netmask 172.25.20.27
+set address Pub_PAN_Management ip-netmask 172.25.20.100
+set address Windows_7 ip-netmask 172.31.20.3
+set address-group DMZ_Hosts
+set address-group DMZ_Hosts static Priv_Ubuntu_DNS_172.20.240.23
+set address-group DMZ_Hosts static Priv_E-Commerce_172.20.240.11
+set address-group LAN_Hosts
+set address-group LAN_Hosts static Priv_Debian_Email_172.20.241.39
+set address-group LAN_Hosts static Priv_2003_FTP_172.20.241.9
+set address-group LAN_Hosts static Priv_2012_Web_172.20.241.3
+set address-group LAN_Hosts static Priv_2008_R2_AD_172.20.241.27
+set address-group LAN_Hosts static Priv_PAN_Management_172.20.241.100
+set application-group Outbound_Apps
+set application-group Outbound_Apps members web-browsing
+set application-group Outbound_Apps members ssl
+set application-group Outbound_Apps members apt-get
+set application-group Outbound_Apps members yum
+set application-group Outbound_Apps members git-base
+set application-group Outbound_Apps members github
+set application-group Outbound_Apps members google-base
+set application-group Outbound_Apps members ms-update
+set application-group Outbound_Apps members pastebin
+set application-group Outbound_Apps members sourceforge-base
+set application-group Outbound_Apps members subversion-base
+set application-group Outbound_Apps members ping
+set application-group Outbound_Apps members ocsp
+set application-group Outbound_Apps members paloalto-updates
+set application-group Outbound_Apps members pan-db-cloud
+set application-group DMZ_to_LAN_Apps
+set application-group DMZ_to_LAN_Apps members ldap
+set application-group DMZ_to_LAN_Apps members ssh
+set application-group DMZ_to_LAN_Apps members syslog
+set application-group DMZ_to_LAN_Apps members splunk
+set application-group DMZ_to_LAN_Apps members web-browsing
+set application-group DMZ_to_LAN_Apps members ssl
+set application-group DMZ_to_LAN_Apps members ping
+set application-group DMZ_to_LAN_Apps members ossec
+set application-group DMZ_to_LAN_Apps members dns
+set application-group LAN_to_DMZ_Apps
+set application-group LAN_to_DMZ_Apps members ntp
+set application-group LAN_to_DMZ_Apps members dns
+set application-group LAN_to_DMZ_Apps members ssh
+set application-group LAN_to_DMZ_Apps members ping
+set application-group LAN_to_DMZ_Apps members web-browsing
+set application-group LAN_to_DMZ_Apps members ssl
+set application-group LAN_to_DMZ_Apps members mysql
+set application-group Log_Apps
+set application-group Log_Apps members splunk
+set application-group Log_Apps members ssl
+set application-group Log_Apps members web-browsing
+set rulebase security rules Deny_1918_Addresses_Out action deny from LAN to External source any destination Private1
+set rulebase security rules Deny_1918_Addresses_Out action deny from LAN to External source any destination Private2
+set rulebase security rules Deny_1918_Addresses_Out action deny from DMZ to External source any destination Private3
+set rulebase security rules Deny_1918_Addresses_Out application any service any
+set rulebase security rules DNS_Outbound action allow from [ DMZ LAN ] to External source [ Priv_Ubuntu_DNS_172.20.240.23 Priv_PAN_Management_172.20.241.100 ] destination 208.67.220.220
+set rulebase security rules DNS_Outbound action allow from [ DMZ LAN ] to External source [ Priv_Ubuntu_DNS_172.20.240.23 Priv_PAN_Management_172.20.241.100 ] destination 208.67.222.222
+set rulebase security rules DNS_Outbound profile-setting profiles spyware strict virus default vulnerability strict
+set rulebase security rules DNS_Outbound application dns service application-default
+set rulebase security rules All_DNS_Outbound action allow from DMZ to External source DMZ_Hosts destination 8.8.8.8
+set rulebase security rules All_DNS_Outbound action allow from DMZ to External source DMZ_Hosts destination 8.8.8.8
+set rulebase security rules All_DNS_Outbound action allow from LAN to External source LAN_Hosts destination 8.8.4.4
+set rulebase security rules All_DNS_Outbound action allow from LAN to External source LAN_Hosts destination 8.8.4.4
+set rulebase security rules All_DNS_Outbound profile-setting profiles spyware strict virus default vulnerability strict
+set rulebase security rules All_DNS_Outbound application dns service application-default
+set rulebase security rules All_DNS_Outbound disabled yes
+set rulebase security rules NTP_Outbound action allow from DMZ to External source Priv_Ubuntu_DNS_172.20.240.23 destination 216.239.35.0-216.239.35.12
+set rulebase security rules NTP_Outbound profile-setting profiles spyware strict virus default vulnerability strict
+set rulebase security rules NTP_Outbound application ntp service application-default
+set rulebase security rules All_Outbound action allow from LAN to External source All_Internal destination any
+set rulebase security rules All_Outbound action allow from DMZ to External source All_Internal destination any
+set rulebase security rules All_Outbound application Outbound_Apps service application-default
+set rulebase security rules External_to_E-Com action allow from External to DMZ source any destination Pub_E-Commerce profile-setting profiles spyware strict virus default vulnerability strict
+set rulebase security rules External_to_E-Com application web-browsing service application-default
+set rulebase security rules External_to_E-Com application ssl service application-default
+set rulebase security rules External_to_DNS action allow from External to DMZ source any destination Pub_Ubuntu_DNS profile-setting profiles spyware strict virus default vulnerability strict
+set rulebase security rules External_to_DNS application dns service application-default
+set rulebase security rules External_to_Deb-Mail action allow from External to LAN source any destination Pub_Debian_Email profile-setting profiles spyware strict virus default vulnerability strict
+set rulebase security rules External_to_Deb-Mail application ssl service application-default
+set rulebase security rules External_to_Deb-Mail application web-browsing service application-default
+set rulebase security rules External_to_Deb-Mail application smtp service application-default
+set rulebase security rules External_to_Deb-Mail application pop3 service application-default
+set rulebase security rules External_to_Web_Apps action allow from External to LAN source any destination Pub_2012_Web profile-setting profiles spyware strict virus default vulnerability strict
+set rulebase security rules External_to_Web_Apps application web-browsing service application-default
+set rulebase security rules External_to_Web_Apps application ssl service application-default
+set rulebase security rules External_to_Web_Apps disabled yes
+set rulebase security rules DMZ_to_LAN action allow from DMZ to LAN source DMZ_Hosts destination LAN_Hosts profile-setting profiles spyware strict virus default vulnerability strict
+set rulebase security rules DMZ_to_LAN application DMZ_to_LAN_Apps service application-default
+set rulebase security rules LAN_to_DMZ action allow from LAN to DMZ source LAN_Hosts destination DMZ_Hosts profile-setting profiles spyware strict virus default vulnerability strict
+set rulebase security rules LAN_to_DMZ application LAN_to_DMZ_Apps service application-default
+set rulebase security rules Win7_to_External action allow from External to External source Windows_7 destination any
+set rulebase security rules Win7_to_External application Outbound_Apps service application-default
+set rulebase security rules Win7_to_External disabled yes
+set rulebase security rules Win7_to_Logs action allow from External to [ LAN External ] source Windows_7 destination [ Priv_2012_Web_172.20.241.3 Pub_2012_Web Pub_PAN_Management ]
+set rulebase security rules Win7_to_Logs application Log_Apps service application-default
+set rulebase security rules Win7_to_Logs disabled yes
+set rulebase security rules Interzone_LAN action allow from LAN to LAN source any destination any
+set rulebase security rules Interzone_LAN application any service any
+set rulebase security rules Interzone_DMZ action allow from DMZ to DMZ source any destination any
+set rulebase security rules Interzone_DMZ application any service any
+set rulebase security rules Deny_to_External action deny from External to any source any destination any
+set rulebase security rules Deny_to_External application any service any
+set rulebase security rules AHHHH action allow from any to any source any destination any application any service application-default
+set rulebase security rules DENYALL action deny from any to any source any destination any
+set rulebase security rules DENYALL application any service any   
