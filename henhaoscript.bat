@@ -11,9 +11,9 @@ netsh advfirewall set allprofiles state on
 cls
 net user
 
-set /p user="Enter a username to delete "
-#if %user% == "n" goto 2
-#net user %user% /del
+rem set /p user="Enter a username to delete "
+rem if %user% == "n" goto 2
+rem net user %user% /del
 goto 2
 
 :: Yeet
