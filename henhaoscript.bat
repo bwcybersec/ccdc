@@ -12,9 +12,9 @@ cls
 net user
 
 set /p user="Enter a username to delete "
-if %user% == "n" goto 2
-net user %user% /del
-goto 1
+#if %user% == "n" goto 2
+#net user %user% /del
+goto 2
 
 :: Yeet
 :2
