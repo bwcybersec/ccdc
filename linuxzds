@@ -154,21 +154,9 @@ EOF
 cat << EOF > /usr/local/bin/weboff
 #!/bin/bash
 iptables -A OUTPUT -o lo -j ACCEPT
-iptables -A OUTPUT -p udp -m udp -m multiport --dports 123 -m state --state NEW -j ACCEPT -s 172.20.0.0/16
-iptables -A OUTPUT -p tcp --dport 80   -j ACCEPT -s 172.20.0.0/16 
-iptables -A OUTPUT -p tcp --dport 443  -j ACCEPT -s 172.20.0.0/16
-iptables -A OUTPUT -p udp --dport 162  -j ACCEPT -s 172.20.0.0/16 
-iptables -A OUTPUT -p udp --dport 161  -j ACCEPT -s 172.20.0.0/16
-iptables -A OUTPUT -p udp --dport 53   -j ACCEPT -s 172.20.0.0/16
-iptables -A OUTPUT -p tcp --dport 3306 -j ACCEPT -s 172.20.0.0/16
-iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT -s 172.20.0.0/16
-iptables -A OUTPUT -p tcp --dport 8088 -j ACCEPT -s 172.20.0.0/16
-iptables -A OUTPUT -p tcp --dport 7000 -j ACCEPT -s 172.20.0.0/16
-iptables -A OUTPUT -p tcp --dport 135  -j ACCEPT -s 172.20.0.0/16
-iptables -A OUTPUT -p tcp --dport 22   -j ACCEPT -s 172.20.0.0/16
-iptables -A OUTPUT -p tcp --dport 9997 -j ACCEPT -s 172.20.0.0/16
+iptables -A OUTPUT -j ACCEPT -d 172.20.0.0/16
 
-iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+#iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 iptables -A OUTPUT -m limit --limit 15/minute -j LOG --log-level 7 --log-prefix 'FW DROP [out]: '
 iptables -A OUTPUT -j DROP
 EOF
