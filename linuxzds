@@ -1,75 +1,59 @@
 #!/bin/bash
-read -sp "Autopassword Key: " key
-read -sp $'\n'"Autopassword Key (again): " key2
-echo
 
-read -p "Autopassword Prefix: " prefix
-
-if [[ "$key" != "$key2" ]]
-then
-    echo "Keys don't match, try again."
-    exit
-fi
+# Backup configs
+mkdir /var/zds
+cp -r /etc /var/zds/etc_backup
 
 if type apt-get &>/dev/null
 then
     expected_dist=apt
-    apt install curl openssh-server vim wget snmpd
+    apt install curl openssh-server vim wget snmpd clamav nmap
 else
     expected_dist=rpm
-    if grep --quiet 'ID=\"centos\"' /etc/os-release then
+    if grep --quiet 'ID=\"centos\"' /etc/os-release; then
         yum install -y epel-release
     fi
-    yum install -y wget vim openssh-server clamav curl net-snmp
+    yum install -y wget vim openssh-server clamav curl net-snmp nmap
 fi
 
-function autopassword {
-    hash=$(echo -n "$prefix$1$key" | sha256sum | xxd -r -p | base64 | tr -d '+/')
-    "${hash:0:8}-${hash:8:8}"
-}
-
-function giveuserautopass {
-    echo "$1:$(autopassword $1)" | chpasswd
-}
-
 # Set user passwords and sweep keys
-mkdir -p /var/log/bash_hist
-mkdir -p /var/log/auth_keys
+mkdir -p /var/zds/bash_hist
+mkdir -p /var/zds/auth_keys
 mkdir -p /var/log/zds
-
-chmod 700 /var/log/bash_hist
-chmod 700 /var/log/auth_keys
 
 if [[ -e /root ]]
 then
-    mv -f /root/.bash_history /var/log/bash_hist/bash_history_ir_root 2> /dev/null
-    mv -f /foot/.ssh/authorized_keys /var/log/auth_keys/root.authorized_keys 2> /dev/null
-    giveuserautopass "root"
+    mv -f /root/.bash_history /var/zds/bash_hist/bash_history_ir_root 2> /dev/null
+    mv -f /foot/.ssh/authorized_keys /var/zds/auth_keys/root.authorized_keys 2> /dev/null
 fi
 if [[ -e /home/sysadmin ]]
 then
     admin_user="sysadmin"
-    mv -f "/home/$admin_user/.bash_history" /var/log/bash_hist/bash_history_ir 2> /dev/null
-    mv -f "/home/$admin_user/.ssh/authorized_keys" "/var/log/auth_keys/$admin_user.authorized_keys" 2> /dev/null
-    giveuserautopass $admin_user
+    mv -f "/home/$admin_user/.bash_history" /var/zds/bash_hist/bash_history_ir 2> /dev/null
+    mv -f "/home/$admin_user/.ssh/authorized_keys" "/var/zds/auth_keys/$admin_user.authorized_keys" 2> /dev/null
 fi
 if [[ -e /home/admin ]]
 then
     admin_user="admin"
     mv -f "/home/$admin_user/.bash_history" /var/log/bash_hist/bash_history_ir 2> /dev/null
-    mv -f "/home/$admin_user/.ssh/authorized_keys" "/var/log/auth_keys/$admin_user.authorized_keys" 2> /dev/null
-    giveuserautopass $admin_user
+    mv -f "/home/$admin_user/.ssh/authorized_keys" "/var/zds/auth_keys/$admin_user.authorized_keys" 2> /dev/null
 fi
 if [[ -e /home/administrator ]]
 then
     admin_user="administrator"
     mv -f "/home/$admin_user/.bash_history" /var/log/bash_hist/bash_history_ir 2> /dev/null
-    mv -f "/home/$admin_user/.ssh/authorized_keys" "/var/log/auth_keys/$admin_user.authorized_keys" 2> /dev/null
-    giveuserautopass $admin_user
+    mv -f "/home/$admin_user/.ssh/authorized_keys" "/var/zds/auth_keys/$admin_user.authorized_keys" 2> /dev/null
 fi
 
+chmod 700 /var/log/bash_hist
+chmod 700 /var/log/auth_keys
+
+# No root login ssh
+sed -i 's/#\?\(PermitRootLogin\s*\).*$/\1 no/' /etc/ssh/sshd_config
+
 # Set up firewall
-cat << EOF > /etc/firewall.bash 
+cat << EOF > /etc/zdsfirewall.bash
+#!/bin/bash 
 iptables -P INPUT ACCEPT
 iptables -P FORWARD ACCEPT
 iptables -P OUTPUT ACCEPT
@@ -77,40 +61,80 @@ iptables -P OUTPUT ACCEPT
 iptables -t nat -F
 iptables -t mangle -F
 iptables -F
-iptables -X
+# iptables -X
 
 iptables -A INPUT -i lo -j ACCEPT
 
-iptables -A INPUT -p tcp -m tcp --dport 22   -j ACCEPT
-iptables -A INPUT -p tcp -m tcp --dport 80   -j ACCEPT
-iptables -A INPUT -p tcp -m tcp --dport 123  -j ACCEPT
-iptables -A INPUT -p tcp -m tcp --dport 3306 -j ACCEPT
-iptables -A INPUT -p tcp -m tcp --dport 7000 -j ACCEPT
-iptables -A INPUT -p tcp -m tcp --dport 8088 -j ACCEPT
-iptables -A INPUT -p tcp -m tcp --dport 8089 -j ACCEPT
+# Both
 
-iptables -A INPUT -p udp -m udp --dport 53   -j ACCEPT
+iptables -A INPUT -p udp -m udp --dport 53   -j ACCEPT # DNS
 
-iptables -A INPUT -p icmp -j ACCEPT
+
+iptables -A INPUT -p tcp -m tcp --dport 20   -j ACCEPT # FTP
+iptables -A INPUT -p tcp -m tcp --dport 21   -j ACCEPT # FTP
+
+iptables -A INPUT -p tcp -m tcp --dport 25   -j ACCEPT # SMTP
+
+iptables -A INPUT -p tcp -m tcp --dport 80   -j ACCEPT # Web
+iptables -A INPUT -p tcp -m tcp --dport 443  -j ACCEPT # Web
+
+
+iptables -A INPUT -p udp        --sport 123  -j ACCEPT
+
+
+iptables -A INPUT -p tcp -m tcp --dport 143  -j ACCEPT # IMAP
+
+iptables -A INPUT -p tcp -m tcp --dport 7000 -j ACCEPT # Splunk (external for scoring)
+
+iptables -A INPUT -p icmp                    -j ACCEPT # ICMP
+
+# Internal only
+
+iptables -A INPUT -p tcp -m tcp --dport 22   -j ACCEPT -s 172.20.0.0/16
+# iptables -A INPUT -p tcp -m tcp --dport 135  -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 3306 -j ACCEPT -s 172.20.0.0/16
+iptables -A INPUT -p tcp -m tcp --dport 8088 -j ACCEPT -s 172.20.0.0/16
+iptables -A INPUT -p tcp -m tcp --dport 8089 -j ACCEPT -s 172.20.0.0/16
+iptables -A INPUT -p tcp -m tcp --dport 9997 -j ACCEPT -s 172.20.0.0/16
+
 
 # NTP
-iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
-iptables -A INPUT  -p udp --sport 123 -j ACCEPT
+iptables -A INPUT -s 172.20.0.0/16 -m state --state NEW -p udp --dport 123 -j ACCEPT
+
 
 # SNMP
-iptables -A OUTPUT -p udp --dport 161 -j ACCEPT
-iptables -A INPUT  -p udp --sport 161 -j ACCEPT
-iptables -A OUTPUT -p udp --dport 162 -j ACCEPT
-iptables -A INPUT  -p udp --sport 162 -j ACCEPT
+iptables -A INPUT -s 172.20.0.0/16 -p udp --dport 161 -j ACCEPT
+iptables -A INPUT -s 172.20.0.0/16 -p udp --dport 162 -j ACCEPT
 
 
 iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
-iptables -A INPUT -m limit --limit 15/minute -j LOG --log-level 7 --log-prefix "Dropped by firewall: "
+iptables -A INPUT -m limit --limit 15/minute -j LOG --log-level 7 --log-prefix 'FW DROP [in]: '
 iptables -A INPUT -j DROP
+
+# Output
+iptables -A OUTPUT -o lo -j ACCEPT
+# iptables -A OUTPUT -p udp -m udp -m multiport --dports 123 -m state --state NEW -j ACCEPT
+# iptables -A OUTPUT -p tcp --dport 80   -j ACCEPT -s 172.20.0.0/16
+# iptables -A OUTPUT -p tcp --dport 443  -j ACCEPT -s 172.20.0.0/16
+# iptables -A OUTPUT -p udp --dport 162  -j ACCEPT
+# iptables -A OUTPUT -p udp --dport 161  -j ACCEPT
+# iptables -A OUTPUT -p udp --dport 53   -j ACCEPT
+# iptables -A OUTPUT -p tcp --dport 3306 -j ACCEPT
+# iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
+# iptables -A OUTPUT -p tcp --dport 8088 -j ACCEPT
+# iptables -A OUTPUT -p tcp --dport 7000 -j ACCEPT
+# iptables -A OUTPUT -p tcp --dport 135  -j ACCEPT
+# iptables -A OUTPUT -p tcp --dport 22   -j ACCEPT 
+# iptables -A OUTPUT -p tcp --dport 9997 -j ACCEPT
+
+# iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+# iptables -A OUTPUT -m limit --limit 15/minute -j LOG --log-level 7 --log-prefix 'Dropped by firewall [out]: '
+# iptables -A OUTPUT -j DROP
+
 EOF
 
-chmod 0744 /etc/firewall.bash
+chmod 0744 /etc/zdsfirewall.bash
 
 cat << EOF > /etc/systemd/system/zdsfirewall.service
 [Unit]
@@ -119,7 +143,7 @@ After=syslog.target network.target
 
 [Service]
 Type=oneshot
-ExecStart=/etc/firewall.bash
+ExecStart=/etc/zdsfirewall.bash
 ExecStop=/sbin/iptables -F
 RemainAfterExit=yes
 
@@ -127,10 +151,48 @@ RemainAfterExit=yes
 WantedBy=multi-user.target
 EOF
 
+cat << EOF > /usr/local/bin/weboff
+#!/bin/bash
+iptables -A OUTPUT -o lo -j ACCEPT
+iptables -A OUTPUT -p udp -m udp -m multiport --dports 123 -m state --state NEW -j ACCEPT -s 172.20.0.0/16
+iptables -A OUTPUT -p tcp --dport 80   -j ACCEPT -s 172.20.0.0/16 
+iptables -A OUTPUT -p tcp --dport 443  -j ACCEPT -s 172.20.0.0/16
+iptables -A OUTPUT -p udp --dport 162  -j ACCEPT -s 172.20.0.0/16 
+iptables -A OUTPUT -p udp --dport 161  -j ACCEPT -s 172.20.0.0/16
+iptables -A OUTPUT -p udp --dport 53   -j ACCEPT -s 172.20.0.0/16
+iptables -A OUTPUT -p tcp --dport 3306 -j ACCEPT -s 172.20.0.0/16
+iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT -s 172.20.0.0/16
+iptables -A OUTPUT -p tcp --dport 8088 -j ACCEPT -s 172.20.0.0/16
+iptables -A OUTPUT -p tcp --dport 7000 -j ACCEPT -s 172.20.0.0/16
+iptables -A OUTPUT -p tcp --dport 135  -j ACCEPT -s 172.20.0.0/16
+iptables -A OUTPUT -p tcp --dport 22   -j ACCEPT -s 172.20.0.0/16
+iptables -A OUTPUT -p tcp --dport 9997 -j ACCEPT -s 172.20.0.0/16
+
+iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A OUTPUT -m limit --limit 15/minute -j LOG --log-level 7 --log-prefix 'FW DROP [out]: '
+iptables -A OUTPUT -j DROP
+EOF
+
+cat << EOF > /usr/local/bin/webon
+#!/bin/bash
+iptables -F OUTPUT 
+iptables -A OUTPUT -o lo -j ACCEPT
+EOF
+
+cat << EOF > /usr/local/bin/webdo
+#!/bin/bash
+webon
+$@
+weboff
+EOF
+chmod +x /usr/local/bin/webon
+chmod +x /usr/local/bin/weboff
+chmod +x /usr/local/bin/webdo
+
 # Disable other firewalls
-if [[ "$expected_dist" == "rpm" ]] then
+if [[ "$expected_dist" == "rpm" ]]; then
 yum list installed firewalld && systemctl disable --now firewalld
-elif [[ "$expected_dist" == "apt" ]]
+elif [[ "$expected_dist" == "apt" ]]; then
 service ufw status && systemctl disable --now ufw
 fi
 
@@ -138,19 +200,29 @@ fi
 systemctl enable --now zdsfirewall.service
 
 # no red team bad red team
-chattr -i /etc/group /etc/shadow /etc/passwd
+# chattr -i /etc/group /etc/shadow /etc/passwd
 chown root:root /etc/group
+if [ $(getent group shadow) ]; then
+chown root:shadow /etc/shadow
+else
 chown root:root /etc/shadow
+fi
 chown root:root /etc/passwd
 chown root:root /etc/sudoers
 
 netstat -an | grep LISTEN | tee netstat.log
         
 # Install splunk
-wget -O /tmp/splunkforwarder.tgz 'https://download.splunk.com/products/universalforwarder/releases/8.2.4/linux/splunkforwarder-8.2.4-87e2dda940d1-Linux-x86_64.tgz'
+if [ ! -d "/opt/splunk" ]; then
+curl -ko /tmp/splunkforwarder.tgz 'https://download.splunk.com/products/universalforwarder/releases/8.2.4/linux/splunkforwarder-8.2.4-87e2dda940d1-Linux-x86_64.tgz'
 tar xzvf /tmp/splunkforwarder.tgz -C /opt
-/opt/splunkforwarder/bin/splunk start --accept-license
-
+echo "Enter the splunk forwarder username and password (yes twice)"
+/opt/splunkforwarder/bin/splunk start --accept-license 
+/opt/splunkforwarder/bin/splunk enable boot-start -systemd-managed 0
+/opt/splunkforwarder/bin/splunk add forward-server 172.20.241.20:9997
+/opt/splunkforwarder/bin/splunk set deploy-poll 172.20.241.20:8089
+/opt/splunkforwarder/bin/splunk restart
+fi
 
 # ClamAV
 freshclam
@@ -159,13 +231,15 @@ echo running full system clamscan in the background, results stored at /var/log/
 clamscan --recursive / &> /var/log/zds/clamscan.log &
 
 # RKHunter
-curl -L https://downloads.sourceforge.net/project/rkhunter/rkhunter/1.4.6/rkhunter-1.4.6.tar.gz -O
+curl -L https://downloads.sourceforge.net/project/rkhunter/rkhunter/1.4.6/rkhunter-1.4.6.tar.gz -Ok
 tar zxf rkhunter-1.4.6.tar.gz
 pushd rkhunter-1.4.6
-./installer.sh --install
+./installer.sh --install &> /var/log/zds/rkhunter.install.log
 popd
 
 rkhunter --propupd 
 echo running rkhunter in the background results stored at /var/log/zds/rkhunter.log
 rkhunter --check &> /var/log/zds/rkhunter.log &
 
+echo Turning web off, use webon or webdo if you need to reach the outside world.
+weboff
