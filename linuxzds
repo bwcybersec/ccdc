@@ -151,7 +151,7 @@ RemainAfterExit=yes
 WantedBy=multi-user.target
 EOF
 
-cat << EOF > /usr/local/bin/weboff
+cat << EOF > /usr/bin/weboff
 #!/bin/bash
 iptables -A OUTPUT -o lo -j ACCEPT
 iptables -A OUTPUT -j ACCEPT -d 172.20.0.0/16
@@ -161,13 +161,13 @@ iptables -A OUTPUT -m limit --limit 15/minute -j LOG --log-level 7 --log-prefix 
 iptables -A OUTPUT -j DROP
 EOF
 
-cat << EOF > /usr/local/bin/webon
+cat << EOF > /usr/bin/webon
 #!/bin/bash
 iptables -F OUTPUT 
 iptables -A OUTPUT -o lo -j ACCEPT
 EOF
 
-cat << EOF > /usr/local/bin/webdo
+cat << EOF > /usr/bin/webdo
 #!/bin/bash
 webon
 $@
