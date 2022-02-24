@@ -173,9 +173,9 @@ webon
 $@
 weboff
 EOF
-chmod +x /usr/local/bin/webon
-chmod +x /usr/local/bin/weboff
-chmod +x /usr/local/bin/webdo
+chmod +x /usr/bin/webon
+chmod +x /usr/bin/weboff
+chmod +x /usr/bin/webdo
 
 # Disable other firewalls
 if [[ "$expected_dist" == "rpm" ]]; then
