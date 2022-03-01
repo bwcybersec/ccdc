@@ -51,141 +51,12 @@ chmod 700 /var/log/auth_keys
 # No root login ssh
 sed -i 's/#\?\(PermitRootLogin\s*\).*$/\1 no/' /etc/ssh/sshd_config
 
-# Set up firewall
-cat << EOF > /etc/zdsfirewall.bash
-#!/bin/bash 
-iptables -P INPUT ACCEPT
-iptables -P FORWARD ACCEPT
-iptables -P OUTPUT ACCEPT
-
-iptables -t nat -F
-iptables -t mangle -F
-iptables -F
-# iptables -X
-
-iptables -A INPUT -i lo -j ACCEPT
-
-# Both
-
-iptables -A INPUT -p udp -m udp --dport 53   -j ACCEPT # DNS
-
-
-iptables -A INPUT -p tcp -m tcp --dport 20   -j ACCEPT # FTP
-iptables -A INPUT -p tcp -m tcp --dport 21   -j ACCEPT # FTP
-
-iptables -A INPUT -p tcp -m tcp --dport 25   -j ACCEPT # SMTP
-
-iptables -A INPUT -p tcp -m tcp --dport 80   -j ACCEPT # Web
-iptables -A INPUT -p tcp -m tcp --dport 443  -j ACCEPT # Web
-
-
-iptables -A INPUT -p udp        --sport 123  -j ACCEPT
-
-
-iptables -A INPUT -p tcp -m tcp --dport 143  -j ACCEPT # IMAP
-
-iptables -A INPUT -p tcp -m tcp --dport 7000 -j ACCEPT # Splunk (external for scoring)
-
-iptables -A INPUT -p icmp                    -j ACCEPT # ICMP
-
-# Internal only
-
-iptables -A INPUT -p tcp -m tcp --dport 22   -j ACCEPT -s 172.20.0.0/16
-# iptables -A INPUT -p tcp -m tcp --dport 135  -j ACCEPT
-iptables -A INPUT -p tcp -m tcp --dport 3306 -j ACCEPT -s 172.20.0.0/16
-iptables -A INPUT -p tcp -m tcp --dport 8088 -j ACCEPT -s 172.20.0.0/16
-iptables -A INPUT -p tcp -m tcp --dport 8089 -j ACCEPT -s 172.20.0.0/16
-iptables -A INPUT -p tcp -m tcp --dport 9997 -j ACCEPT -s 172.20.0.0/16
-
-
-# NTP
-iptables -A INPUT -s 172.20.0.0/16 -m state --state NEW -p udp --dport 123 -j ACCEPT
-
-
-# SNMP
-iptables -A INPUT -s 172.20.0.0/16 -p udp --dport 161 -j ACCEPT
-iptables -A INPUT -s 172.20.0.0/16 -p udp --dport 162 -j ACCEPT
-
-
-iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
-
-iptables -A INPUT -m limit --limit 15/minute -j LOG --log-level 7 --log-prefix 'FW DROP [in]: '
-iptables -A INPUT -j DROP
-
-# Output
-iptables -A OUTPUT -o lo -j ACCEPT
-# iptables -A OUTPUT -p udp -m udp -m multiport --dports 123 -m state --state NEW -j ACCEPT
-# iptables -A OUTPUT -p tcp --dport 80   -j ACCEPT -s 172.20.0.0/16
-# iptables -A OUTPUT -p tcp --dport 443  -j ACCEPT -s 172.20.0.0/16
-# iptables -A OUTPUT -p udp --dport 162  -j ACCEPT
-# iptables -A OUTPUT -p udp --dport 161  -j ACCEPT
-# iptables -A OUTPUT -p udp --dport 53   -j ACCEPT
-# iptables -A OUTPUT -p tcp --dport 3306 -j ACCEPT
-# iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
-# iptables -A OUTPUT -p tcp --dport 8088 -j ACCEPT
-# iptables -A OUTPUT -p tcp --dport 7000 -j ACCEPT
-# iptables -A OUTPUT -p tcp --dport 135  -j ACCEPT
-# iptables -A OUTPUT -p tcp --dport 22   -j ACCEPT 
-# iptables -A OUTPUT -p tcp --dport 9997 -j ACCEPT
-
-# iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
-# iptables -A OUTPUT -m limit --limit 15/minute -j LOG --log-level 7 --log-prefix 'Dropped by firewall [out]: '
-# iptables -A OUTPUT -j DROP
-
-EOF
-
-chmod 0744 /etc/zdsfirewall.bash
-
-cat << EOF > /etc/systemd/system/zdsfirewall.service
-[Unit]
-Description=ZDSFirewall
-After=syslog.target network.target
-
-[Service]
-Type=oneshot
-ExecStart=/etc/zdsfirewall.bash
-ExecStop=/sbin/iptables -F
-RemainAfterExit=yes
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-cat << EOF > /usr/bin/weboff
-#!/bin/bash
-iptables -A OUTPUT -o lo -j ACCEPT
-iptables -A OUTPUT -j ACCEPT -d 172.20.0.0/16
-
-#iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
-iptables -A OUTPUT -m limit --limit 15/minute -j LOG --log-level 7 --log-prefix 'FW DROP [out]: '
-iptables -A OUTPUT -j DROP
-EOF
-
-cat << EOF > /usr/bin/webon
-#!/bin/bash
-iptables -F OUTPUT 
-iptables -A OUTPUT -o lo -j ACCEPT
-EOF
-
-cat << EOF > /usr/bin/webdo
-#!/bin/bash
-webon
-$@
-weboff
-EOF
-chmod +x /usr/bin/webon
-chmod +x /usr/bin/weboff
-chmod +x /usr/bin/webdo
-
 # Disable other firewalls
 if [[ "$expected_dist" == "rpm" ]]; then
 yum list installed firewalld && systemctl disable --now firewalld
 elif [[ "$expected_dist" == "apt" ]]; then
 service ufw status && systemctl disable --now ufw
 fi
-
-# Throw the switch
-systemctl enable --now zdsfirewall.service
 
 # no red team bad red team
 # chattr -i /etc/group /etc/shadow /etc/passwd
@@ -245,5 +116,10 @@ cat << EOF > /etc/issue.net
 This computer system/network is the property of $domain. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Company’s Acceptable Use of Information Technology Resources Policy (AUP). Users have no personal privacy rights in any materials they place, view, access, or transmit on this system. The Company complies with state and federal law regarding certain legally protected confidential information, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Company and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to such interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Company personnel. Unauthorized or improper use of this system may result in administrative disciplinary action civil charges/criminal penalties, and/or other sanctions as set forth in the Companys AUP By continuing to use this system you indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF A $domain OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE.
 EOF
 
-echo Turning web off, use webon or webdo if you need to reach the outside world.
-weboff
+echo Downloading and installing smartfw
+curl -kO https://raw.githubusercontent.com/bwcybersec/ccdc/main/smartfw
+chmod +x smartfw
+./smartfw
+
+cp smartfw /etc/smartfw
+echo "@reboot root /etc/smartfw" >> /etc/crontab

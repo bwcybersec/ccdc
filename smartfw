@@ -1,0 +1,70 @@
+#!/bin/bash
+iptables -P INPUT ACCEPT
+iptables -P FORWARD ACCEPT
+iptables -P OUTPUT ACCEPT
+
+iptables -F
+
+##### INPUT CHAIN #####
+
+# All systems
+iptables -A INPUT -i lo               -j ACCEPT  # Allow all localhost traffic
+iptables -A INPUT -s 172.20.0.0/16    -j ACCEPT  # Allow all internal traffic
+
+# Fedora
+iptables -A INPUT -p tcp --dport 25   -j ACCEPT # Allow SMTP
+iptables -A INPUT -p tcp --dport 110  -j ACCEPT # Allow POP3
+
+# CentOS
+iptables -A INPUT -p tcp --dport 80   -j ACCEPT # Allow HTTP
+iptables -A INPUT -p tcp --dport 443  -j ACCEPT # Allow HTTPS
+
+# Splunk
+iptables -A INPUT -p tcp --dport 8000 -j ACCEPT # Allow Splunk Web
+
+# Debian
+iptables -A INPUT -p udp --dport 53   -j ACCEPT # Allow DNS
+
+# All systems
+iptables -A INPUT -m limit --limit 15/minute -j LOG --log-level 7 --log-prefix 'FW DROP [in]: '
+iptables -A INPUT -p tcp -j DROP # Deny ANY:ANY
+
+
+##### OUTPUT CHAIN #####
+
+iptables -A OUTPUT -i lo            -j ACCEPT  # Allow all localhost traffic
+iptables -A OUTPUT -d 172.20.0.0/16 -j ACCEPT  # Allow all internal traffic
+
+iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT # Don't break services like Splunk
+
+iptables -A OUTPUT -m limit --limit 15/minute -j LOG --log-level 7 --log-prefix 'FW DROP [out]: '
+iptables -A OUTPUT -j DROP
+
+
+cat << EOF > /usr/bin/weboff
+#!/bin/bash
+iptables -F OUTPUT 
+iptables -A OUTPUT -i lo            -j ACCEPT  # Allow all localhost traffic
+iptables -A OUTPUT -d 172.20.0.0/16 -j ACCEPT  # Allow all internal traffic
+
+iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT # Don't break services like Splunk
+
+iptables -A OUTPUT -m limit --limit 15/minute -j LOG --log-level 7 --log-prefix 'FW DROP [out]: '
+iptables -A OUTPUT -j DROP
+EOF
+
+cat << EOF > /usr/bin/webon
+#!/bin/bash
+iptables -F OUTPUT 
+EOF
+
+cat << EOF > /usr/bin/webdo
+#!/bin/bash
+webon
+$@
+weboff
+EOF
+
+chmod +x /usr/bin/webon
+chmod +x /usr/bin/weboff
+chmod +x /usr/bin/webdo
