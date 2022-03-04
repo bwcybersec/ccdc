@@ -6,8 +6,6 @@
 set ccdcpath="c:\ccdc"
 :: set path="%systemroot%\system32\LogFiles\Firewall"
 mode con:cols=140 lines=10000
-:: ECHO Please type your box as follows: [ win8 , 2008ad, 2008sql , 2012web , win10 ]
-set /p box="Please type your box as follows: [ win8 , Win7 , 2008ad , 2008sql , 2012web , win10 ]: "
 
 :: ########## Check if Elevated ##########
 
