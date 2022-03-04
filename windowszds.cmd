@@ -259,14 +259,6 @@ netsh advfirewall firewall add rule name="Splunk Out" dir=out action=allow enabl
 ::net localgroup Sales MDorn /Add
 
 
-::ECHO on
-net start w32time
-w32tm /config /manualpeerlist:"%DNSNTP%" /syncfromflags:manual /reliable:yes /update
-w32tm /resync
-
-net stop w32time && net start w32time
-
-
 ::Change time to Eastern
 TZUTIL /s "Eastern Standard Time"
 ::@ECHO off
@@ -280,13 +272,13 @@ powershell.exe -noexit Import-Module ServerManager $check = Get-WindowsFeature |
 
 
 :: LDAP STUFF
-netsh advfirewall firewall add rule name="LDAP OUT UDP" dir=out action=allow enable=yes profile=any remoteport=389 remoteip=%ADDNS% protocol=udp
-netsh advfirewall firewall add rule name="LDAP OUT TCP" dir=out action=allow enable=yes profile=any remoteport=389 remoteip=%ADDNS% protocol=tcp
-netsh advfirewall firewall add rule name="SHARE Out" dir=out action=allow enable=yes profile=any remoteport=445 remoteip=%ADDNS% protocol=tcp
-netsh advfirewall firewall add rule name="msrpc" dir=out action=allow enable=yes profile=any remoteport=135 remoteip=%ADDNS% protocol=tcp
-netsh advfirewall firewall add rule name="Static rpc out" dir=out action=allow enable=yes profile=any remoteport=50243,50244,50245 remoteip=%ADDNS% protocol=tcp
-netsh advfirewall firewall add rule name="Kerberos out" dir=out action=allow enable=yes profile=any remoteport=88 remoteip=%ADDNS% protocol=tcp
-netsh advfirewall firewall add rule name="Splunk OUT" dir=out action=allow enable=yes profile=any remoteip=%WebMail% remoteport=,8000,8089,9997 protocol=tcp
+::netsh advfirewall firewall add rule name="LDAP OUT UDP" dir=out action=allow enable=yes profile=any remoteport=389 remoteip=%ADDNS% protocol=udp
+::netsh advfirewall firewall add rule name="LDAP OUT TCP" dir=out action=allow enable=yes profile=any remoteport=389 remoteip=%ADDNS% protocol=tcp
+::netsh advfirewall firewall add rule name="SHARE Out" dir=out action=allow enable=yes profile=any remoteport=445 remoteip=%ADDNS% protocol=tcp
+::netsh advfirewall firewall add rule name="msrpc" dir=out action=allow enable=yes profile=any remoteport=135 remoteip=%ADDNS% protocol=tcp
+::netsh advfirewall firewall add rule name="Static rpc out" dir=out action=allow enable=yes profile=any remoteport=50243,50244,50245 remoteip=%ADDNS% protocol=tcp
+::netsh advfirewall firewall add rule name="Kerberos out" dir=out action=allow enable=yes profile=any remoteport=88 remoteip=%ADDNS% protocol=tcp
+::netsh advfirewall firewall add rule name="Splunk OUT" dir=out action=allow enable=yes profile=any remoteip=%WebMail% remoteport=,8000,8089,9997 protocol=tcp
 
 
 :Config_NTP
