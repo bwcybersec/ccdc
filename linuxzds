@@ -10,7 +10,7 @@ then
     apt install curl openssh-server vim wget snmpd clamav nmap
 else
     expected_dist=rpm
-    if grep --quiet 'ID=\"centos\"' /etc/os-release; then
+    if grep --quiet 'ID=\"centos\"' /etc/os-release || [[ -f /etc/centos-release ]]; then
         yum install -y epel-release
     fi
     yum install -y wget vim openssh-server clamav curl net-snmp nmap
