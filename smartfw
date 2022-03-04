@@ -26,7 +26,7 @@ iptables -A INPUT -p tcp --dport 8000 -j ACCEPT # Allow Splunk Web
 iptables -A INPUT -p udp --dport 53   -j ACCEPT # Allow DNS
 
 # All systems
-iptables -A INPUT -m limit --limit 15/minute -j LOG --log-level 7 --log-prefix 'FW DROP [in]: '
+iptables -A INPUT -m limit --limit 15/minute -j LOG --log-level 6 --log-prefix 'FW DROP [in]: '
 iptables -A INPUT -p tcp -j DROP # Deny ANY:ANY
 
 
