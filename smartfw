@@ -10,7 +10,7 @@ iptables -F
 # All systems
 iptables -A INPUT -i lo               -j ACCEPT  # Allow all localhost traffic
 iptables -A INPUT -s 172.20.0.0/16    -j ACCEPT  # Allow all internal traffic
-
+iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT # Allow important traffic
 # Fedora
 iptables -A INPUT -p tcp --dport 25   -j ACCEPT # Allow SMTP
 iptables -A INPUT -p tcp --dport 110  -j ACCEPT # Allow POP3
