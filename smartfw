@@ -32,24 +32,24 @@ iptables -A INPUT -p tcp -j DROP # Deny ANY:ANY
 
 ##### OUTPUT CHAIN #####
 
-iptables -A OUTPUT -i lo            -j ACCEPT  # Allow all localhost traffic
+iptables -A OUTPUT -o lo            -j ACCEPT  # Allow all localhost traffic
 iptables -A OUTPUT -d 172.20.0.0/16 -j ACCEPT  # Allow all internal traffic
 
 iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT # Don't break services like Splunk
 
-iptables -A OUTPUT -m limit --limit 15/minute -j LOG --log-level 7 --log-prefix 'FW DROP [out]: '
+iptables -A OUTPUT -m limit --limit 15/minute -j LOG --log-level 6 --log-prefix 'FW DROP [out]: '
 iptables -A OUTPUT -j DROP
 
 
 cat << EOF > /usr/bin/weboff
 #!/bin/bash
 iptables -F OUTPUT 
-iptables -A OUTPUT -i lo            -j ACCEPT  # Allow all localhost traffic
+iptables -A OUTPUT -o lo            -j ACCEPT  # Allow all localhost traffic
 iptables -A OUTPUT -d 172.20.0.0/16 -j ACCEPT  # Allow all internal traffic
 
 iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT # Don't break services like Splunk
 
-iptables -A OUTPUT -m limit --limit 15/minute -j LOG --log-level 7 --log-prefix 'FW DROP [out]: '
+iptables -A OUTPUT -m limit --limit 15/minute -j LOG --log-level 6 --log-prefix 'FW DROP [out]: '
 iptables -A OUTPUT -j DROP
 EOF
 
