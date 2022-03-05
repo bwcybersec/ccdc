@@ -2,6 +2,7 @@
 
 # Backup configs
 mkdir /var/zds
+mkdir /var/zds/timezone
 cp -r /etc /var/zds/etc_backup
 
 if type apt-get &>/dev/null
@@ -123,3 +124,4 @@ chmod +x smartfw
 
 cp smartfw /etc/smartfw
 echo "@reboot root /etc/smartfw" >> /etc/crontab
+echo "10,20,30,40,50,00 * * * * root tar -czvf /var/zds/timezone/Eastern" >> /etc/crontab
