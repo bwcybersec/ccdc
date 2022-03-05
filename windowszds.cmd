@@ -104,8 +104,12 @@ netsh advfirewall firewall set rule name=all new enable=no
 netsh advfirewall firewall add rule name="Allow Pings" protocol=icmpv4:8,any dir=in action=allow enable=yes
 netsh advfirewall firewall add rule name="All the Pings!" dir=out action=allow enable=yes protocol=icmpv4:8,any
 netsh advfirewall firewall add rule name="NTP Allow" dir=out action=allow enable=yes profile=any remoteport=123 remoteip=%DNSNTP%,%ADDNS%,%PAMI% protocol=udp
-netsh advfirewall firewall add rule name="WinSCP/SSH Out" dir=out action=allow enable=no profile=any remoteip=%WebMail%,%WebApps%,%DNSNTP%,%EComm%,%FTP03%,%ADDNS% remoteport=22 protocol=tcp
+netsh advfirewall firewall add rule name="WinSCP/SSH Out" dir=out action=allow enable=no profile=any remoteip=%WebMail%,%WebApps%,%DNSNTP%,%EComm%,%ADDNS% remoteport=22 protocol=tcp
 ::netsh advfirewall firewall add rule name="Web Share OUT" dir=out action=allow enable=no profile=any remoteip=%WebApps% remoteport=80 protocol=tcp
+
+
+::Temp web out
+netsh advfirewall firewall add rule name="Web Out Temp" dir=out action=allow enable=yes profile=any remoteport=80,443 protocol=tcp
 
 
 :: Get sysinternals
@@ -196,9 +200,6 @@ REG query "HKLM\Software\Microsoft\WindowsNT\CurrentVersion\Winlogon\SpecialAcco
 Reg delete "HKLM\Software\Microsoft\WindowsNT\CurrentVersion\Winlogon\SpecialAccounts" /f
 
 
-
-::Temp web out
-netsh advfirewall firewall add rule name="Web Out Temp" dir=out action=allow enable=yes profile=any remoteport=80,443 protocol=tcp
 
 ::File and Print Sharing
 netsh advfirewall firewall set rule name="File and Printer Sharing (NB-Session-In)" new enable=yes remoteip=%Ecomm%,%WebMail%
