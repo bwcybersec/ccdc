@@ -295,6 +295,7 @@ start cmd /k echo w32tm /query /peers
 
 :export_configs
 :: Export registry
+mkdir %ccdcpath%\Regback
 reg export HKLM %ccdcpath%\Regback\hlkm.reg
 reg export HKCU %ccdcpath%\Regback\hkcu.reg
 reg export HKCR %ccdcpath%\Regback\hlcr.reg
