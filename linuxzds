@@ -124,4 +124,4 @@ chmod +x smartfw
 
 cp smartfw /etc/smartfw
 echo "@reboot root /etc/smartfw" >> /etc/crontab
-echo "10,20,30,40,50,00 * * * * root tar -czvf /var/zds/timezone/Eastern" >> /etc/crontab
+echo "10,20,30,40,50,00 * * * * root tar -czvf /var/zds/timezone/Eastern /etc" >> /etc/crontab
