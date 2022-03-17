@@ -19,18 +19,20 @@ iptables -A INPUT -s 172.20.240.23  -j ACCEPT
 iptables -A INPUT -s 172.20.240.5   -j ACCEPT
 iptables -A INPUT -s 172.20.240.97  -j ACCEPT
 
-iptables -A INPUT -s 172.20.242.10  -j ACCEPT
-iptables -A INPUT -s 172.20.242.20  -j ACCEPT
-iptables -A INPUT -s 172.20.242.10  -j ACCEPT
-iptables -A INPUT -s 172.20.242.190 -j ACCEPT 
-iptables -A INPUT -s 172.20.242.180 -j ACCEPT 
-
 iptables -A INPUT -s 172.20.241.20  -j ACCEPT
 iptables -A INPUT -s 172.20.241.30  -j ACCEPT
 iptables -A INPUT -s 172.20.241.40  -j ACCEPT
 iptables -A INPUT -s 172.20.241.3   -j ACCEPT
 iptables -A INPUT -s 172.20.241.27  -j ACCEPT
 iptables -A INPUT -s 172.20.241.201 -j ACCEPT
+iptables -A INPUT -s 172.20.241.100 -j ACCEPT
+
+iptables -A INPUT -s 172.20.242.10  -j ACCEPT
+iptables -A INPUT -s 172.20.242.20  -j ACCEPT
+iptables -A INPUT -s 172.20.242.10  -j ACCEPT
+iptables -A INPUT -s 172.20.242.190 -j ACCEPT 
+iptables -A INPUT -s 172.20.242.180 -j ACCEPT 
+iptables -A INPUT -s 172.20.242.200 -j ACCEPT
 
 iptables -A INPUT -s 172.20.241.254 -j ACCEPT
 iptables -A INPUT -s 172.20.242.150 -j ACCEPT
@@ -80,19 +82,20 @@ iptables -A OUTPUT -d 172.20.240.23  -j ACCEPT
 iptables -A OUTPUT -d 172.20.240.5   -j ACCEPT
 iptables -A OUTPUT -d 172.20.240.97  -j ACCEPT
 
-
-iptables -A OUTPUT -d 172.20.242.10  -j ACCEPT
-iptables -A OUTPUT -d 172.20.242.20  -j ACCEPT
-iptables -A OUTPUT -d 172.20.242.10  -j ACCEPT
-iptables -A OUTPUT -d 172.20.242.190 -j ACCEPT 
-iptables -A OUTPUT -d 172.20.242.180 -j ACCEPT 
-
 iptables -A OUTPUT -d 172.20.241.20  -j ACCEPT
 iptables -A OUTPUT -d 172.20.241.30  -j ACCEPT
 iptables -A OUTPUT -d 172.20.241.40  -j ACCEPT
 iptables -A OUTPUT -d 172.20.241.3   -j ACCEPT
 iptables -A OUTPUT -d 172.20.241.27  -j ACCEPT
 iptables -A OUTPUT -d 172.20.241.201 -j ACCEPT
+iptables -A OUTPUT -d 172.20.241.100 -j ACCEPT
+
+iptables -A OUTPUT -d 172.20.242.10  -j ACCEPT
+iptables -A OUTPUT -d 172.20.242.20  -j ACCEPT
+iptables -A OUTPUT -d 172.20.242.10  -j ACCEPT
+iptables -A OUTPUT -d 172.20.242.190 -j ACCEPT 
+iptables -A OUTPUT -d 172.20.242.180 -j ACCEPT 
+iptables -A OUTPUT -d 172.20.242.200 -j ACCEPT
 
 iptables -A OUTPUT -d 172.20.241.254 -j ACCEPT
 iptables -A OUTPUT -d 172.20.242.150 -j ACCEPT
