@@ -1,0 +1,122 @@
+Cisco Router Config
+
+version 12.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname Router
+!
+boot-start-marker
+boot-end-marker
+!
+!
+no aaa new-model
+!
+resource policy
+!
+ip subnet-zero
+!
+!
+ip cef
+!
+!
+!
+!
+!
+!
+interface FastEthernet0/0
+ description INSIDE
+ ip address 172.20.243.253 255.255.255.0 duplex auto
+ speed auto
+!
+interface FastEthernet0/1
+ description OUTSIDE
+ ip address 172.31.20.2 255.255.255.252
+ ip access-group INBOUND in
+ ip access-group OUTBOUND out
+ duplex auto
+ speed auto
+!
+ip classless
+ip route 0.0.0.0 0.0.0.0 172.31.20.1
+ip route 172.25.20.0 255.255.255.0 172.20.243.254
+!
+no ip http server
+!
+ip access-list extended INBOUND
+ evaluate STATE
+ permit udp any host 172.25.20.23 eq domain reflect IN-STATE
+ permit udp any host 172.25.20.27 eq domain reflect IN-STATE
+ permit tcp any host 172.25.20.9 eq www 443 reflect IN-STATE
+ permit tcp any host 172.25.20.11 eq www 443 reflect IN-STATE
+ permit tcp any host 172.25.20.11 eq www 443 smtp pop3 reflect IN-STATE
+ deny   ip any any log
+ip access-list extended OUTBOUND
+ evaluate IN-STATE
+ deny   ip any 192.168.0.0 0.0.255.255 log-input
+ deny   ip any 172.16.0.0 0.15.255.255 log-input
+ deny   ip any 10.0.0.0 0.255.255.255 log-input
+ permit tcp any any reflect STATE
+ permit udp any any reflect STATE
+ permit icmp any any reflect STATE
+ deny   ip any any log
+!
+!
+control-plane
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ no login
+ no exec
+line vty 5 1180
+ no login
+ no exec
+!
+no scheduler allocate
+!
+!zone based fileware
+!
+class-map type inspect match-all OUT2IN
+ match protocol http
+ match protocol https
+ match protocol dns
+ match protocol smtp
+ match protocol pop3
+class-map type inspect match-all IN2OUT
+ match protocol tcp
+ match protocol udp
+!
+!
+policy-map type inspect OUT2IN
+ class type inspect OUT2IN
+  inspect
+ class class-default
+  drop
+policy-map type inspect IN2OUT
+ class type inspect IN2OUT
+  inspect
+ class class-default
+  pass
+!
+zone security OUTSIDE
+zone security INSIDE
+zone-pair security OUT2IN source OUTSIDE destination INSIDE
+ service-policy type inspect OUT2IN
+zone-pair security IN2OUT source INSIDE destination OUTSIDE
+ service-policy type inspect IN2OUT
+!
+!
+!
+!
+interface FastEthernet0/0
+ zone-member security INSIDE
+!
+interface FastEthernet0/1
+ zone-member security OUTSIDE
+!
+end
+
