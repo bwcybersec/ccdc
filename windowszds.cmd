@@ -35,8 +35,8 @@ ECHO.
 
 
 :Set_IPS
-set  Docker=172.20.240.10
-set  DockerServer=172.20.240.??
+set  Docker=172.20.240.15
+set  DockerServer=172.20.240.10
 set  DNSNTP=172.20.240.20
 
 set  Splunk=172.20.241.20
@@ -47,7 +47,7 @@ set  WebApps=172.20.242.10
 set  UbuntuWorkstation=172.20.242.100
 set  ADDNS=172.20.242.200
 
-set  Windows10=172.31.??.5
+set  Windows10=172.31.10.5
 
 set  PAMI=172.20.242.150
 
