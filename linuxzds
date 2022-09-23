@@ -8,7 +8,7 @@ cp -r /etc /var/zds/etc_backup
 if type apt-get &>/dev/null
 then
     expected_dist=apt
-    apt install curl openssh-server vim wget snmpd clamav nmap
+    apt-get install curl openssh-server vim wget snmpd clamav nmap aud
 else
     expected_dist=rpm
     if grep --quiet 'ID=\"centos\"' /etc/os-release || [[ -f /etc/centos-release ]]; then
