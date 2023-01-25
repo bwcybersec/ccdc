@@ -5,10 +5,12 @@ if [ ! -e "./linuxzds" ]; then
 wget https://raw.githubusercontent.com/bwcybersec/ccdc/main/linuxzds 
 fi
 
+# stop splunk
+/opt/splunk/bin/splunk stop
+
 # Download Splunk, make sure to update the link over time 
 if [ ! -e "./splunk-9.0.2-17e00c557dc1-Linux-x86_64.tgz" ]; then
 wget -O splunk-9.0.2-17e00c557dc1-Linux-x86_64.tgz "https://download.splunk.com/products/splunk/releases/9.0.2/linux/splunk-9.0.2-17e00c557dc1-Linux-x86_64.tgz"
-
 rm -rf /opt/splunk
 tar xvzf splunk-9.0.2-17e00c557dc1-Linux-x86_64.tgz -C /opt
 fi
