@@ -5,18 +5,18 @@ if [ ! -e "./linuxzds" ]; then
 wget https://raw.githubusercontent.com/bwcybersec/ccdc/main/linuxzds 
 fi
 
-# stop splunk
-/opt/splunk/bin/splunk stop
-
 # Download Splunk, make sure to update the link over time 
 if [ ! -e "./splunk-9.0.2-17e00c557dc1-Linux-x86_64.tgz" ]; then
 wget -O splunk-9.0.2-17e00c557dc1-Linux-x86_64.tgz "https://download.splunk.com/products/splunk/releases/9.0.2/linux/splunk-9.0.2-17e00c557dc1-Linux-x86_64.tgz"
+fi
+
 rm -rf /opt/splunk
 tar xvzf splunk-9.0.2-17e00c557dc1-Linux-x86_64.tgz -C /opt
-fi
+
 
 chmod +x linuxzds
 ./linuxzds
+webon
 
 #linux directory path for TA configuration
 mkdir -p /opt/splunk/etc/deployment-apps/ccdc_linux_inputs/local
@@ -34,6 +34,32 @@ cat << EOF > /opt/splunk/etc/deployment-apps/ccdc_linux_inputs/local/inputs.conf
 [monitor:///var/log]
 index=main
 disabled = false
+blacklist1=/var/log/audit.log
+blacklist2=/var/log/auth.log
+blacklist3=/var/log/secure
+blacklist4=/var/log/kern.log
+blacklist5=/var/log/zds/clamscan.log
+blacklist6=/var/log/clamav/freshclam.log
+
+[monitor:///var/log/audit.log]
+index=main
+disabled=false
+sourcetype=linux:audit:enriched
+
+[monitor:///var/log/secure]
+index=main
+disabled=false
+sourcetype=linux_secure
+
+[monitor:///var/log/auth.log]
+index=main
+disabled=false
+sourcetype=linux_secure
+
+[monitor:///var/log/kern.log]
+index=main
+disabled=false
+sourcetype=syslog
 
 [monitor:///var/adm]
 index=main
@@ -69,10 +95,6 @@ disabled = false
 index = main
 disabled = false
 
-[WinEventLog://Microsoft-Windows-Sysmon/Operational]
-disabled = false
-renderXml = false
-source = WinEventLog:Microsoft-Windows-Sysmon/Operational
 
 EOF
 
@@ -117,8 +139,7 @@ restartSplunkd = 1
 EOF
 
 
-#start splunk
-/opt/splunk/bin/splunk start --accept-license
+
 
 if [ ! -e "/opt/splunk/etc/system/local/web.conf" ]; then
 cat << EOF > /opt/splunk/etc/system/local/web.conf
@@ -127,5 +148,11 @@ login_content = This computer system/network is the property of Allsafe.com. It 
 
 EOF
 fi
+
+#start splunk
+/opt/splunk/bin/splunk start --accept-license
+
+
+
 
 
