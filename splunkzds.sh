@@ -153,6 +153,38 @@ fi
 /opt/splunk/bin/splunk start --accept-license
 
 
+#splunkbase downloader script from github, this allows us to pull the apps as part of this script instead of via the gui
+curl -L -O -J \
+'https://github.com/tfrederick74656/splunkbase-download/releases/download/v1.0.0/splunkbase-download.sh' && \
+chmod +x ./splunkbase-download.sh
+
+
+
+# runs splunkbase downloader in authenticate mode, this will take your username and password for splunkbase and generate a file with the ssi and SSOIDs needed to download the apps
+./splunkbase-download.sh authenticate username password > session.txt
+sid=$(grep sid session.txt | cut -f3)
+SSOID=$(grep SSOID session.txt | cut -f3)
+
+# associative array for app_id and app_version, app_version will need to be checked and updated
+# apps in order: Nix, Windows, PAN, Sysmon, App for Stream, Add-on for Stream, Stream Wire Data 
+appid=(833 742 2757 5709 1809 5238 5234)
+declare -A version=(
+[833]=8.8.0
+[742]=8.6.0
+[2757]=7.1.0
+[5709]=3.1.0
+[1809]=8.1.0
+[5238]=8.1.0
+[5234]=8.1.0
+)
+for appid in "${appid[@]}"; do
+./splunkbase-download $appid ${version[$appid]} $sid $SSOID	
+done
+
+rm session.txt
+
+
+
 
 
 
