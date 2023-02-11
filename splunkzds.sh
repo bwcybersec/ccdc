@@ -16,6 +16,7 @@ tar xvzf splunk-9.0.2-17e00c557dc1-Linux-x86_64.tgz -C /opt
 
 chmod +x linuxzds
 ./linuxzds
+chmod +x /usr/local/bin/webon
 webon
 
 #linux directory path for TA configuration
@@ -164,19 +165,22 @@ yum install -y git
 /opt/splunk/bin/splunk cmd python -mpip install git+https://github.com/HurricaneLabs/sbclient.git
 
 
-#reminder: -U [username] please change the username to your own account!
+# REPLACE with your own username and password for Splunkbase please
+export SPLUNKBASE_USERNAME="ecall390"
+export SPLUNKBASE_PASSWORD="Changeme*390"
+
+#makes temp folder, moves you into it, and downloads all the apps
 mkdir /opt/splunk/drop
-read -s -p "Splunkbase Password: " password
-/opt/splunk/drop cmd sbclient download-app -U ecall390 -P $password Splunk_TA_nix
-/opt/splunk/drop cmd sbclient download-app -U ecall390 -P $password Splunk_TA_windows
-/opt/splunk/drop cmd sbclient download-app -U ecall390 -P $password Splunk_TA_paloalto
-/opt/splunk/drop cmd sbclient download-app -U ecall390 -P $password Splunk_TA_stream
-/opt/splunk/drop cmd sbclient download-app -U ecall390 -P $password Splunk_TA_microsoft_sysmon
-#/opt/splunk/drop cmd sbclient download-app -U ecall390 -P $password Splunk_TA_stream_forwarder
-/opt/splunk/drop cmd sbclient download-app -U ecall390 -P $password Splunk_TA_stream_wire_data
+cd /opt/splunk/drop
+/opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_nix
+/opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_windows
+/opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_paloalto
+/opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_stream
+/opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_microsoft_sysmon
+/opt/splunk/bin/splunk cmd sbclient download-app splunk_app_stream
+/opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_stream_wire_data
 
 #untar our newly downloaded app files from our temp folder to the correct place
-cd /opt/splunk/drop
 for filename in *;
 do tar xvzf $filename -C /opt/splunk/etc/apps;
 done
