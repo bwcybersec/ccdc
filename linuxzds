@@ -90,17 +90,6 @@ freshclam
 echo running full system clamscan in the background, results stored at /var/log/zds/clamscan.log
 clamscan --recursive / &> /var/log/zds/clamscan.log &
 
-# RKHunter
-curl -L https://downloads.sourceforge.net/project/rkhunter/rkhunter/1.4.6/rkhunter-1.4.6.tar.gz -Ok
-tar zxf rkhunter-1.4.6.tar.gz
-pushd rkhunter-1.4.6
-./installer.sh --install &> /var/log/zds/rkhunter.install.log
-popd
-
-rkhunter --propupd 
-echo running rkhunter in the background results stored at /var/log/zds/rkhunter.log
-rkhunter --check &> /var/log/zds/rkhunter.log &
-
 function prompt {
     #[prompt] [default] [variable]
     read -p "$1 [$2] " "$3"
@@ -117,11 +106,13 @@ cat << EOF > /etc/issue.net
 This computer system/network is the property of $domain. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Company’s Acceptable Use of Information Technology Resources Policy (AUP). Users have no personal privacy rights in any materials they place, view, access, or transmit on this system. The Company complies with state and federal law regarding certain legally protected confidential information, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Company and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to such interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Company personnel. Unauthorized or improper use of this system may result in administrative disciplinary action civil charges/criminal penalties, and/or other sanctions as set forth in the Companys AUP By continuing to use this system you indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF A $domain OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE.
 EOF
 
-echo Downloading and installing smartfw
-curl -kO https://raw.githubusercontent.com/bwcybersec/ccdc/main/smartfw
-chmod +x smartfw
-./smartfw
+echo Downloading and installing clodsire via smarterfw
+curl -kO https://raw.githubusercontent.com/bwcybersec/ccdc/main/smarterfw
+chmod +x smarterfw
+./smarterfw
+chmod +x clodsire
+cp clodsire /etc/clodsire
+/etc/clodsire
 
-cp smartfw /etc/smartfw
-echo "@reboot root /etc/smartfw" >> /etc/crontab
+echo "@reboot root /etc/clodsire" >> /etc/crontab
 echo "10,20,30,40,50,00 * * * * root tar -czvf /var/zds/timezone/Eastern /etc" >> /etc/crontab
