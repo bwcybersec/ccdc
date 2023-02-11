@@ -81,6 +81,10 @@ sourcetype = bash_history
 
 EOF
 
+
+
+
+
 #conf file set up for Windows
 cat << EOF > /opt/splunk/etc/deployment-apps/ccdc_windows_inputs/local/inputs.conf
 [WinEventLog://Application]
@@ -144,7 +148,7 @@ EOF
 if [ ! -e "/opt/splunk/etc/system/local/web.conf" ]; then
 cat << EOF > /opt/splunk/etc/system/local/web.conf
 [settings]
-login_content = This computer system/network is the property of Allsafe.com. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Company’s Acceptable Use of Information Technology Resources Policy (AUP). Users have no personal privacy rights in any materials they place, view, access, or transmit on this system. The Company complies with state and federal law regarding certain legally protected confidential information, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Company and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to such interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Company personnel. Unauthorized or improper use of this system may result in administrative disciplinary action civil charges/criminal penalties, and/or other sanctions as set forth in the Companys AUP By continuing to use this system you indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF AN ALLSAFE.COM OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE.
+login_content = This computer system/network is the property of Allsafe.com. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Allsafe's Acceptable Use of Information Technology Resources Policy (AUP). Users have no personal privacy rights in any materials they place, view, access, or transmit on this system. Allsafe complies with state and federal law regarding certain legally protected confidential information, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Allsafe and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to such interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Allsafe personnel. Unauthorized or improper use of this system may result in administrative disciplinary action civil charges/criminal penalties, and/or other sanctions as set forth in Allsafe's AUP. By continuing to use this system you indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF AN ALLSAFE.COM OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE.
 
 EOF
 fi
@@ -153,37 +157,49 @@ fi
 /opt/splunk/bin/splunk start --accept-license
 
 
-#splunkbase downloader script from github, this allows us to pull the apps as part of this script instead of via the gui
-curl -L -O -J \
-'https://github.com/tfrederick74656/splunkbase-download/releases/download/v1.0.0/splunkbase-download.sh' && \
-chmod +x ./splunkbase-download.sh
+
+#Hurricane labs has this available freely, allows for app download via cli
+yum install -y git
+/opt/splunk/bin/splunk cmd python -mpip install wheel
+/opt/splunk/bin/splunk cmd python -mpip install git+https://github.com/HurricaneLabs/sbclient.git
 
 
+#reminder: -U [username] please change the username to your own account!
+mkdir /opt/splunk/drop
+read -s -p "Splunkbase Password: " password
+/opt/splunk/drop cmd sbclient download-app -U ecall390 -P $password Splunk_TA_nix
+/opt/splunk/drop cmd sbclient download-app -U ecall390 -P $password Splunk_TA_windows
+/opt/splunk/drop cmd sbclient download-app -U ecall390 -P $password Splunk_TA_paloalto
+/opt/splunk/drop cmd sbclient download-app -U ecall390 -P $password Splunk_TA_stream
+/opt/splunk/drop cmd sbclient download-app -U ecall390 -P $password Splunk_TA_microsoft_sysmon
+#/opt/splunk/drop cmd sbclient download-app -U ecall390 -P $password Splunk_TA_stream_forwarder
+/opt/splunk/drop cmd sbclient download-app -U ecall390 -P $password Splunk_TA_stream_wire_data
 
-# runs splunkbase downloader in authenticate mode, this will take your username and password for splunkbase and generate a file with the ssi and SSOIDs needed to download the apps
-./splunkbase-download.sh authenticate username password > session.txt
-sid=$(grep sid session.txt | cut -f3)
-SSOID=$(grep SSOID session.txt | cut -f3)
-
-# associative array for app_id and app_version, app_version will need to be checked and updated
-# apps in order: Nix, Windows, PAN, Sysmon, App for Stream, Add-on for Stream, Stream Wire Data 
-appid=(833 742 2757 5709 1809 5238 5234)
-declare -A version=(
-[833]=8.8.0
-[742]=8.6.0
-[2757]=7.1.0
-[5709]=3.1.0
-[1809]=8.1.0
-[5238]=8.1.0
-[5234]=8.1.0
-)
-for appid in "${appid[@]}"; do
-./splunkbase-download $appid ${version[$appid]} $sid $SSOID	
+#untar our newly downloaded app files from our temp folder to the correct place
+cd /opt/splunk/drop
+for filename in *;
+do tar xvzf $filename -C /opt/splunk/etc/apps;
 done
 
-rm session.txt
+
+#post app install set up
+cp -r  /opt/splunk/etc/apps/Splunk_TA_microsoft_sysmon /opt/splunk/etc/deployment-apps
+cp -r  /opt/splunk/etc/apps/Splunk_TA_stream /opt/splunk/etc/deployment-apps
+cp -r /opt/splunk/etc/deployment-apps/ccdc_linux_inputs /opt/splunk/etc/apps
+
+# for stream we need to change the 'localhost' piece in the app's inputs.conf to the actual localhost IP
+
+cat << EOF > /opt/splunk/etc/deployment-apps/Splunk_TA_stream/inputs.conf
+
+[streamfwd://streamdfwd]
+#update the IP address '172.20.241.20' as necessary
+splunk_stream_app_location = http://172.20.241.20:8000/en-us/custom/splunk_app_stream/
+disabled = 0
+
+EOF
 
 
+/opt/splunk/bin/splunk reload deploy-server
 
 
 
