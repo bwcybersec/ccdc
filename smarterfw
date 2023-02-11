@@ -143,6 +143,7 @@ applaud
 esac
 cat >> clodsire << applaud
 EOF
+chmod +x /usr/local/bin/webon
 iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
 iptables -A OUTPUT -o lo -j ACCEPT
 applaud
