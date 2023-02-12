@@ -1,5 +1,5 @@
 #!/bin/bash
-# This file was not written by hand. This file is not inrended to be edited by
+# This file was not written by hand. This file is not intended to be edited by
 # hand. If you think you need to edit this by hand, you don't.
 
 cat > clodsire << applaud
@@ -33,6 +33,18 @@ iptables -A INPUT -p udp -s 172.20.241.40 --dport 123 -j ACCEPT
 iptables -A INPUT -p udp -s 172.20.240.10 --dport 123 -j ACCEPT
 iptables -A INPUT -p udp -s 172.20.242.200 --dport 123 -j ACCEPT
 iptables -A INPUT -p udp --dport 53 -j ACCEPT
+applaud
+;;
+ubuweb)
+cat >> clodsire << applaud
+iptables -A INPUT -p tcp -s 172.20.242.10 --dport 8000 -j ACCEPT
+iptables -A INPUT -p tcp -s 172.20.242.100 --dport 8000 -j ACCEPT
+iptables -A INPUT -p tcp -s 172.20.240.20 --dport 8000 -j ACCEPT
+iptables -A INPUT -p tcp -s 172.20.241.30 --dport 8000 -j ACCEPT
+iptables -A INPUT -p tcp -s 172.20.241.40 --dport 8000 -j ACCEPT
+iptables -A INPUT -p tcp -s 172.20.240.10 --dport 8000 -j ACCEPT
+iptables -A INPUT -p tcp -s 172.20.242.200 --dport 8000 -j ACCEPT
+iptables -A INPUT -p tcp -s 172.20.241.20 --dport 8000 -j ACCEPT
 applaud
 ;;
 splunk)
@@ -80,66 +92,67 @@ applaud
 case $CLODSIRE_HOST in
 debian)
 cat >> clodsire << applaud
-iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 8000 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
-iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 9997 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
 applaud
 ;;
 ubuweb)
 cat >> clodsire << applaud
-iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 8000 -j ACCEPT
-iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 9997 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
 applaud
 ;;
 ubuwkst)
 cat >> clodsire << applaud
-iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 8000 -j ACCEPT
-iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 22 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 9997 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 22 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
 applaud
 ;;
 splunk)
 cat >> clodsire << applaud
-iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
-iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 8000 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
 iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
 applaud
 ;;
 centos)
 cat >> clodsire << applaud
-iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 8000 -j ACCEPT
-iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 9997 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
 applaud
 ;;
 fedora)
 cat >> clodsire << applaud
-iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 8000 -j ACCEPT
-iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 9997 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
 applaud
 ;;
 esac
@@ -157,6 +170,7 @@ iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 8089 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 9997 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.30 --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.40 --dport 80 -j ACCEPT
+iptables -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.200 --dport 123 -j ACCEPT
 applaud
 ;;
@@ -166,6 +180,7 @@ iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 8000 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 8089 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 9997 -j ACCEPT
+iptables -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.200 --dport 123 -j ACCEPT
 applaud
 ;;
@@ -177,6 +192,7 @@ iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 8089 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 9997 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.30 --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.40 --dport 80 -j ACCEPT
+iptables -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.242.150 --dport 22 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.242.150 --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.242.150 --dport 443 -j ACCEPT
@@ -186,6 +202,7 @@ applaud
 splunk)
 cat >> clodsire << applaud
 iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
+iptables -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.200 --dport 123 -j ACCEPT
 applaud
 ;;
@@ -195,6 +212,7 @@ iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 8000 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 8089 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 9997 -j ACCEPT
+iptables -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.200 --dport 123 -j ACCEPT
 applaud
 ;;
@@ -204,6 +222,7 @@ iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 8000 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 8089 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 9997 -j ACCEPT
+iptables -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.200 --dport 123 -j ACCEPT
 applaud
 ;;
