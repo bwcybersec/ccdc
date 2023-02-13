@@ -1,0 +1,13 @@
+#!/bin/bash
+if type apt-get &>/dev/null
+then
+apt-get update 
+apt-get install curl
+else
+yum install curl
+fi
+# Needed for zds
+curl -ko splunkforwarder.tgz "https://download.splunk.com/products/universalforwarder/releases/8.2.9/linux/splunkforwarder-8.2.9-4a20fb65aa78-Linux-x86_64.tgz"
+python2 -m SimpleHTTPServer > ~/stageserver.log
+echo "Running the stage web server PID $! on port 8000"
+curl -Lko rkhunter.tgz "http://downloads.sourceforge.net/project/rkhunter/rkhunter/1.4.6/rkhunter-1.4.6.tar.gz"

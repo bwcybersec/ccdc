@@ -7,14 +7,36 @@ cp -r /etc /var/zds/etc_backup
 
 if type apt-get &>/dev/null
 then
+    # Are we on old Debian-based
+    if [[ -f /etc/lsb-release ]]
+    then
+        . /etc/lsb-release
+        # Are we on precise?
+        if [$DISTRIB_CODENAME = "precise"]
+        then
+            pushd /etc/apt
+            mv sources.list sources.list.bak
+            cat  <<EOF
+deb http://old-releases.ubuntu.com/ubuntu/ precise main restricted universe multiverse
+deb-src http://old-releases.ubuntu.com/ubuntu/ precise main restricted universe multiverse
+deb http://old-releases.ubuntu.com/ubuntu/ precise-updates main restricted universe multiverse
+deb-src http://old-releases.ubuntu.com/ubuntu/ precise-updates main restricted universe multiverse
+deb http://old-releases.ubuntu.com/ubuntu/ precise-backports main restricted universe multiverse
+deb-src http://old-releases.ubuntu.com/ubuntu/ precise-backports main restricted universe multiverse
+deb http://old-releases.ubuntu.com/ubuntu/ precise-security main restricted universe multiverse
+deb-src http://old-releases.ubuntu.com/ubuntu/ precise-security main restricted universe multiverse
+EOF
+        fi
+    fi
+    
     expected_dist=apt
-    apt-get install curl openssh-server vim wget snmpd clamav nmap auditd curl
+    apt-get install curl openssh-server vim snmpd clamav nmap auditd curl
 else
     expected_dist=rpm
     if grep --quiet 'ID=\"centos\"' /etc/os-release || [[ -f /etc/centos-release ]]; then
         yum install -y epel-release
     fi
-    yum install -y wget vim openssh-server clamav curl net-snmp nmap
+    yum install -y vim openssh-server clamav curl net-snmp nmap audit
 fi
 
 # Set user passwords and sweep keys
@@ -74,7 +96,7 @@ netstat -an | grep LISTEN | tee netstat.log
         
 # Install splunk
 if [ ! -d "/opt/splunk" ]; then
-curl -ko /tmp/splunkforwarder.tgz 'https://download.splunk.com/products/universalforwarder/releases/8.2.4/linux/splunkforwarder-8.2.4-87e2dda940d1-Linux-x86_64.tgz'
+curl -o /tmp/splunkforwarder.tgz 'http://172.20.242.10/splunkforwarder.tgz'
 tar xzvf /tmp/splunkforwarder.tgz -C /opt
 echo "Enter the splunk forwarder username and password (yes twice)"
 /opt/splunkforwarder/bin/splunk start --accept-license 
@@ -107,7 +129,7 @@ This computer system/network is the property of $domain. It is for authorized us
 EOF
 
 echo Downloading and installing clodsire via smarterfw
-curl -kO https://raw.githubusercontent.com/bwcybersec/ccdc/main/smarterfw
+curl -o smarterfw http://172.20.242.10/smarterfw
 chmod +x smarterfw
 ./smarterfw
 chmod +x clodsire
