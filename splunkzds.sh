@@ -195,7 +195,7 @@ cp -r /opt/splunk/etc/deployment-apps/ccdc_linux_inputs /opt/splunk/etc/apps
 
 cat << EOF > /opt/splunk/etc/deployment-apps/Splunk_TA_stream/inputs.conf
 
-[streamfwd://streamdfwd]
+[streamfwd://streamfwd]
 #update the IP address '172.20.241.20' as necessary
 splunk_stream_app_location = http://172.20.241.20:8000/en-us/custom/splunk_app_stream/
 disabled = 0
