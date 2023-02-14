@@ -30,7 +30,7 @@ EOF
     fi
     
     expected_dist=apt
-    apt-get install curl openssh-server vim snmpd clamav nmap auditd curl
+    apt-get install curl openssh-server vim snmpd clamav nmap auditd curl debsums
 else
     expected_dist=rpm
     if grep --quiet 'ID=\"centos\"' /etc/os-release || [[ -f /etc/centos-release ]]; then
@@ -129,7 +129,7 @@ This computer system/network is the property of $domain. It is for authorized us
 EOF
 
 echo Downloading and installing clodsire via smarterfw
-curl -o smarterfw http://172.20.242.10/smarterfw
+curl -o smarterfw http://172.20.242.10:8000/smarterfw
 chmod +x smarterfw
 ./smarterfw
 chmod +x clodsire
