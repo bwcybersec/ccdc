@@ -14,10 +14,6 @@ rm -rf /opt/splunk
 tar xvzf splunk-9.0.2-17e00c557dc1-Linux-x86_64.tgz -C /opt
 
 
-chmod +x linuxzds
-./linuxzds
-chmod +x /usr/local/bin/webon
-webon
 
 #linux directory path for TA configuration
 mkdir -p /opt/splunk/etc/deployment-apps/ccdc_linux_inputs/local
