@@ -179,6 +179,7 @@ cd /opt/splunk/drop
 /opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_microsoft_sysmon
 /opt/splunk/bin/splunk cmd sbclient download-app splunk_app_stream
 /opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_stream_wire_data
+/opt/splunk/bin/splunk cmd sbclient download-app TA_netfilter
 
 #untar our newly downloaded app files from our temp folder to the correct place
 for filename in *;
