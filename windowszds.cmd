@@ -74,7 +74,7 @@ ECHO    Logs OUT to Splunk
 netsh advfirewall firewall add rule name="CCDC-Splunk Logs"       new dir=out action=allow enable=yes protocol=tcp profile=any remoteport=8080,9997 remoteip=%Splunk%  >NUL 2>NUL
 
 ECHO    Webshare access
-netsh advfirewall firewall add rule name="CCDC-Web Share OUT"    new dir=out action=allow enable=no  protocol=tcp profile=any remoteport=8000 remoteip=%Ubuntu14Web%  >NUL 2>NUL
+netsh advfirewall firewall add rule name="CCDC-Web Share OUT"    new dir=out action=allow enable=yes protocol=tcp profile=any remoteport=8000 remoteip=%Ubuntu14Web%  >NUL 2>NUL
 
 ECHO    Internet access
 netsh advfirewall firewall add rule name="CCDC-Web State"        new dir=out action=allow enable=yes protocol=tcp profile=any remoteip=any remoteport=80,443  >NUL 2>NUL
@@ -96,6 +96,7 @@ call :Damage_Reversal
 
 ECHO Applying box specific rules...
 call :%box%
+call :Config_NTP
 call :Export_Configs
 
 :: Tighten ccdc ACL
@@ -223,9 +224,9 @@ EXIT /B 0
 :Damage_Reversal
 :: Remove all saved credentials
 ECHO Removing saved credentials...
-cmdkey.exe /list > "%TEMP%\List.txt"
-findstr.exe Target "%TEMP%\List.txt" > "%TEMP%\tokensonly.txt"
-FOR /F "tokens=1,2 delims= " %%G IN (%TEMP%\tokensonly.txt) DO cmdkey.exe /delete:%%H
+cmdkey.exe /list > "%TEMP%\List.txt" 2>NUL
+findstr.exe Target "%TEMP%\List.txt" > "%TEMP%\tokensonly.txt" 2>NUL
+FOR /F "tokens=1,2 delims= " %%G IN (%TEMP%\tokensonly.txt) DO cmdkey.exe /delete:%%H 2>NUL
 del "%TEMP%\tokensonly.txt" /s /f /q >NUL
 del "%TEMP%\List.txt" /s /f /q >NUL
 
@@ -264,7 +265,7 @@ DISM /online /disable-feature /featurename:"Printing-Foundation-LPDPrintService"
 ECHO    Printing-Foundation-LPRPortMonitor
 DISM /online /disable-feature /featurename:"Printing-Foundation-LPRPortMonitor" /NoRestart  >NUL
 
-DISM /online /get-features /format:table
+DISM /online /get-features /format:table | find "Enabled"
 set /p ScreenShotWait="[ Hit Return To Continue ]:   "
 
 
@@ -442,13 +443,39 @@ REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Winlogon" /v legalnotice
 REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WinLogon" /v legalnoticecaption   2>NUL
 REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WinLogon" /v legalnoticetext   2>NUL
 set /p ScreenShotWait="[ Hit Return To Continue ]:   "
-call :Config_NTP_NewWinVer_External
+EXIT /B 0
+
+
+:Docker
+ECHO Docker Banner
+REG delete "HKLM\SYSTEM\CurrentControlSet\Services\NTDS\Parameters" /v "TCP/IP Port" /f REG_DWORD /d 50243 /f >NUL 2>NUL
+REG add "HKLM\SYSTEM\CurrentControlSet\Services\NTDS\Parameters" /v "TCP/IP Port" /t REG_DWORD /d 50243 /f >NUL 2>NUL
+
+REG delete "HKLM\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters" /v "DCTcpipPort" /f >NUL 2>NUL 
+REG add "HKLM\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters" /v "DCTcpipPort" /t REG_DWORD /d 50244 /f >NUL 2>NUL
+
+REG delete "HKLM\SYSTEM\CurrentControlSet\Services\NTFRS\Parameters" /v "RPC TCP/IP Port Assignment" /f >NUL 2>NUL
+REG add "HKLM\SYSTEM\CurrentControlSet\Services\NTFRS\Parameters" /v "RPC TCP/IP Port Assignment" /t REG_DWORD /d 50245 /f >NUL 2>NUL
+
+REG delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v legalnoticecaption /f >NUL 2>NUL
+REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v legalnoticecaption /t REG_SZ /d "* * * * * * * * * * W A R N I N G * * * * * * * * * *" >NUL 2>NUL
+
+REG delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v legalnoticetext /f >NUL 2>NUL 
+REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v legalnoticetext /t REG_SZ /d "This computer system/network is the property of %Domain%. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Company’s Acceptable Use of Information Technology Resources Policy (“AUP”). Users have no personal privacy rights in any materials they place, view, access, or transmit on this system. The Company complies with state and federal law regarding certain legally protected confidential information, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Company and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to such interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Company personnel. Unauthorized or improper use of this system may result in administrative disciplinary action, civil charges/criminal penalties, and/or other sanctions as set forth in the Company’s AUP. By continuing to use this system you indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF A %Domain% OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE." >NUL 2>NUL
+
+REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v legalnoticecaption   2>NUL
+REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v legalnoticetext   2>NUL
+set /p ScreenShotWait="[ Hit Return To Continue ]:   "
+
+:: Disable SMB1?
+ECHO Disable SMB1 via Registry...
+REG add "HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" /v "SMB1" /t REG_DWORD /d 0 /f
 EXIT /B 0
 
 
 :2012ad
 ECHO Win2012 ADDNS Banner
-REG add "HKLM\SYSTEM\CurrentControlSet\Services\NTDS\Parameters" /v "TCP/IP Port" /t REG_DWORD /d 50243 /f >NUL 2>NUL
+reg Add "HKLM\SYSTEM\CurrentControlSet\Services\NTDS\Parameters" /v "TCP/IP Port" /t REG_DWORD /d 50243 /f >NUL 2>NUL
 REG add "HKLM\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters" /v "DCTcpipPort" /t REG_DWORD /d 50244 /f >NUL 2>NUL
 REG add "HKLM\SYSTEM\CurrentControlSet\Services\NTFRS\Parameters" /v "RPC TCP/IP Port Assignment" /t REG_DWORD /d 50245 /f >NUL 2>NUL
 REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v legalnoticecaption /t REG_SZ /d "* * * * * * * * * * W A R N I N G * * * * * * * * * *" >NUL 2>NUL
@@ -461,6 +488,7 @@ set /p ScreenShotWait="[ Hit Return To Continue ]:   "
 :: Disable SMB1?
 ECHO Disable SMB1 via Registry...
 REG add "HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" /v "SMB1" /t REG_DWORD /d 0 /f
+EXIT /B 0
 
 
 :: LDAP 389
@@ -517,44 +545,20 @@ net localgroup "Remote Desktop Users" panuser /add
 ::ECHO Making user Michael Dorn...
 ::dsadd user "cn=Michael Dorn,cn=Users,dc=allsafe,dc=com" -samid MDorn -fn Michael -ln Dorn  -pwd *
 
-
 ::Create Password policy
 ::start powershell.exe -noexit Set-ADDefaultDomainPasswordPolicy -Identity allsafe -ComplexityEnabled $true -MinPasswordLength 10 -MinPasswordAge 1.00:00:00 -MaxPasswordAge 30.00:00:00 -LockoutDuration 90.00:00:00 -LockoutObservationWindow 00:30:00 -LockoutThreshold 5
 ::start powershell.exe -noexit Get-ADDefaultDomainPasswordPolicy >> %ccdcpath%\DomainPasswordPolicy.txt
-
-call :Config_NTP
 EXIT /B 0
 
 
-
-:Config_NTP_NewWinVer_External
+:Config_NTP
 net start w32time
-w32tm /config /manualpeerlist:"172.25.24.27" /syncfromflags:manual /reliable:yes /update
+w32tm /config /manualpeerlist:%ADDNS% /syncfromflags:manual /reliable:yes /update
 w32tm /resync
 net stop w32time && net start w32time
 TZUTIL /s "Eastern Standard Time"
 start powershell -Noexit w32tm /query /peers
 Exit /B 0
-
-
-:Config_NTP
-net start w32time
-w32tm /config /manualpeerlist:"%EComm%" /syncfromflags:manual /reliable:yes /update
-w32tm /resync
-net stop w32time && net start w32time
-start cmd /k echo w32tm /query /peers
-EXIT /B 0
-
-
-:Config_NTP_NewWinVer
-::Configuration  for new windows versions
-net start w32time
-w32tm /config /manualpeerlist:"%EComm%" /syncfromflags:manual /reliable:yes /update
-w32tm /resync
-net stop w32time && net start w32time
-TZUTIL /s "Eastern Standard Time"
-start powershell -Noexit w32tm /query /peers
-EXIT /B 0
 
 
 :Export_Configs
