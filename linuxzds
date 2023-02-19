@@ -98,7 +98,7 @@ netstat -an | grep LISTEN | tee netstat.log
         
 # Install splunk
 if [ ! -d "/opt/splunk" ]; then
-curl -o /tmp/splunkforwarder.tgz 'http://172.20.242.10/splunkforwarder.tgz'
+curl -o /tmp/splunkforwarder.tgz 'http://172.20.242.10:8000/splunkforwarder.tgz'
 tar xzvf /tmp/splunkforwarder.tgz -C /opt
 echo "Enter the splunk forwarder username and password (yes twice)"
 /opt/splunkforwarder/bin/splunk start --accept-license 
