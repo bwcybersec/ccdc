@@ -45,6 +45,7 @@ iptables -A INPUT -p tcp -s 172.20.241.40 --dport 8000 -j ACCEPT
 iptables -A INPUT -p tcp -s 172.20.240.10 --dport 8000 -j ACCEPT
 iptables -A INPUT -p tcp -s 172.20.242.200 --dport 8000 -j ACCEPT
 iptables -A INPUT -p tcp -s 172.20.241.20 --dport 8000 -j ACCEPT
+iptables -A INPUT -p tcp -s 172.25.24.5 --dport 8000 -j ACCEPT
 applaud
 ;;
 splunk)
@@ -92,67 +93,67 @@ applaud
 case $CLODSIRE_HOST in
 debian)
 cat >> clodsire << applaud
-iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 8000 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 9997 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
 iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
-iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 8000 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 9997 -j ACCEPT
 applaud
 ;;
 ubuweb)
 cat >> clodsire << applaud
-iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 8000 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 9997 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
 iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
-iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 8000 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 9997 -j ACCEPT
 applaud
 ;;
 ubuwkst)
 cat >> clodsire << applaud
-iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 8000 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 9997 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 22 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
 iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
-iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 8000 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 9997 -j ACCEPT
 applaud
 ;;
 splunk)
 cat >> clodsire << applaud
-iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 8000 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
 iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
-iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 8000 -j ACCEPT
 applaud
 ;;
 centos)
 cat >> clodsire << applaud
-iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 8000 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 9997 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
 iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
-iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 8000 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 9997 -j ACCEPT
 applaud
 ;;
 fedora)
 cat >> clodsire << applaud
-iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 8000 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 9997 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
 iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
-iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 8000 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 8089 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 9997 -j ACCEPT
 applaud
 ;;
 esac
