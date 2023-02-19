@@ -492,8 +492,6 @@ set /p ScreenShotWait="[ Hit Return To Continue ]:   "
 :: Disable SMB1?
 ECHO Disable SMB1 via Registry...
 REG add "HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" /v "SMB1" /t REG_DWORD /d 0 /f
-EXIT /B 0
-
 
 :: LDAP 389
 netsh advfirewall firewall add rule name="CCDC-LDAP Service" dir=in action=allow enable=yes profile=any localport=389 remoteip=%EComm%,%WebMail%,%PAMI% protocol=tcp
