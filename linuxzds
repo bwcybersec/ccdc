@@ -32,7 +32,16 @@ EOF
     fi
     
     expected_dist=apt
-    apt-get install curl openssh-server vim snmpd clamav nmap auditd curl debsums
+    apt-get update
+    apt-get install curl 
+    apt-get install openssh-server 
+    apt-get install vim 
+    apt-get install snmpd 
+    apt-get install clamav 
+    apt-get install nmap 
+    apt-get install auditd 
+    apt-get install curl 
+    apt-get install debsums
 else
     expected_dist=rpm
     if grep --quiet 'ID=\"centos\"' /etc/os-release || [[ -f /etc/centos-release ]]; then
