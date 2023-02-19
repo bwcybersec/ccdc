@@ -12,11 +12,11 @@ then
     then
         . /etc/lsb-release
         # Are we on precise?
-        if [$DISTRIB_CODENAME = "precise"]
+        if [ $DISTRIB_CODENAME = "precise" ]
         then
             pushd /etc/apt
             mv sources.list sources.list.bak
-            cat  <<EOF
+            cat > /etc/apt/sources.list <<EOF
 deb http://old-releases.ubuntu.com/ubuntu/ precise main restricted universe multiverse
 deb-src http://old-releases.ubuntu.com/ubuntu/ precise main restricted universe multiverse
 deb http://old-releases.ubuntu.com/ubuntu/ precise-updates main restricted universe multiverse
@@ -28,6 +28,7 @@ deb-src http://old-releases.ubuntu.com/ubuntu/ precise-security main restricted 
 EOF
             apt-get update
             apt-get install firefox
+            popd
         fi
     fi
     
