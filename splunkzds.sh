@@ -202,7 +202,7 @@ EOF
 
 
 /opt/splunk/bin/splunk reload deploy-server
-
+/opt/splunk/bin/splunk enable listen 9997
 
 
 
