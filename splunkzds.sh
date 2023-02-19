@@ -157,6 +157,7 @@ fi
 
 #Hurricane labs has this available freely, allows for app download via cli
 yum install -y git
+git config --global http.sslVerify false
 /opt/splunk/bin/splunk cmd python -mpip install wheel
 /opt/splunk/bin/splunk cmd python -mpip install git+https://github.com/HurricaneLabs/sbclient.git
 
