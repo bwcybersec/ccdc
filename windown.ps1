@@ -16,10 +16,5 @@ Invoke-WebRequest https://dl.google.com/chrome/install/375.126/chrome_installer.
 Invoke-WebRequest https://download.sysinternals.com/files/ProcessMonitor.zip -Outfile procmon.zip
 Invoke-WebRequest shorturl.at/lwNS1 -Outfile firefox.exe
 Invoke-WebRequest https://www.winpcap.org/install/bin/WinPcap_4_1_3.exe -Outfile WinPcap.ex
-Invoke-WebRequest https://www.winpcap.org/windump/install/bin/windump_3_9_5/WinDump.exe -Outfile Windump.exe
+#Invoke-WebRequest https://www.winpcap.org/windump/install/bin/windump_3_9_5/WinDump.exe -Outfile Windump.exe
 Invoke-WebRequest https://download.splunk.com/products/universalforwarder/releases/9.0.3/windows/splunkforwarder-9.0.3-dd0128b1f8cd-x64-release.msi -Outfile splunk.msi
-#Stop-Service -Name "Print Spooler"
-#Stop-Service -Name "Windows Mobile Hotspot Service"
-#Get-WindowsFeature FS-SMB1 
-#Remove-WindowsFeature FS-SMB1
-#(New-Object -ComObject HNetCfg.FwPolicy2).RestoreLocalFirewallDefaults()
