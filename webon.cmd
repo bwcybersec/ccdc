@@ -1,5 +1,4 @@
 @echo off
-:: Frame settings
 Title "CCDC Windows Script"
 
 ::Generic Firewall rules
