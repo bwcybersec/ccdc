@@ -443,6 +443,8 @@ REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Winlogon" /v legalnotice
 REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WinLogon" /v legalnoticecaption   2>NUL
 REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WinLogon" /v legalnoticetext   2>NUL
 set /p ScreenShotWait="[ Hit Return To Continue ]:   "
+
+call :Config_NTP
 EXIT /B 0
 
 
@@ -470,6 +472,8 @@ set /p ScreenShotWait="[ Hit Return To Continue ]:   "
 :: Disable SMB1?
 ECHO Disable SMB1 via Registry...
 REG add "HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" /v "SMB1" /t REG_DWORD /d 0 /f
+
+call :Config_NTP
 EXIT /B 0
 
 
@@ -491,38 +495,38 @@ set /p ScreenShotWait="[ Hit Return To Continue ]:   "
 
 :: Disable SMB1?
 ECHO Disable SMB1 via Registry...
-REG add "HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" /v "SMB1" /t REG_DWORD /d 0 /f
+REG add "HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" /v "SMB1" /t REG_DWORD /d 0 /f  >NUL 2>NUL
 
 :: LDAP 389
-netsh advfirewall firewall add rule name="CCDC-LDAP Service" dir=in action=allow enable=yes profile=any localport=389 remoteip=%EComm%,%WebMail%,%PAMI% protocol=tcp
+netsh advfirewall firewall add rule name="CCDC-LDAP Service" dir=in action=allow enable=yes profile=any localport=389 remoteip=%EComm%,%WebMail%,%PAMI% protocol=tcp  >NUL 2>NUL
 
 :: LDAP 636
-netsh advfirewall firewall add rule name="CCDC-LDAP Service SSL" dir=in action=allow enable=no profile=any localport=636 remoteip=%EComm%,%WebMail%,%PAMI% protocol=tcp
+netsh advfirewall firewall add rule name="CCDC-LDAP Service SSL" dir=in action=allow enable=no profile=any localport=636 remoteip=%EComm%,%WebMail%,%PAMI% protocol=tcp  >NUL 2>NUL
 
 :: LDAP 3268
-::netsh advfirewall firewall add rule name="CCDC-LDAP GC IN TCP" dir=in action=allow enable=yes profile=any localport=3268 remoteip=%EComm%,%WebMail%,%PAMI% protocol=tcp
+::netsh advfirewall firewall add rule name="CCDC-LDAP GC IN TCP" dir=in action=allow enable=yes profile=any localport=3268 remoteip=%EComm%,%WebMail%,%PAMI% protocol=tcp  >NUL 2>NUL
 
 :: LDAP 3269
-::netsh advfirewall firewall add rule name="CCDC-LDAP GC SSL IN TCP" dir=in action=allow enable=yes profile=any localport=3269 remoteip=%EComm%,%WebMail%,%PAMI% protocol=tcp
+::netsh advfirewall firewall add rule name="CCDC-LDAP GC SSL IN TCP" dir=in action=allow enable=yes profile=any localport=3269 remoteip=%EComm%,%WebMail%,%PAMI% protocol=tcp  >NUL 2>NUL
 
 :: KERBEROS
-netsh advfirewall firewall add rule name="CCDC-Kerberos In UDP from Internal" dir=in action=allow enable=yes profile=any localport=88,464 remoteip=%EComm%,%WebMail%,%PAMI% protocol=udp
-netsh advfirewall firewall add rule name="CCDC-Kerberos In TCP from Internal" dir=in action=allow enable=yes profile=any localport=88,464 remoteip=%EComm%,%WebMail%,%PAMI% protocol=tcp
-netsh advfirewall firewall set rule group="CCDC-Kerberos Key Distribution Center (TCP-In)" new enable=yes
-netsh advfirewall firewall set rule group="CCDC-Kerberos Key Distribution Center (UDP-In)" new enable=yes
+netsh advfirewall firewall add rule name="CCDC-Kerberos In UDP from Internal" dir=in action=allow enable=yes profile=any localport=88,464 remoteip=%EComm%,%WebMail%,%PAMI% protocol=udp  >NUL 2>NUL
+netsh advfirewall firewall add rule name="CCDC-Kerberos In TCP from Internal" dir=in action=allow enable=yes profile=any localport=88,464 remoteip=%EComm%,%WebMail%,%PAMI% protocol=tcp  >NUL 2>NUL
+netsh advfirewall firewall set rule group="CCDC-Kerberos Key Distribution Center (TCP-In)" new enable=yes  >NUL 2>NUL
+netsh advfirewall firewall set rule group="CCDC-Kerberos Key Distribution Center (UDP-In)" new enable=yes  >NUL 2>NUL
 
 :: DNS 53
-netsh advfirewall firewall add rule name="CCDC-DNS In UDP from DNSNTP"  dir=in action=allow enable=yes profile=any remoteport=53 remoteip=%DNSNTP% protocol=udp
-netsh advfirewall firewall add rule name="CCDC-DNS Out UDP to DNSNTP" dir=out action=allow enable=yes profile=any remoteport=53 remoteip=%DNSNTP% protocol=udp
+netsh advfirewall firewall add rule name="CCDC-DNS In UDP from DNSNTP"  dir=in action=allow enable=yes profile=any remoteport=53 remoteip=%DNSNTP% protocol=udp  >NUL 2>NUL
+netsh advfirewall firewall add rule name="CCDC-DNS Out UDP to DNSNTP" dir=out action=allow enable=yes profile=any remoteport=53 remoteip=%DNSNTP% protocol=udp   >NUL 2>NUL
 
-netsh advfirewall firewall add rule name="CCDC-DNS In TCP from DNSNTP"  dir=in action=allow enable=yes profile=any remoteport=53 remoteip=%DNSNTP% protocol=tcp
-netsh advfirewall firewall add rule name="CCDC-DNS Out TCP to DNSNTP" dir=out action=allow enable=yes profile=any remoteport=53 remoteip=%DNSNTP% protocol=tcp
+netsh advfirewall firewall add rule name="CCDC-DNS In TCP from DNSNTP"  dir=in action=allow enable=yes profile=any remoteport=53 remoteip=%DNSNTP% protocol=tcp   >NUL 2>NUL
+netsh advfirewall firewall add rule name="CCDC-DNS Out TCP to DNSNTP" dir=out action=allow enable=yes profile=any remoteport=53 remoteip=%DNSNTP% protocol=tcp   >NUL 2>NUL
 
-netsh advfirewall firewall add rule name="CCDC-DNS In UDP from Internal" dir=in action=allow enable=yes profile=any localport=53  protocol=udp remoteip=%Internal%
-netsh advfirewall firewall add rule name="CCDC-DNS Out UDP to Internal" dir=out action=allow enable=yes profile=any localport=53  protocol=udp remoteip=%Internal%
+netsh advfirewall firewall add rule name="CCDC-DNS In UDP from Internal" dir=in action=allow enable=yes profile=any localport=53  protocol=udp remoteip=%Internal%   >NUL 2>NUL
+netsh advfirewall firewall add rule name="CCDC-DNS Out UDP to Internal" dir=out action=allow enable=yes profile=any localport=53  protocol=udp remoteip=%Internal%   >NUL 2>NUL
 
-netsh advfirewall firewall add rule name="CCDC-DNS In UDP from Internet" dir=in action=allow enable=no profile=any localport=53  protocol=udp
-netsh advfirewall firewall add rule name="CCDC-DNS OUT UDP to Internet" dir=out action=allow enable=no profile=any localport=53  protocol=udp
+netsh advfirewall firewall add rule name="CCDC-DNS In UDP from Internet" dir=in action=allow enable=no profile=any localport=53  protocol=udp  >NUL 2>NUL
+netsh advfirewall firewall add rule name="CCDC-DNS OUT UDP to Internet" dir=out action=allow enable=no profile=any localport=53  protocol=udp  >NUL 2>NUL
 
 netsh advfirewall firewall add rule name="CCDC-DNS In TCP from Internal" dir=in action=allow enable=yes profile=any localport=53  protocol=tcp remoteip=%Internal%
 netsh advfirewall firewall add rule name="CCDC-DNS Out TCP to Internal" dir=out action=allow enable=yes profile=any localport=53  protocol=tcp remoteip=%Internal%
@@ -554,8 +558,22 @@ EXIT /B 0
 
 
 :Config_NTP
+ECHO Configure NTP Client
+ECHO Sync Time with %ADDNS%
 net start w32time
 w32tm /config /manualpeerlist:%ADDNS% /syncfromflags:manual /reliable:yes /update
+w32tm /resync
+net stop w32time && net start w32time
+TZUTIL /s "Eastern Standard Time"
+start powershell -Noexit w32tm /query /peers
+Exit /B 0
+
+
+:Config_NTP_SERVER
+ECHO Configure NTP Server
+ECHO Sync Time with pool.ntp.org
+net start w32time
+w32tm /config /manualpeerlist:pool.ntp.org /syncfromflags:manual /reliable:yes /update
 w32tm /resync
 net stop w32time && net start w32time
 TZUTIL /s "Eastern Standard Time"
