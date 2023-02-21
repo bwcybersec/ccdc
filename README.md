@@ -1,6 +1,6 @@
 # ccdc
 
-This is BWCyberSec's CCDC repository for 2022 States.
+This is BWCyberSec's CCDC repository for 2023 States.
 
  * PAConfig.txt - Used to configure PANOS from commandline
 
