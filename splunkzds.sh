@@ -156,10 +156,10 @@ fi
 
 
 #Hurricane labs has this available freely, allows for app download via cli
-yum install -y git
+yum install -y svn
 git config --global http.sslVerify false
 /opt/splunk/bin/splunk cmd python -mpip install wheel
-/opt/splunk/bin/splunk cmd python -mpip install git+https://github.com/HurricaneLabs/sbclient.git
+/opt/splunk/bin/splunk cmd python -mpip install svn+https://github.com/HurricaneLabs/sbclient/trunk
 
 
 # REPLACE with your own username and password for Splunkbase please
