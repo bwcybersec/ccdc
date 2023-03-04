@@ -71,7 +71,7 @@ netsh advfirewall firewall add rule name="CCDC-Allow Pings Out!" new dir=in  act
 netsh advfirewall firewall add rule name="CCDC-Allow Pings In!"  new dir=out action=allow enable=yes protocol=icmpv4:8,any profile=any  >NUL 2>NUL
 
 ECHO    Logs OUT to Splunk
-netsh advfirewall firewall add rule name="CCDC-Splunk Logs"       new dir=out action=allow enable=yes protocol=tcp profile=any remoteport=8080,9997 remoteip=%Splunk%  >NUL 2>NUL
+netsh advfirewall firewall add rule name="CCDC-Splunk Logs"       new dir=out action=allow enable=yes protocol=tcp profile=any remoteport=8089,9997 remoteip=%Splunk%  >NUL 2>NUL
 
 ECHO    Webshare access
 netsh advfirewall firewall add rule name="CCDC-Web Share OUT"    new dir=out action=allow enable=yes protocol=tcp profile=any remoteport=8000 remoteip=%Ubuntu14Web%  >NUL 2>NUL
