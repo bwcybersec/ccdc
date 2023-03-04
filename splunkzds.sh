@@ -191,7 +191,7 @@ cp -r /opt/splunk/etc/deployment-apps/ccdc_linux_inputs /opt/splunk/etc/apps
 
 # for stream we need to change the 'localhost' piece in the app's inputs.conf to the actual localhost IP
 
-cat << EOF > /opt/splunk/etc/deployment-apps/Splunk_TA_stream/inputs.conf
+cat << EOF > /opt/splunk/etc/deployment-apps/Splunk_TA_stream/local/inputs.conf
 
 [streamfwd://streamfwd]
 #update the IP address '172.20.241.20' as necessary
