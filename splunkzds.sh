@@ -43,6 +43,11 @@ index=main
 disabled=false
 sourcetype=linux:audit:enriched
 
+[monitor:///var/log/audit/audit.log]
+index=main
+disabled=false
+sourcetype=linux:audit:enriched
+
 [monitor:///var/log/secure]
 index=main
 disabled=false
