@@ -101,6 +101,10 @@ disabled = false
 index = main
 disabled = false
 
+[monitor://C:\ccdc\pfirewall.log]
+disabled = false
+sourcetype = winfw
+
 
 EOF
 
@@ -167,9 +171,20 @@ git config --global http.sslVerify false
 /opt/splunk/bin/splunk cmd python -mpip install svn+https://github.com/HurricaneLabs/sbclient/trunk
 
 
-# REPLACE with your own username and password for Splunkbase please
-export SPLUNKBASE_USERNAME="ecall390"
-export SPLUNKBASE_PASSWORD="Changeme*390"
+# entering your Splunkbase username and password to make sbclient work
+while : ; do
+  read -p 'Username:' uservar
+  read -sp 'Password:' passvar
+  export SPLUNKBASE_USERNAME=$uservar
+  export SPLUNKBASE_PASSWORD=$passvar
+
+  if /opt/splunk/bin/splunk cmd sbclient get-app-info Splunk_TA_nix; then
+    echo "Login works"
+    break
+  else 
+    echo "Login doesn't work (or DNS is broke, it's always DNS)"
+  fi
+done
 
 #makes temp folder, moves you into it, and downloads all the apps
 mkdir /opt/splunk/drop
@@ -182,6 +197,7 @@ cd /opt/splunk/drop
 /opt/splunk/bin/splunk cmd sbclient download-app splunk_app_stream
 /opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_stream_wire_data
 /opt/splunk/bin/splunk cmd sbclient download-app TA_netfilter
+/opt/splunk/bin/splunk cmd sbclient download-app TA-winfw
 
 #untar our newly downloaded app files from our temp folder to the correct place
 for filename in *;
@@ -196,11 +212,13 @@ cp -r /opt/splunk/etc/deployment-apps/ccdc_linux_inputs /opt/splunk/etc/apps
 
 # for stream we need to change the 'localhost' piece in the app's inputs.conf to the actual localhost IP
 
+#enter your localhost IP for this next piece
+read -p 'Localhost IP:' hostip
+
 cat << EOF > /opt/splunk/etc/deployment-apps/Splunk_TA_stream/local/inputs.conf
 
 [streamfwd://streamfwd]
-#update the IP address '172.20.241.20' as necessary
-splunk_stream_app_location = http://172.20.241.20:8000/en-us/custom/splunk_app_stream/
+splunk_stream_app_location = http://$hostip:8000/en-us/custom/splunk_app_stream/
 disabled = 0
 
 EOF
