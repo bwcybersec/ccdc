@@ -102,6 +102,7 @@ index = main
 disabled = false
 
 [monitor://C:\ccdc\pfirewall.log]
+index = main
 disabled = false
 sourcetype = winfw
 
