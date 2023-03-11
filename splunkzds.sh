@@ -166,16 +166,25 @@ fi
 
 
 #Hurricane labs has this available freely, allows for app download via cli
-yum install -y svn
-git config --global http.sslVerify false
-/opt/splunk/bin/splunk cmd python -mpip install wheel
-/opt/splunk/bin/splunk cmd python -mpip install svn+https://github.com/HurricaneLabs/sbclient/trunk
+
+if type apt-get &>/dev/null
+then
+  agt-get install -y git
+  git config --global http.sslVerify false
+  /opt/splunk/bin/splunk cmd python -mpip install wheel
+  /opt/splunk/bin/splunk cmd python -mpip install git+https://github.com/HurricaneLabs/sbclient
+else
+  yum install -y svn
+  /opt/splunk/bin/splunk cmd python -mpip install wheel
+  /opt/splunk/bin/splunk cmd python -mpip install svn+https://github.com/HurricaneLabs/sbclient/trunk
+fi
+
 
 
 # entering your Splunkbase username and password to make sbclient work
 while : ; do
-  read -p 'Username:' uservar
-  read -sp 'Password:' passvar
+  read -p 'Splunkbase Username:' uservar
+  read -sp 'Splunkbase Password:' passvar
   export SPLUNKBASE_USERNAME=$uservar
   export SPLUNKBASE_PASSWORD=$passvar
 
@@ -211,11 +220,12 @@ cp -r  /opt/splunk/etc/apps/Splunk_TA_microsoft_sysmon /opt/splunk/etc/deploymen
 cp -r  /opt/splunk/etc/apps/Splunk_TA_stream /opt/splunk/etc/deployment-apps
 cp -r /opt/splunk/etc/deployment-apps/ccdc_linux_inputs /opt/splunk/etc/apps
 
-# for stream we need to change the 'localhost' piece in the app's inputs.conf to the actual localhost IP
 
+mkdir -p /opt/splunk/etc/deployment-apps/splunk_app_stream/local
+
+# for stream we need to change the 'localhost' piece in the app's inputs.conf to the actual localhost IP
 #enter your localhost IP for this next piece
 read -p 'Localhost IP:' hostip
-
 cat << EOF > /opt/splunk/etc/deployment-apps/Splunk_TA_stream/local/inputs.conf
 
 [streamfwd://streamfwd]
