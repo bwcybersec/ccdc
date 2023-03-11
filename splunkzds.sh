@@ -170,7 +170,7 @@ fi
 
 if type apt-get &>/dev/null
 then
-  agt-get install -y git
+  apt-get install -y git
   git config --global http.sslVerify false
   /opt/splunk/bin/splunk cmd python -mpip install wheel
   /opt/splunk/bin/splunk cmd python -mpip install git+https://github.com/HurricaneLabs/sbclient
