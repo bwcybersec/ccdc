@@ -25,6 +25,7 @@ mkdir -p /opt/splunk/etc/deployment-apps/ccdc_windows_inputs/local
 mkdir -p /opt/splunk/etc/apps/Splunk_TA_paloalto/local
 mkdir -p /opt/splunk/etc/deployment-apps/uf_limits_unlimited/local
 mkdir -p /opt/splunk/etc/system/local
+mkdir -p /opt/splunk/etc/deployment-apps/Splunk_TA_stream/local
 
 #conf file set up for TA *nix
 cat << EOF > /opt/splunk/etc/deployment-apps/ccdc_linux_inputs/local/inputs.conf
@@ -221,7 +222,7 @@ cp -r  /opt/splunk/etc/apps/Splunk_TA_stream /opt/splunk/etc/deployment-apps
 cp -r /opt/splunk/etc/deployment-apps/ccdc_linux_inputs /opt/splunk/etc/apps
 
 
-mkdir -p /opt/splunk/etc/deployment-apps/Splunk_TA_stream/local
+
 
 # for stream we need to change the 'localhost' piece in the app's inputs.conf to the actual localhost IP
 #enter your localhost IP for this next piece
