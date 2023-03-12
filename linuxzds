@@ -1,5 +1,8 @@
 #!/bin/bash
 
+VULPIX="http://172.20.242.10:8000"
+KABUTO="172.20.241.20"
+
 # Backup configs
 mkdir /var/zds
 mkdir /var/zds/timezone
@@ -108,13 +111,13 @@ netstat -an | grep LISTEN | tee netstat.log
         
 # Install splunk
 if [ ! -d "/opt/splunk" ]; then
-curl -o /tmp/splunkforwarder.tgz 'http://172.20.242.10:8000/splunkforwarder.tgz'
+curl -o /tmp/splunkforwarder.tgz "$VULPIX/splunkforwarder.tgz"
 tar xzvf /tmp/splunkforwarder.tgz -C /opt
 echo "Enter the splunk forwarder username and password (yes twice)"
 /opt/splunkforwarder/bin/splunk start --accept-license 
 /opt/splunkforwarder/bin/splunk enable boot-start -systemd-managed 0
-/opt/splunkforwarder/bin/splunk add forward-server 172.20.241.20:9997
-/opt/splunkforwarder/bin/splunk set deploy-poll 172.20.241.20:8089
+/opt/splunkforwarder/bin/splunk add forward-server $KABUTO:9997
+/opt/splunkforwarder/bin/splunk set deploy-poll $KABUTO:8089    
 /opt/splunkforwarder/bin/splunk restart
 fi
 
@@ -141,7 +144,7 @@ This computer system/network is the property of $domain. It is for authorized us
 EOF
 
 echo Downloading and installing clodsire via smarterfw
-curl -o smarterfw http://172.20.242.10:8000/smarterfw
+curl -o smarterfw $VULPIX/smarterfw
 chmod +x smarterfw
 ./smarterfw
 chmod +x clodsire
