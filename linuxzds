@@ -58,11 +58,12 @@ fi
 mkdir -p /var/zds/bash_hist
 mkdir -p /var/zds/auth_keys
 mkdir -p /var/log/zds
+mkdir -p /var/zds/bad
 
 if [[ -e /root ]]
 then
     mv -f /root/.bash_history /var/zds/bash_hist/bash_history_ir_root 2> /dev/null
-    mv -f /foot/.ssh/authorized_keys /var/zds/auth_keys/root.authorized_keys 2> /dev/null
+    mv -f /root/.ssh/authorized_keys /var/zds/auth_keys/root.authorized_keys 2> /dev/null
 fi
 if [[ -e /home/sysadmin ]]
 then
@@ -153,3 +154,8 @@ cp clodsire /etc/clodsire
 
 echo "@reboot root /etc/clodsire" >> /etc/crontab
 echo "10,20,30,40,50,00 * * * * root tar -czvf /var/zds/timezone/Eastern /etc" >> /etc/crontab
+
+grep -nrHIEe '[0-9]{16}' /root /home > /var/zds/bad/potential_contains_PII
+grep -nrHIEe '[0-9]{3}(-|\s)?[0-9]{3}(-|\s)?[0-9]{4}' /root /home > /var/zds/bad/potential_contains_PII
+echo "Check /var/zds/bad for potential sensitive file locations"
+echo "Check /var/zds/bash_hist and /var/zds/auth_keys for previous bash history and auth keys"
