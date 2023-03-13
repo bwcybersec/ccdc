@@ -9,13 +9,23 @@ set Good_host = "false"
 set /p box="Please type your box as follows: [ 2012ad Docker Win10]: "
 (for %%a in (2012ad Docker Win10) do (
 	if "%box%" == "%%a" (
-	   GOTO :Passed
+	   GOTO :Team_Check
 	)
 ))
 ECHO Please input a valid box...
 GOTO :Host_Check
 
-:Passed
+:Team_Check
+set /p Team="Please Enter Team Number + 20 [ Team 1 + 20 = 21 ]: "
+(for %%a in (21 22 23 24 25 26 27 28 29 30 31 32) do (
+	if "%Team%" == "%%a" (
+	   GOTO :Admin_Check
+	)
+))
+ECHO Please input a Team Number + 20
+GOTO :Team_Check
+
+:Admin_Check
 :: Checks for admin permissions, errorlevel indicates number of errors
 echo Administrative permissions required. Detecting permissions.....
 ECHO.
@@ -139,17 +149,17 @@ EXIT /B 0
 :Set_External_IPS
 :: Sets Hardcoded IP address for use in firewall rules
 
-set  Docker=172.25.24.97
-set  DNSNTP=172.25.24.20
+set  Docker=172.25.%Team%.97
+set  DNSNTP=172.25.%Team%.20
 
-set  Ubuntu14Web=172.25.24.23
-set  ADDNS=172.25.24.27
-set  UbuntuWrk= 172.25.24.100
-set  PAMI=172.25.24.150
+set  Ubuntu14Web=172.25.%Team%.23
+set  ADDNS=172.25.%Team%.27
+set  UbuntuWrk= 172.25.%Team%.100
+set  PAMI=172.25.%Team%.150
 
-set  Splunk=172.25.24.9
-set  WebMail=172.25.24.39
-set  EComm=172.25.24.11
+set  Splunk=172.25.%Team%.9
+set  WebMail=172.25.%Team%.39
+set  EComm=172.25.%Team%.11
 set  Internal=%Docker%,%DNSNTP%,%Ubuntu10Web%,%UbuntuWrk%,%PAMI%,%ADDNS%,%Splunk%,%EComm%,%WebMail%
 
 Echo Docker IP is now %Docker%
