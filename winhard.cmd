@@ -77,12 +77,12 @@ ECHO    Webshare access
 netsh advfirewall firewall add rule name="CCDC-Web Share OUT"    new dir=out action=allow enable=yes protocol=tcp profile=any remoteport=8000 remoteip=%Ubuntu14Web%  >NUL 2>NUL
 
 ECHO    Internet access
-netsh advfirewall firewall add rule name="CCDC-Web State"        new dir=out action=allow enable=yes protocol=tcp profile=any remoteip=any remoteport=80,443  >NUL 2>NUL
-netsh advfirewall firewall add rule name="CCDC-DNS State"        new dir=out action=allow enable=yes protocol=udp profile=any remoteport=53  >NUL 2>NUL
+netsh advfirewall firewall add rule name="CCDC-Web Regional"        new dir=out action=allow enable=yes protocol=tcp profile=any remoteip=any remoteport=80,443  >NUL 2>NUL
+netsh advfirewall firewall add rule name="CCDC-DNS Regional"        new dir=out action=allow enable=yes protocol=udp profile=any remoteport=53  >NUL 2>NUL
 
 ECHO    Intranet access
-netsh advfirewall firewall add rule name="CCDC-Web State (INT)"  new dir=out action=allow enable=yes protocol=tcp profile=any remoteport=80,443 remoteip=%Internal%  >NUL 2>NUL
-netsh advfirewall firewall add rule name="CCDC-DNS State (INT)"  new dir=out action=allow enable=yes protocol=udp profile=any remoteport=53 remoteip=%ADDNS% >NUL 2>NUL
+netsh advfirewall firewall add rule name="CCDC-Web Regional (INT)"  new dir=out action=allow enable=yes protocol=tcp profile=any remoteport=80,443 remoteip=%Internal%  >NUL 2>NUL
+netsh advfirewall firewall add rule name="CCDC-DNS Regional (INT)"  new dir=out action=allow enable=yes protocol=udp profile=any remoteport=53 remoteip=%ADDNS% >NUL 2>NUL
 netsh advfirewall firewall add rule name="CCDC-NTP Allow (INT)"  new dir=out action=allow enable=yes protocol=udp profile=any remoteport=123 remoteip=%ADDNS%  >NUL 2>NUL
 
 
