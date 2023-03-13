@@ -92,6 +92,8 @@ netsh advfirewall firewall add rule name="CCDC-Web Regional (INT)"  new dir=out 
 netsh advfirewall firewall add rule name="CCDC-DNS Regional (INT)"  new dir=out action=allow enable=yes protocol=udp profile=any remoteport=53 remoteip=%2019AD% >NUL 2>NUL
 netsh advfirewall firewall add rule name="CCDC-NTP Allow (INT)"  new dir=out action=allow enable=yes protocol=udp profile=any remoteport=123 remoteip=%2019AD%  >NUL 2>NUL
 
+ECHO    SNMP access
+netsh advfirewall firewall add rule name="CCDC-SNMP Regional (INT)"  new dir=in action=allow enable=yes protocol=udp profile=any localport=161 remoteip=%Internal%  >NUL 2>NUL
 
 :: Diable IPv6 Teredo tunneling
 netsh interface teredo set state disabled >NUL 2>NUL
