@@ -18,14 +18,14 @@ GOTO :Host_Check
 :Team_Check
 set /p Team="Please Enter Team Number + 20 [ Team 1 + 20 = 21 ]: "
 (for %%a in (21 22 23 24 25 26 27 28 29 30 31 32) do (
-	if "%box%" == "%%a" (
-	   GOTO :TeamCheck
+	if "%Team%" == "%%a" (
+	   GOTO :Admin_Check
 	)
 ))
 ECHO Please input a valid box...
-GOTO :Host_Check
+GOTO :Team_Check
 
-:Passed
+:Admin_Check
 :: Checks for admin permissions, errorlevel indicates number of errors
 echo Administrative permissions required. Detecting permissions.....
 ECHO.
@@ -146,10 +146,10 @@ EXIT /B 0
 
 :Set_Internal_IPS
 :: Sets Hardcoded IP address for use in firewall rules
-set  Splunk = 172.20.241.20
-set  SplunkExt = 172.25.%Team%.9
+set  Splunk=172.20.241.20
+set  SplunkExt=172.25.%Team%.9
 
-set  2012Email = 172.20.240.11
+set  2012Email=172.20.240.11
 set  DNSNTP=172.20.240.23
 set  Ubuntu18Web=172.20.240.5
 set  Ubuntu16OpenEMR=172.20.240.97
