@@ -66,7 +66,8 @@ netsh advfirewall set global statefulpptp disable > NUL 2>NUL
 :: TCPDump equivalent
 ECHO Setup TCPDUMP...
 :: Tool to convert ETL to PCAP: https://github.com/microsoft/etl2pcapng/releases
-netsh trace start capture=YES tracefile=%ccdcpath%\trace.etl > NUL 2>NUL 
+netsh trace start capture=YES tracefile=%ccdcpath%\day1.etl > NUL 2>NUL 
+:: netsh trace start capture=YES tracefile=%ccdcpath%\day2.etl > NUL 2>NUL 
 
 ::Generic Firewall rules
 ECHO Disable ALL Existing Firewall Rules
