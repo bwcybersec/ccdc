@@ -3,7 +3,20 @@ Set-ExecutionPolicy -executionpolicy unrestricted
 mkdir c:\downloads
 cd c:\downloads
 
+add-type @"
+    using System.Net;
+    using System.Security.Cryptography.X509Certificates;
+    public class TrustAllCertsPolicy : ICertificatePolicy {
+        public bool CheckValidationResult(
+            ServicePoint srvPoint, X509Certificate certificate,
+            WebRequest request, int certificateProblem) {
+            return true;
+        }
+    }
+"@
+[System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls, [Net.SecurityProtocolType]::Tls11, [Net.SecurityProtocolType]::Tls12, [Net.SecurityProtocolType]::Ssl3
+
 Invoke-WebRequest https://2.na.dl.wireshark.org/win64/Wireshark-4.2.0-x64.exe -Outfile wireshark.exe
 Invoke-WebRequest https://nmap.org/dist/nmap-7.93-setup.exe -Outfile nmap.exe
 Invoke-WebRequest https://the.earth.li/~sgtatham/putty/latest/w64/putty-64bit-0.79-installer.msi -Outfile putty.msi
