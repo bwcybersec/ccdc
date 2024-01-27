@@ -26,6 +26,23 @@ read -p "Enter host (virt_debian,virt_ubuweb,virt_ubuwkst,virt_centos,virt_splun
 case $CLODSIRE_HOST in
 virt_debian)
 cat >> clodsire << applaud
+iptables -A INPUT -p udp -s 172.20.242.10 --dport 123 -j ACCEPT
+iptables -A INPUT -p udp -s 172.20.242.100 --dport 123 -j ACCEPT
+iptables -A INPUT -p udp -s 172.20.240.20 --dport 123 -j ACCEPT
+iptables -A INPUT -p udp -s 172.20.241.30 --dport 123 -j ACCEPT
+iptables -A INPUT -p udp -s 172.20.241.40 --dport 123 -j ACCEPT
+iptables -A INPUT -p udp -s 172.20.240.10 --dport 123 -j ACCEPT
+iptables -A INPUT -p udp -s 172.20.242.200 --dport 123 -j ACCEPT
+iptables -A INPUT -p udp -s 172.20.240.23 --dport 123 -j ACCEPT
+iptables -A INPUT -p udp -s 172.20.240.5 --dport 123 -j ACCEPT
+iptables -A INPUT -p udp -s 172.20.240.97 --dport 123 -j ACCEPT
+iptables -A INPUT -p udp -s 172.20.241.10 --dport 123 -j ACCEPT
+iptables -A INPUT -p udp -s 172.20.241.201 --dport 123 -j ACCEPT
+iptables -A INPUT -p udp -s 172.20.242.101 --dport 123 -j ACCEPT
+iptables -A INPUT -p udp -s 172.20.240.11 --dport 123 -j ACCEPT
+iptables -A INPUT -p udp -s 172.20.241.27 --dport 123 -j ACCEPT
+iptables -A INPUT -p udp -s 172.20.242.102 --dport 123 -j ACCEPT
+iptables -A INPUT -p udp -s 172.20.241.20 --dport 123 -j ACCEPT
 iptables -A INPUT -p udp -s 172.20.242.10 --dport 161 -j ACCEPT
 iptables -A INPUT -p udp -s 172.20.242.100 --dport 161 -j ACCEPT
 iptables -A INPUT -p udp -s 172.20.240.20 --dport 161 -j ACCEPT
@@ -550,6 +567,7 @@ iptables -A OUTPUT -p tcp -d 172.20.240.23 --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.240.5 --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.240.97 --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.201 --dport 80 -j ACCEPT
+iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
@@ -562,7 +580,6 @@ iptables -A OUTPUT -p udp -d 172.20.240.97 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.201 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.101 --dport 161 -j ACCEPT
-iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 0.0.0.0/0 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.200 --dport 53 -j ACCEPT
 applaud
@@ -573,6 +590,7 @@ iptables -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 8000 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 8089 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 9997 -j ACCEPT
+iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
@@ -585,7 +603,6 @@ iptables -A OUTPUT -p udp -d 172.20.240.97 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.201 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.101 --dport 161 -j ACCEPT
-iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.200 --dport 53 -j ACCEPT
 applaud
 ;;
@@ -602,6 +619,7 @@ iptables -A OUTPUT -p tcp -d 172.20.240.23 --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.240.5 --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.240.97 --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.201 --dport 80 -j ACCEPT
+iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
@@ -617,7 +635,6 @@ iptables -A OUTPUT -p udp -d 172.20.242.101 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.242.150 --dport 22 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.242.150 --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.242.150 --dport 443 -j ACCEPT
-iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.200 --dport 53 -j ACCEPT
 applaud
 ;;
@@ -627,6 +644,7 @@ iptables -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 8000 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 8089 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 9997 -j ACCEPT
+iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
@@ -639,13 +657,13 @@ iptables -A OUTPUT -p udp -d 172.20.240.97 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.201 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.101 --dport 161 -j ACCEPT
-iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.200 --dport 53 -j ACCEPT
 applaud
 ;;
 virt_splunk)
 cat >> clodsire << applaud
 iptables -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
+iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
@@ -658,7 +676,6 @@ iptables -A OUTPUT -p udp -d 172.20.240.97 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.201 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.101 --dport 161 -j ACCEPT
-iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.200 --dport 53 -j ACCEPT
 applaud
 ;;
@@ -668,6 +685,7 @@ iptables -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 8000 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 8089 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.20 --dport 9997 -j ACCEPT
+iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
@@ -680,7 +698,6 @@ iptables -A OUTPUT -p udp -d 172.20.240.97 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.201 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.101 --dport 161 -j ACCEPT
-iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.242.200 --dport 389 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.242.200 --dport 636 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.200 --dport 53 -j ACCEPT
@@ -702,6 +719,7 @@ iptables -A OUTPUT -p tcp -d 172.20.240.5 --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.240.97 --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.201 --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.240.5 --dport 8000 -j ACCEPT
+iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
@@ -714,7 +732,6 @@ iptables -A OUTPUT -p udp -d 172.20.240.97 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.201 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.101 --dport 161 -j ACCEPT
-iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.27 --dport 53 -j ACCEPT
 applaud
 ;;
@@ -728,6 +745,7 @@ iptables -A OUTPUT -p tcp -d 172.20.241.10 --dport 8000 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.10 --dport 8089 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.10 --dport 9997 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.240.5 --dport 8000 -j ACCEPT
+iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
@@ -740,7 +758,6 @@ iptables -A OUTPUT -p udp -d 172.20.240.97 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.201 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.101 --dport 161 -j ACCEPT
-iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.27 --dport 53 -j ACCEPT
 applaud
 ;;
@@ -754,6 +771,7 @@ iptables -A OUTPUT -p tcp -d 172.20.241.10 --dport 8000 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.10 --dport 8089 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.10 --dport 9997 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.240.5 --dport 8000 -j ACCEPT
+iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
@@ -766,7 +784,6 @@ iptables -A OUTPUT -p udp -d 172.20.240.97 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.201 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.101 --dport 161 -j ACCEPT
-iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.27 --dport 53 -j ACCEPT
 applaud
 ;;
@@ -783,6 +800,7 @@ iptables -A OUTPUT -p tcp -d 172.20.240.5 --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.240.97 --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.201 --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.240.5 --dport 8000 -j ACCEPT
+iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
@@ -795,7 +813,6 @@ iptables -A OUTPUT -p udp -d 172.20.240.97 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.201 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.101 --dport 161 -j ACCEPT
-iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.27 --dport 53 -j ACCEPT
 applaud
 ;;
@@ -809,6 +826,7 @@ iptables -A OUTPUT -p tcp -d 172.20.241.10 --dport 8000 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.10 --dport 8089 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.10 --dport 9997 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.240.5 --dport 8000 -j ACCEPT
+iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
@@ -821,7 +839,6 @@ iptables -A OUTPUT -p udp -d 172.20.240.97 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.201 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.101 --dport 161 -j ACCEPT
-iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.27 --dport 53 -j ACCEPT
 applaud
 ;;
@@ -841,6 +858,7 @@ iptables -A OUTPUT -p tcp -d 172.20.240.5 --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.240.97 --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.241.201 --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp -d 172.20.240.5 --dport 8000 -j ACCEPT
+iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
@@ -853,7 +871,6 @@ iptables -A OUTPUT -p udp -d 172.20.240.97 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.10 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.201 --dport 161 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.242.101 --dport 161 -j ACCEPT
-iptables -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 iptables -A OUTPUT -p udp -d 172.20.241.27 --dport 53 -j ACCEPT
 applaud
 ;;
