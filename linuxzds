@@ -8,6 +8,8 @@ mkdir /var/zds
 mkdir /var/zds/timezone
 cp -r /etc /var/zds/etc_backup
 
+mkdir -p /var/zds/integrity
+
 if type apt-get &>/dev/null
 then
     # Are we on old Debian-based
@@ -44,14 +46,16 @@ EOF
     apt-get install clamav 
     apt-get install nmap 
     apt-get install auditd 
-    apt-get install curl 
+    apt-get install curl
     apt-get install debsums
+    debsums -ca &> /var/zds/integrity/package_checksums.log &
 else
     expected_dist=rpm
     if grep --quiet 'ID=\"centos\"' /etc/os-release || [[ -f /etc/centos-release ]]; then
         yum install -y epel-release
     fi
     yum install -y vim openssh-server clamav curl net-snmp nmap audit
+    rpm --verify -a &> /var/zds/integrity/package_checksums.log &
 fi
 
 # Set user passwords and sweep keys
@@ -156,6 +160,7 @@ echo "@reboot root /etc/clodsire" >> /etc/crontab
 echo "10,20,30,40,50,00 * * * * root tar -czvf /var/zds/timezone/Eastern /etc" >> /etc/crontab
 
 grep -nrHIEe '[0-9]{16}' /root /home > /var/zds/bad/potential_contains_PII
-grep -nrHIEe '[0-9]{3}(-|\s)?[0-9]{3}(-|\s)?[0-9]{4}' /root /home > /var/zds/bad/potential_contains_PII
+grep -nrHIEe '[0-9]{3}(-|\s)?[0-9]{3}(-|\s)?[0-9]{4}' /root /home >> /var/zds/bad/potential_contains_PII
 echo "Check /var/zds/bad for potential sensitive file locations"
 echo "Check /var/zds/bash_hist and /var/zds/auth_keys for previous bash history and auth keys"
+echo "Check /var/zds/integrity for integrity data"
