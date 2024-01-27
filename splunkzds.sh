@@ -216,7 +216,7 @@ cp -r /opt/splunk/etc/deployment-apps/ccdc_linux_inputs /opt/splunk/etc/apps
 # for stream we need to change the 'localhost' piece in the app's inputs.conf to the actual localhost IP
 #enter your localhost IP for this next piece
 #read -p 'Localhost IP:' hostip
-hostip = $(ip a|awk '/172\.20/ {gsub(/\/[0-9]{2}/, ""); print $2}')
+hostip=$(ip a|awk '/172\.20/ {gsub(/\/[0-9]{2}/, ""); print $2}')
 echo "Setting up Stream with our IP as $hostip"
 cat <<EOF >/opt/splunk/etc/deployment-apps/Splunk_TA_stream/local/inputs.conf
 
