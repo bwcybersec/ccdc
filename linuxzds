@@ -46,7 +46,6 @@ EOF
     apt-get install clamav 
     apt-get install nmap 
     apt-get install auditd 
-    apt-get install curl
     apt-get install debsums
     debsums -ca &> /var/zds/integrity/package_checksums.log &
 else
