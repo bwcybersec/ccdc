@@ -111,6 +111,11 @@ if [ ! -d "/opt/splunk" ]; then
 	curl -o /tmp/splunkforwarder.tgz "$VULPIX/splunkforwarder.tgz"
 	tar xzvf /tmp/splunkforwarder.tgz -C /opt
 	touch /opt/splunkforwarder/etc/passwd
+	/opt/splunkforwarder/bin/splunk version --accept-license
+	cat >>/opt/splunkforwarder/etc/system/local/server.conf <<EOF
+[httpServer]
+disableDefaultPort=true
+EOF
 	cat >/opt/splunkforwarder/etc/system/local/deploymentclient.conf <<EOF
 [target-broker:deploymentServer]
 targetUri = $KABUTO:8089
