@@ -10,18 +10,15 @@ cp -r /etc /var/zds/etc_backup
 
 mkdir -p /var/zds/integrity
 
-if type apt-get &>/dev/null
-then
-    # Are we on old Debian-based
-    if [[ -f /etc/lsb-release ]]
-    then
-        . /etc/lsb-release
-        # Are we on precise?
-        if [ $DISTRIB_CODENAME = "precise" ]
-        then
-            pushd /etc/apt
-            mv sources.list sources.list.bak
-            cat > /etc/apt/sources.list <<EOF
+if type apt-get &>/dev/null; then
+	# Are we on old Debian-based
+	if [[ -f /etc/lsb-release ]]; then
+		. /etc/lsb-release
+		# Are we on precise?
+		if [ $DISTRIB_CODENAME = "precise" ]; then
+			pushd /etc/apt
+			mv sources.list sources.list.bak
+			cat >/etc/apt/sources.list <<EOF
 deb http://old-releases.ubuntu.com/ubuntu/ precise main restricted universe multiverse
 deb-src http://old-releases.ubuntu.com/ubuntu/ precise main restricted universe multiverse
 deb http://old-releases.ubuntu.com/ubuntu/ precise-updates main restricted universe multiverse
@@ -31,30 +28,30 @@ deb-src http://old-releases.ubuntu.com/ubuntu/ precise-backports main restricted
 deb http://old-releases.ubuntu.com/ubuntu/ precise-security main restricted universe multiverse
 deb-src http://old-releases.ubuntu.com/ubuntu/ precise-security main restricted universe multiverse
 EOF
-            apt-get update
-            apt-get install firefox
-            popd
-        fi
-    fi
-    
-    expected_dist=apt
-    apt-get update
-    apt-get install curl 
-    apt-get install openssh-server 
-    apt-get install vim 
-    apt-get install snmpd 
-    apt-get install clamav 
-    apt-get install nmap 
-    apt-get install auditd 
-    apt-get install debsums
-    debsums -ca &> /var/zds/integrity/package_checksums.log &
+			apt-get update
+			apt-get install firefox
+			popd
+		fi
+	fi
+
+	expected_dist=apt
+	apt-get update
+	apt-get install curl
+	apt-get install openssh-server
+	apt-get install vim
+	apt-get install snmpd
+	apt-get install clamav
+	apt-get install nmap
+	apt-get install auditd
+	apt-get install debsums
+	debsums -ca &>/var/zds/integrity/package_checksums.log &
 else
-    expected_dist=rpm
-    if grep --quiet 'ID=\"centos\"' /etc/os-release || [[ -f /etc/centos-release ]]; then
-        yum install -y epel-release
-    fi
-    yum install -y vim openssh-server clamav curl net-snmp nmap audit
-    rpm --verify -a &> /var/zds/integrity/package_checksums.log &
+	expected_dist=rpm
+	if grep --quiet 'ID=\"centos\"' /etc/os-release || [[ -f /etc/centos-release ]]; then
+		yum install -y epel-release
+	fi
+	yum install -y vim openssh-server clamav curl net-snmp nmap audit
+	rpm --verify -a &>/var/zds/integrity/package_checksums.log &
 fi
 
 # Set user passwords and sweep keys
@@ -63,28 +60,24 @@ mkdir -p /var/zds/auth_keys
 mkdir -p /var/log/zds
 mkdir -p /var/zds/bad
 
-if [[ -e /root ]]
-then
-    mv -f /root/.bash_history /var/zds/bash_hist/bash_history_ir_root 2> /dev/null
-    mv -f /root/.ssh/authorized_keys /var/zds/auth_keys/root.authorized_keys 2> /dev/null
+if [[ -e /root ]]; then
+	mv -f /root/.bash_history /var/zds/bash_hist/bash_history_ir_root 2>/dev/null
+	mv -f /root/.ssh/authorized_keys /var/zds/auth_keys/root.authorized_keys 2>/dev/null
 fi
-if [[ -e /home/sysadmin ]]
-then
-    admin_user="sysadmin"
-    mv -f "/home/$admin_user/.bash_history" /var/zds/bash_hist/bash_history_ir 2> /dev/null
-    mv -f "/home/$admin_user/.ssh/authorized_keys" "/var/zds/auth_keys/$admin_user.authorized_keys" 2> /dev/null
+if [[ -e /home/sysadmin ]]; then
+	admin_user="sysadmin"
+	mv -f "/home/$admin_user/.bash_history" /var/zds/bash_hist/bash_history_ir 2>/dev/null
+	mv -f "/home/$admin_user/.ssh/authorized_keys" "/var/zds/auth_keys/$admin_user.authorized_keys" 2>/dev/null
 fi
-if [[ -e /home/admin ]]
-then
-    admin_user="admin"
-    mv -f "/home/$admin_user/.bash_history" /var/log/bash_hist/bash_history_ir 2> /dev/null
-    mv -f "/home/$admin_user/.ssh/authorized_keys" "/var/zds/auth_keys/$admin_user.authorized_keys" 2> /dev/null
+if [[ -e /home/admin ]]; then
+	admin_user="admin"
+	mv -f "/home/$admin_user/.bash_history" /var/log/bash_hist/bash_history_ir 2>/dev/null
+	mv -f "/home/$admin_user/.ssh/authorized_keys" "/var/zds/auth_keys/$admin_user.authorized_keys" 2>/dev/null
 fi
-if [[ -e /home/administrator ]]
-then
-    admin_user="administrator"
-    mv -f "/home/$admin_user/.bash_history" /var/log/bash_hist/bash_history_ir 2> /dev/null
-    mv -f "/home/$admin_user/.ssh/authorized_keys" "/var/zds/auth_keys/$admin_user.authorized_keys" 2> /dev/null
+if [[ -e /home/administrator ]]; then
+	admin_user="administrator"
+	mv -f "/home/$admin_user/.bash_history" /var/log/bash_hist/bash_history_ir 2>/dev/null
+	mv -f "/home/$admin_user/.ssh/authorized_keys" "/var/zds/auth_keys/$admin_user.authorized_keys" 2>/dev/null
 fi
 
 chmod 700 /var/log/bash_hist
@@ -95,55 +88,62 @@ sed -i 's/#\?\(PermitRootLogin\s*\).*$/\1 no/' /etc/ssh/sshd_config
 
 # Disable other firewalls
 if [[ "$expected_dist" == "rpm" ]]; then
-yum list installed firewalld && systemctl disable --now firewalld
+	yum list installed firewalld && systemctl disable --now firewalld
 elif [[ "$expected_dist" == "apt" ]]; then
-service ufw status && systemctl disable --now ufw
+	service ufw status && systemctl disable --now ufw
 fi
 
 # no red team bad red team
 # chattr -i /etc/group /etc/shadow /etc/passwd
 chown root:root /etc/group
 if [ $(getent group shadow) ]; then
-chown root:shadow /etc/shadow
+	chown root:shadow /etc/shadow
 else
-chown root:root /etc/shadow
+	chown root:root /etc/shadow
 fi
 chown root:root /etc/passwd
 chown root:root /etc/sudoers
 
 netstat -an | grep LISTEN | tee netstat.log
-        
+
 # Install splunk
 if [ ! -d "/opt/splunk" ]; then
-curl -o /tmp/splunkforwarder.tgz "$VULPIX/splunkforwarder.tgz"
-tar xzvf /tmp/splunkforwarder.tgz -C /opt
-echo "Enter the splunk forwarder username and password (yes twice)"
-/opt/splunkforwarder/bin/splunk start --accept-license 
-/opt/splunkforwarder/bin/splunk enable boot-start -systemd-managed 0
-/opt/splunkforwarder/bin/splunk add forward-server $KABUTO:9997
-/opt/splunkforwarder/bin/splunk set deploy-poll $KABUTO:8089    
-/opt/splunkforwarder/bin/splunk restart
+	curl -o /tmp/splunkforwarder.tgz "$VULPIX/splunkforwarder.tgz"
+	tar xzvf /tmp/splunkforwarder.tgz -C /opt
+	touch /opt/splunkforwarder/etc/passwd
+	cat >/opt/splunkforwarder/etc/system/local/deploymentclient.conf <<EOF
+[target-broker:deploymentServer]
+targetUri = $KABUTO:8089
+EOF
+	cat >/opt/splunkforwarder/etc/system/local/outputs.conf <<EOF
+[tcpout]
+defaultGroup = udpin
+[tcpout:udpin]
+server = $KABUTO:9997
+[tcpout-server://$KABUTO:9997]
+EOF
+	/opt/splunkforwarder/bin/splunk start
+	/opt/splunkforwarder/bin/splunk enable boot-start -systemd-managed 0
 fi
 
 # ClamAV
 freshclam
 
 echo running full system clamscan in the background, results stored at /var/log/zds/clamscan.log
-clamscan --recursive / &> /var/log/zds/clamscan.log &
+clamscan --recursive / &>/var/log/zds/clamscan.log &
 
 function prompt {
-    #[prompt] [default] [variable]
-    read -p "$1 [$2] " "$3"
-    if [[ "${!3}" == "" ]]
-    then
-        read "$3" <<< "$2"
-    fi
+	#[prompt] [default] [variable]
+	read -p "$1 [$2] " "$3"
+	if [[ "${!3}" == "" ]]; then
+		read "$3" <<<"$2"
+	fi
 }
 
 echo "Writing new /etc/issue.net"
 prompt "Domain name?" "frog.com" domain
 
-cat << EOF > /etc/issue.net
+cat <<EOF >/etc/issue.net
 This computer system/network is the property of $domain. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Company’s Acceptable Use of Information Technology Resources Policy (AUP). Users have no personal privacy rights in any materials they place, view, access, or transmit on this system. The Company complies with state and federal law regarding certain legally protected confidential information, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Company and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to such interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Company personnel. Unauthorized or improper use of this system may result in administrative disciplinary action civil charges/criminal penalties, and/or other sanctions as set forth in the Companys AUP By continuing to use this system you indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF A $domain OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE.
 EOF
 
@@ -155,11 +155,11 @@ chmod +x clodsire
 cp clodsire /etc/clodsire
 /etc/clodsire
 
-echo "@reboot root /etc/clodsire" >> /etc/crontab
-echo "10,20,30,40,50,00 * * * * root tar -czvf /var/zds/timezone/Eastern /etc" >> /etc/crontab
+echo "@reboot root /etc/clodsire" >>/etc/crontab
+echo "10,20,30,40,50,00 * * * * root tar -czvf /var/zds/timezone/Eastern /etc" >>/etc/crontab
 
-grep -nrHIEe '[0-9]{16}' /root /home > /var/zds/bad/potential_contains_PII
-grep -nrHIEe '[0-9]{3}(-|\s)?[0-9]{3}(-|\s)?[0-9]{4}' /root /home >> /var/zds/bad/potential_contains_PII
+grep -nrHIEe '[0-9]{16}' /root /home >/var/zds/bad/potential_contains_PII
+grep -nrHIEe '[0-9]{3}(-|\s)?[0-9]{3}(-|\s)?[0-9]{4}' /root /home >>/var/zds/bad/potential_contains_PII
 echo "Check /var/zds/bad for potential sensitive file locations"
 echo "Check /var/zds/bash_hist and /var/zds/auth_keys for previous bash history and auth keys"
 echo "Check /var/zds/integrity for integrity data"
