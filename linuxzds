@@ -47,7 +47,18 @@ EOF
 	debsums -ca &>/var/zds/integrity/package_checksums.log &
 else
 	expected_dist=rpm
-	if grep --quiet 'ID=\"centos\"' /etc/os-release || [[ -f /etc/centos-release ]]; then
+
+	EXPECTED_OS="redhat"
+
+	if [[ -e /etc/os-release ]]; then
+		EXPECTED_OS = $(awk 'BEGIN {FS="=";}; /^ID=/ {print $2}' /etc/os-release)
+	elif [[ -e /etc/centos-release ]]; then
+		EXPECTED_OS = "centos"
+	else
+		EXPECTED_OS = "fedora"
+	fi
+
+	if [[ ! EXPECTED_OS = "fedora" ]]; then
 		yum install -y epel-release
 	fi
 	yum install -y vim openssh-server clamav curl net-snmp nmap audit
@@ -88,9 +99,9 @@ sed -i 's/#\?\(PermitRootLogin\s*\).*$/\1 no/' /etc/ssh/sshd_config
 
 # Disable other firewalls
 if [[ "$expected_dist" == "rpm" ]]; then
-	yum list installed firewalld && systemctl disable --now firewalld
+	systemctl disable --now firewalld
 elif [[ "$expected_dist" == "apt" ]]; then
-	service ufw status && systemctl disable --now ufw
+	systemctl disable --now ufw
 fi
 
 # no red team bad red team
