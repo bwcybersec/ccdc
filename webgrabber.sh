@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+ #!/usr/bin/env bash
 
 # backup initial page (/var/zds/integrity and /usr/share/man)
 # grab page
@@ -8,7 +8,6 @@
 # restore if mismatch
 # repeat every 5 minutes
 
-# Note: bash needs to be v5 or above for timestamps to work! $EPOCHSECONDS was introduced in v5.
 TIMESTAMP=$(date +%s)
 
 rm -rf /tmp/web_grab && mkdir /tmp/web_grab
@@ -28,10 +27,8 @@ while true; do
 	truncate -s 64 current.hash && echo "" >> current.hash
 	diff /var/zds/integrity/dropflag.hash current.hash
 	DIFF=$(diff /var/zds/integrity/dropflag.hash current.hash)
-	$DIFF
 	if [[ -z "$DIFF" ]] ; then
 		echo "$TIMESTAMP: Hashes match!" >> /var/zds/integrity/web_hash.log
-		cat /var/zds/integrity/web_hash.log
 	else
 		echo "$TIMESTAMP: Hashes do not match! Restoring backup..." >> /var/zds/integrity/web_hash.log
 		wall "$TIMESTAMP: Hashes do not match! Restoring backup..."
