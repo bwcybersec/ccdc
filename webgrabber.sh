@@ -27,7 +27,7 @@ while true; do
 	truncate -s 64 current.hash && echo "" >> current.hash
 	diff /var/zds/integrity/dropflag.hash current.hash
 	DIFF=$(diff /var/zds/integrity/dropflag.hash current.hash)
-	if [[ -z "$DIFF" ]] ; then
+	if [[ -z $DIFF ]] ; then
 		echo "$TIMESTAMP: Hashes match!" >> /var/zds/integrity/web_hash.log
 	else
 		echo "$TIMESTAMP: Hashes do not match! Restoring backup..." >> /var/zds/integrity/web_hash.log
