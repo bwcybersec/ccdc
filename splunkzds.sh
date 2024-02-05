@@ -29,15 +29,40 @@ mkdir -p /opt/splunk/etc/deployment-apps/Splunk_TA_stream/local
 
 #conf file set up for TA *nix
 cat <<EOF >/opt/splunk/etc/deployment-apps/ccdc_linux_inputs/local/inputs.conf
-[monitor:///var/log]
+#[monitor:///var/log]
+#index=main
+#disabled = false
+#blacklist1=/var/log/audit.log
+#blacklist2=/var/log/auth.log
+#blacklist3=/var/log/secure
+#blacklist4=/var/log/kern.log
+#blacklist5=/var/log/zds/clamscan.log
+#blacklist6=/var/log/clamav/freshclam.log
+
+[monitor:///var/log/syslog]
 index=main
-disabled = false
-blacklist1=/var/log/audit.log
-blacklist2=/var/log/auth.log
-blacklist3=/var/log/secure
-blacklist4=/var/log/kern.log
-blacklist5=/var/log/zds/clamscan.log
-blacklist6=/var/log/clamav/freshclam.log
+disabled=false
+sourcetype=syslog
+
+[monitor:///var/log/messages]
+index=main
+disabled=false
+sourcetype=syslog
+
+[monitor:///var/log/zds/*]
+index=main
+disabled=false
+sourcetype=zds:log
+
+[monitor:///var/log/.../access.log]
+index=main
+disabled=false
+sourcetype=access_combined
+
+[monitor:///var/log/.../access_log]
+index=main
+disabled=false
+sourcetype=access_combined
 
 [monitor:///var/log/audit.log]
 index=main
@@ -216,7 +241,7 @@ cp -r /opt/splunk/etc/deployment-apps/ccdc_linux_inputs /opt/splunk/etc/apps
 # for stream we need to change the 'localhost' piece in the app's inputs.conf to the actual localhost IP
 #enter your localhost IP for this next piece
 #read -p 'Localhost IP:' hostip
-hostip=$(ip a|awk '/172\.20/ {gsub(/\/[0-9]{2}/, ""); print $2}')
+hostip=$(ip a | awk '/172\.20/ {gsub(/\/[0-9]{2}/, ""); print $2}')
 echo "Setting up Stream with our IP as $hostip"
 cat <<EOF >/opt/splunk/etc/deployment-apps/Splunk_TA_stream/local/inputs.conf
 
