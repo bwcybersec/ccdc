@@ -1,15 +1,23 @@
 #!/bin/bash
-if type apt-get &>/dev/null
-then
-apt-get update 
-apt-get install curl
+if type apt-get &>/dev/null; then
+	apt-get update
+	apt-get install curl
 else
-yum install curl
+	yum install curl
 fi
 # Needed for zds
 curl -ko splunkforwarder.tgz "https://download.splunk.com/products/universalforwarder/releases/8.2.9/linux/splunkforwarder-8.2.9-4a20fb65aa78-Linux-x86_64.tgz"
 curl -ko splunkforwarder.msi "https://download.splunk.com/products/universalforwarder/releases/9.1.3/windows/splunkforwarder-9.1.3-d95b3299fa65-x64-release.msi"
 curl -ko smarterfw "https://raw.githubusercontent.com/bwcybersec/ccdc/main/smarterfw"
-python2 -m SimpleHTTPServer & > ~/stageserver.log
+curl -ko linuxzds "https://raw.githubusercontent.com/bwcybersec/ccdc/main/linuxzds"
+curl -ko splunkzds "https://raw.githubusercontent.com/bwcybersec/ccdc/main/splunkzds.sh"
+cp splunkzds splunkzds.sh
+if type -P python3; then
+	python3 -m http.server &
+	>~/stageserver.log
+else
+	python2 -m SimpleHTTPServer &
+	>~/stageserver.log
+fi
 echo "Running the stage web server PID $! on port 8000"
 curl -Lko rkhunter.tgz "http://downloads.sourceforge.net/project/rkhunter/rkhunter/1.4.6/rkhunter-1.4.6.tar.gz"

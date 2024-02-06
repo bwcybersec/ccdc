@@ -155,6 +155,9 @@ whitelist.0 = *
 [serverClass:all:app:uf_limits_unlimited]
 restartSplunkd = 1
 
+[serverClass:all:app:Splunk_TA_stream]
+restartSplunkd = 1
+
 [serverClass:all_linux]
 machineTypesFilter = linux*
 whitelist.0 = *
@@ -169,6 +172,8 @@ whitelist.0 = *
 [serverClass:all_windows:app:ccdc_windows_inputs]
 restartSplunkd = 1
 
+[serverClass:all_windows:app:Splunk_TA_microsoft_sysmon]
+restartSplunkd = 1
 EOF
 
 if [ ! -e "/opt/splunk/etc/system/local/web.conf" ]; then
