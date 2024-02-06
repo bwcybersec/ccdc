@@ -3,6 +3,8 @@
 VULPIX="http://172.20.242.10:8000"
 KABUTO="172.20.241.20"
 
+export PATH=/sbin:/usr/sbin:/usr/local/sbin:$PATH
+
 # Backup configs
 mkdir /var/zds
 mkdir /var/zds/timezone
