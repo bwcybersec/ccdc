@@ -51,11 +51,11 @@ else
 	EXPECTED_OS="redhat"
 
 	if [[ -e /etc/os-release ]]; then
-		EXPECTED_OS = $(awk 'BEGIN {FS="=";}; /^ID=/ {print $2}' /etc/os-release)
+		EXPECTED_OS=$(awk 'BEGIN {FS="=";}; /^ID=/ {print $2}' /etc/os-release)
 	elif [[ -e /etc/centos-release ]]; then
-		EXPECTED_OS = "centos"
+		EXPECTED_OS="centos"
 	else
-		EXPECTED_OS = "fedora"
+		EXPECTED_OS="fedora"
 	fi
 
 	if [[ ! EXPECTED_OS = "fedora" ]]; then
