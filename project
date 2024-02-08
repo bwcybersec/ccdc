@@ -11,6 +11,7 @@ curl -ko splunkforwarder.msi "https://download.splunk.com/products/universalforw
 curl -ko smarterfw "https://raw.githubusercontent.com/bwcybersec/ccdc/main/smarterfw"
 curl -ko linuxzds "https://raw.githubusercontent.com/bwcybersec/ccdc/main/linuxzds"
 curl -ko splunkzds "https://raw.githubusercontent.com/bwcybersec/ccdc/main/splunkzds.sh"
+curl -ko PAConfig.txt "https://raw.githubusercontent.com/bwcybersec/ccdc/main/PAConfig.txt"
 cp splunkzds splunkzds.sh
 if type -P python3; then
 	python3 -m http.server &
