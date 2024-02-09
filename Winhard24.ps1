@@ -239,6 +239,11 @@ Function Damage_Reversal {
     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
     Start-Sleep -s 1
     cls
+                # Disabling IPv6
+    $Adapters = Get-NetAdapterBinding | Where-Object ComponentID -EQ 'ms_tcpip6' | Select-Object Name
+    ForEach ($adapter in $Adapters  ) { 
+    Disable-NetAdapterBinding -Name $Adapters.Name -ComponentID ms_tcpip6}
+    Write-Host "IPv6 Disabled..." -ForegroundColor Yellow
                 # Disable win features   (Telnet client seems to no longer be involved. Client however is found.)
     Write-Host "Disabling Windows Features" -ForegroundColor Cyan
     $features = @("TelnetServer","TelnetClient","TFTP","SMB1Protocol","SMB1Protocol-Client","SMB1Protocol-Server","SMB1Protocol-Deprecation","SmbDirect","Printing-Foundation-Features","Printing-Foundation-InternetPrinting-Client","Printing-Foundation-LPDPrintService","Printing-Foundation-LPRPortMonitor")
