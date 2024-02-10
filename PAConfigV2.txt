@@ -1,0 +1,945 @@
+set deviceconfig system ip-address 172.20.242.150
+set deviceconfig system netmask 255.255.255.0
+set deviceconfig system update-server updates.paloaltonetworks.com
+set deviceconfig system update-schedule threats recurring weekly day-of-week wednesday
+set deviceconfig system update-schedule threats recurring weekly at 01:02
+set deviceconfig system update-schedule threats recurring weekly action download-only
+set deviceconfig system timezone America/Chicago
+set deviceconfig system service disable-telnet yes
+set deviceconfig system service disable-http no
+set deviceconfig system service disable-snmp no
+set deviceconfig system snmp-setting snmp-system 
+set deviceconfig system hostname PA-VM
+set deviceconfig system default-gateway 172.20.242.254
+set deviceconfig system dns-setting servers primary 10.0.96.11
+set deviceconfig system dns-setting servers secondary 10.0.1.10
+set deviceconfig system server-verification yes
+set deviceconfig system ntp-servers primary-ntp-server ntp-server-address 172.20.240.23
+set deviceconfig system ntp-servers primary-ntp-server authentication-type none 
+set deviceconfig system ntp-servers secondary-ntp-server ntp-server-address 172.20.241.27
+set deviceconfig system device-telemetry device-health-performance yes
+set deviceconfig system device-telemetry product-usage yes
+set deviceconfig system device-telemetry threat-prevention yes
+set deviceconfig system device-telemetry region Americas
+set deviceconfig system permitted-ip 172.20.241.0/24 
+set deviceconfig system permitted-ip 172.20.242.0/24 
+set deviceconfig system permitted-ip 172.20.240.0/24 
+set deviceconfig system login-banner "This computer system/network is the property of allsafe.com. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Company's Acceptable Use of Information Technology Resources Policy (AUP). Users have no personal privacy rights in any material law regarding certain legally protected confidential information, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Company and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to such interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Company personnel. Unauthorized or improper use of this system may result in administrative disciplinary action, civil charges, criminal penalties, and/or other sanctions as set forth in the Company's AUP.  By continuing to use this system, you indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF A allsafe.com OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE."
+set deviceconfig system ack-login-banner yes
+set deviceconfig setting custom-logo pdf-report-header name logo_pan.gif
+set deviceconfig setting config rematch yes
+set deviceconfig setting management idle-timeout 0
+set deviceconfig setting management quota-settings 
+set deviceconfig setting management disable-predefined-reports [ spyware-infected-hosts top-application-categories top-technology-categories bandwidth-trend risk-trend threat-trend top-users top-attacker-sources top-attacker-destinations top-victim-sources top-victim-destinations top-attackers-by-source-countries top-attackers-by-destination-countries top-victims-by-source-countries top-victims-by-destination-countries top-sources top-destinations top-destination-countries top-source-countries top-connections top-ingress-interfaces top-egress-interfaces top-ingress-zones top-egress-zones top-applications top-http-applications top-rules top-attacks top-spyware-threats top-viruses top-vulnerabilities wildfire-file-digests top-websites top-url-categories top-url-users top-url-user-behavior top-blocked-websites top-blocked-url-categories top-blocked-url-users top-blocked-url-user-behavior blocked-credential-post unknown-tcp-connections unknown-udp-connections top-denied-sources top-denied-destinations top-denied-applications risky-users "SaaS Application Usage" gtp-events-summary gtp-malicious-wildfire-submissions gtp-security-events gtp-v1-causes gtp-v2-causes gtp-users-visiting-malicious-url top-gtp-attacker-destinations top-gtp-attacker-sources top-gtp-victim-destinations top-gtp-victim-sources sctp-error-causes sctp-events-summary sctp-security-events ]
+set deviceconfig setting management common-criteria-alarm-generation enable-alarm-generation yes
+set network interface ethernet ethernet1/1 link-speed auto
+set network interface ethernet ethernet1/1 link-duplex auto
+set network interface ethernet ethernet1/1 link-state auto
+set network interface ethernet ethernet1/1 comment PUBLIC
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement enable no
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement min-interval 200
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement max-interval 600
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement hop-limit 64
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement reachable-time unspecified
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement retransmission-timer unspecified
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement lifetime 1800
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement managed-flag no
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement other-flag no
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement enable-consistency-check no
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement link-mtu unspecified
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery enable-dad no
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery reachable-time 30
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery ns-interval 1
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery dad-attempts 1
+set network interface ethernet ethernet1/1 layer3 ipv6 enabled no
+set network interface ethernet ethernet1/1 layer3 ipv6 interface-id EUI-64
+set network interface ethernet ethernet1/1 layer3 untagged-sub-interface no
+set network interface ethernet ethernet1/1 layer3 interface-management-profile Base
+set network interface ethernet ethernet1/1 layer3 ip 172.20.241.254/24 
+set network interface ethernet ethernet1/2 link-speed auto
+set network interface ethernet ethernet1/2 link-duplex auto
+set network interface ethernet ethernet1/2 link-state auto
+set network interface ethernet ethernet1/2 comment INTERNAL
+set network interface ethernet ethernet1/2 layer3 ipv6 neighbor-discovery enable-dad no
+set network interface ethernet ethernet1/2 layer3 ipv6 neighbor-discovery reachable-time 30
+set network interface ethernet ethernet1/2 layer3 ipv6 neighbor-discovery ns-interval 1
+set network interface ethernet ethernet1/2 layer3 ipv6 neighbor-discovery dad-attempts 1
+set network interface ethernet ethernet1/2 layer3 ipv6 enabled no
+set network interface ethernet ethernet1/2 layer3 ipv6 interface-id EUI-64
+set network interface ethernet ethernet1/2 layer3 untagged-sub-interface no
+set network interface ethernet ethernet1/2 layer3 interface-management-profile Base
+set network interface ethernet ethernet1/2 layer3 ip 172.20.240.254/24 
+set network interface ethernet ethernet1/2 layer3 ndp-proxy enabled no
+set network interface ethernet ethernet1/2 layer3 sdwan-link-settings upstream-nat enable no
+set network interface ethernet ethernet1/2 layer3 sdwan-link-settings upstream-nat static-ip 
+set network interface ethernet ethernet1/2 layer3 sdwan-link-settings enable no
+set network interface ethernet ethernet1/2 layer3 lldp enable no
+set network interface ethernet ethernet1/3 link-speed auto
+set network interface ethernet ethernet1/3 link-duplex auto
+set network interface ethernet ethernet1/3 link-state auto
+set network interface ethernet ethernet1/3 comment EXTERNAL
+set network interface ethernet ethernet1/3 layer3 ipv6 neighbor-discovery enable-dad no
+set network interface ethernet ethernet1/3 layer3 ipv6 neighbor-discovery reachable-time 30
+set network interface ethernet ethernet1/3 layer3 ipv6 neighbor-discovery ns-interval 1
+set network interface ethernet ethernet1/3 layer3 ipv6 neighbor-discovery dad-attempts 1
+set network interface ethernet ethernet1/3 layer3 ipv6 enabled no
+set network interface ethernet ethernet1/3 layer3 ipv6 interface-id EUI-64
+set network interface ethernet ethernet1/3 layer3 untagged-sub-interface no
+set network interface ethernet ethernet1/3 layer3 interface-management-profile Base
+set network interface ethernet ethernet1/3 layer3 ip 172.31.21.2/29 
+set network interface ethernet ethernet1/3 layer3 ndp-proxy enabled no
+set network interface ethernet ethernet1/3 layer3 lldp enable no
+set network interface ethernet ethernet1/3 layer3 sdwan-link-settings upstream-nat enable no
+set network interface ethernet ethernet1/3 layer3 sdwan-link-settings upstream-nat static-ip 
+set network interface ethernet ethernet1/3 layer3 sdwan-link-settings enable no
+set network interface ethernet ethernet1/4 layer3 ipv6 neighbor-discovery router-advertisement enable no
+set network interface ethernet ethernet1/4 layer3 ip 172.20.242.254/24 
+set network interface ethernet ethernet1/4 layer3 interface-management-profile Base
+set network interface ethernet ethernet1/4 comment USER
+set network virtual-wire 
+set network profiles monitor-profile default interval 3
+set network profiles monitor-profile default threshold 5
+set network profiles monitor-profile default action wait-recover
+set network profiles interface-management-profile Base http no
+set network profiles interface-management-profile Base https no
+set network profiles interface-management-profile Base http-ocsp yes
+set network profiles interface-management-profile Base ssh no
+set network profiles interface-management-profile Base snmp yes
+set network profiles interface-management-profile Base userid-service yes
+set network profiles interface-management-profile Base ping yes
+set network profiles interface-management-profile Base response-pages yes
+set network profiles interface-management-profile Base telnet no
+set network profiles interface-management-profile none 
+set network profiles zone-protection-profile Default discard-overlapping-tcp-segment-mismatch yes
+set network profiles zone-protection-profile Default discard-unknown-option yes
+set network profiles zone-protection-profile Default tcp-reject-non-syn yes
+set network profiles zone-protection-profile Default flood tcp-syn enable yes
+set network profiles zone-protection-profile Default flood tcp-syn syn-cookies maximal-rate 500
+set network profiles zone-protection-profile Default flood tcp-syn syn-cookies activate-rate 100
+set network profiles zone-protection-profile Default flood tcp-syn syn-cookies alarm-rate 100
+set network profiles zone-protection-profile Default flood icmp enable yes
+set network profiles zone-protection-profile Default flood icmp red activate-rate 1000
+set network profiles zone-protection-profile Default flood icmp red alarm-rate 1000
+set network profiles zone-protection-profile Default flood icmp red maximal-rate 5000
+set network profiles zone-protection-profile Default flood udp enable yes
+set network profiles zone-protection-profile Default flood udp red activate-rate 1000
+set network profiles zone-protection-profile Default flood udp red alarm-rate 1000
+set network profiles zone-protection-profile Default flood udp red maximal-rate 5000
+set network profiles zone-protection-profile Default flood other-ip enable yes
+set network profiles zone-protection-profile Default flood other-ip red activate-rate 1000
+set network profiles zone-protection-profile Default flood other-ip red alarm-rate 1000
+set network profiles zone-protection-profile Default flood other-ip red maximal-rate 5000
+set network profiles zone-protection-profile Default flood icmpv6 enable yes
+set network profiles zone-protection-profile Default flood icmpv6 red activate-rate 1000
+set network profiles zone-protection-profile Default flood icmpv6 red alarm-rate 1000
+set network profiles zone-protection-profile Default flood icmpv6 red maximal-rate 5000
+set network qos profile default class-bandwidth-type mbps class class1 priority real-time
+set network qos profile default class-bandwidth-type mbps class class2 priority high
+set network qos profile default class-bandwidth-type mbps class class3 priority high
+set network qos profile default class-bandwidth-type mbps class class4 priority medium
+set network qos profile default class-bandwidth-type mbps class class5 priority medium
+set network qos profile default class-bandwidth-type mbps class class6 priority low
+set network qos profile default class-bandwidth-type mbps class class7 priority low
+set network qos profile default class-bandwidth-type mbps class class8 priority low
+set network virtual-router RT1 protocol bgp enable no
+set network virtual-router RT1 protocol bgp dampening-profile default cutoff 1.25
+set network virtual-router RT1 protocol bgp dampening-profile default reuse 0.5
+set network virtual-router RT1 protocol bgp dampening-profile default max-hold-time 900
+set network virtual-router RT1 protocol bgp dampening-profile default decay-half-life-reachable 300
+set network virtual-router RT1 protocol bgp dampening-profile default decay-half-life-unreachable 900
+set network virtual-router RT1 protocol bgp dampening-profile default enable yes
+set network virtual-router RT1 protocol bgp routing-options med always-compare-med no
+set network virtual-router RT1 protocol bgp routing-options med deterministic-med-comparison yes
+set network virtual-router RT1 protocol bgp routing-options aggregate aggregate-med yes
+set network virtual-router RT1 protocol bgp routing-options graceful-restart enable yes
+set network virtual-router RT1 protocol bgp routing-options graceful-restart stale-route-time 120
+set network virtual-router RT1 protocol bgp routing-options graceful-restart local-restart-time 120
+set network virtual-router RT1 protocol bgp routing-options graceful-restart max-peer-restart-time 120
+set network virtual-router RT1 protocol bgp routing-options as-format 2-byte
+set network virtual-router RT1 protocol bgp routing-options default-local-preference 100
+set network virtual-router RT1 protocol bgp reject-default-route yes
+set network virtual-router RT1 protocol bgp allow-redist-default-route no
+set network virtual-router RT1 protocol bgp install-route no
+set network virtual-router RT1 protocol rip enable no
+set network virtual-router RT1 protocol ospf enable no
+set network virtual-router RT1 protocol ospfv3 enable no
+set network virtual-router RT1 admin-dists static 10
+set network virtual-router RT1 admin-dists ospf-int 30
+set network virtual-router RT1 admin-dists ospf-ext 110
+set network virtual-router RT1 admin-dists ibgp 200
+set network virtual-router RT1 admin-dists ebgp 20
+set network virtual-router RT1 admin-dists rip 120
+set network virtual-router RT1 interface [ ethernet1/1 ethernet1/2 ethernet1/3 ethernet1/4 ]
+set network virtual-router RT1 routing-table ip static-route default nexthop ip-address 172.31.21.1
+set network virtual-router RT1 routing-table ip static-route default bfd profile None
+set network virtual-router RT1 routing-table ip static-route default interface ethernet1/3
+set network virtual-router RT1 routing-table ip static-route default metric 10
+set network virtual-router RT1 routing-table ip static-route default destination 0.0.0.0/0
+set network virtual-router RT1 routing-table ip static-route default route-table unicast 
+set network virtual-router RT1 ecmp algorithm ip-modulo 
+set network ike crypto-profiles ike-crypto-profiles default encryption [ aes-128-cbc 3des ]
+set network ike crypto-profiles ike-crypto-profiles default hash sha1
+set network ike crypto-profiles ike-crypto-profiles default dh-group group2
+set network ike crypto-profiles ike-crypto-profiles default lifetime hours 8
+set network ike crypto-profiles ike-crypto-profiles Suite-B-GCM-128 encryption aes-128-cbc
+set network ike crypto-profiles ike-crypto-profiles Suite-B-GCM-128 hash sha256
+set network ike crypto-profiles ike-crypto-profiles Suite-B-GCM-128 dh-group group19
+set network ike crypto-profiles ike-crypto-profiles Suite-B-GCM-128 lifetime hours 8
+set network ike crypto-profiles ike-crypto-profiles Suite-B-GCM-256 encryption aes-256-cbc
+set network ike crypto-profiles ike-crypto-profiles Suite-B-GCM-256 hash sha384
+set network ike crypto-profiles ike-crypto-profiles Suite-B-GCM-256 dh-group group20
+set network ike crypto-profiles ike-crypto-profiles Suite-B-GCM-256 lifetime hours 8
+set network ike crypto-profiles ipsec-crypto-profiles default esp encryption [ aes-128-cbc 3des ]
+set network ike crypto-profiles ipsec-crypto-profiles default esp authentication sha1
+set network ike crypto-profiles ipsec-crypto-profiles default dh-group group2
+set network ike crypto-profiles ipsec-crypto-profiles default lifetime hours 1
+set network ike crypto-profiles ipsec-crypto-profiles Suite-B-GCM-128 esp encryption aes-128-gcm
+set network ike crypto-profiles ipsec-crypto-profiles Suite-B-GCM-128 esp authentication none
+set network ike crypto-profiles ipsec-crypto-profiles Suite-B-GCM-128 dh-group group19
+set network ike crypto-profiles ipsec-crypto-profiles Suite-B-GCM-128 lifetime hours 1
+set network ike crypto-profiles ipsec-crypto-profiles Suite-B-GCM-256 esp encryption aes-256-gcm
+set network ike crypto-profiles ipsec-crypto-profiles Suite-B-GCM-256 esp authentication none
+set network ike crypto-profiles ipsec-crypto-profiles Suite-B-GCM-256 dh-group group20
+set network ike crypto-profiles ipsec-crypto-profiles Suite-B-GCM-256 lifetime hours 1
+set network ike crypto-profiles global-protect-app-crypto-profiles default encryption aes-128-cbc
+set network ike crypto-profiles global-protect-app-crypto-profiles default authentication sha1
+set network ike gateway 
+set network tunnel ipsec 
+set network tunnel global-protect-gateway 
+set network dhcp interface ethernet1/4 server option lease timeout 1440
+set network dhcp interface ethernet1/4 server option gateway 172.20.242.254
+set network dhcp interface ethernet1/4 server option dns primary 172.20.241.27
+set network dhcp interface ethernet1/4 server option dns secondary 172.20.240.23
+set network dhcp interface ethernet1/4 server ip-pool 172.20.242.101-172.20.242.150
+set network dhcp interface ethernet1/4 server mode disabled
+set network dhcp interface ethernet1/4 server probe-ip yes
+set network dhcp interface ethernet1/1 server option lease timeout 1440
+set network dhcp interface ethernet1/1 server option gateway 172.20.241.254
+set network dhcp interface ethernet1/1 server ip-pool 172.20.241.101-172.20.241.150
+set network dhcp interface ethernet1/1 server mode disabled
+set network dhcp interface ethernet1/1 server probe-ip yes
+set network dhcp interface ethernet1/2 server option lease timeout 1440
+set network dhcp interface ethernet1/2 server option gateway 172.20.240.254
+set network dhcp interface ethernet1/2 server ip-pool 172.20.240.101-172.20.240.150
+set network dhcp interface ethernet1/2 server mode disabled
+set network dhcp interface ethernet1/2 server probe-ip yes
+set network dns-proxy mark default primary 8.8.8.8
+set network dns-proxy mark cache enabled yes
+set network dns-proxy mark tcp-queries enabled no
+set network dns-proxy mark domain-servers changm3 domain-name www.blah.com
+set network dns-proxy mark domain-servers changm3 cacheable no
+set network dns-proxy mark domain-servers changm3 primary 8.8.8.8
+set network dns-proxy mark enabled no
+set shared ssl-decrypt ssl-exclude-cert 
+set shared ssl-decrypt trusted-root-CA 
+set shared application 
+set shared application-group 
+set shared service 
+set shared service-group 
+set shared botnet configuration http dynamic-dns enabled yes
+set shared botnet configuration http dynamic-dns threshold 5
+set shared botnet configuration http malware-sites enabled yes
+set shared botnet configuration http malware-sites threshold 5
+set shared botnet configuration http recent-domains enabled yes
+set shared botnet configuration http recent-domains threshold 5
+set shared botnet configuration http ip-domains enabled yes
+set shared botnet configuration http ip-domains threshold 10
+set shared botnet configuration http executables-from-unknown-sites enabled yes
+set shared botnet configuration http executables-from-unknown-sites threshold 5
+set shared botnet configuration other-applications irc yes
+set shared botnet configuration unknown-applications unknown-tcp destinations-per-hour 10
+set shared botnet configuration unknown-applications unknown-tcp sessions-per-hour 10
+set shared botnet configuration unknown-applications unknown-tcp session-length maximum-bytes 100
+set shared botnet configuration unknown-applications unknown-tcp session-length minimum-bytes 50
+set shared botnet configuration unknown-applications unknown-udp destinations-per-hour 10
+set shared botnet configuration unknown-applications unknown-udp sessions-per-hour 10
+set shared botnet configuration unknown-applications unknown-udp session-length maximum-bytes 100
+set shared botnet configuration unknown-applications unknown-udp session-length minimum-bytes 50
+set shared botnet report topn 100
+set shared botnet report scheduled yes
+set shared profiles decryption 
+set shared profiles custom-url-category 
+set shared admin-role Honeypot description 'Honeypot for "admin" user scanning and n00b college kids.'
+set shared admin-role Honeypot role device webui objects address-groups enable
+set shared admin-role Honeypot role device webui objects application-groups enable
+set shared admin-role Honeypot role device webui objects application-filters enable
+set shared admin-role Honeypot role device webui objects service-groups enable
+set shared admin-role Honeypot role device webui objects global-protect hip-objects enable
+set shared admin-role Honeypot role device webui objects global-protect hip-profiles enable
+set shared admin-role Honeypot role device webui objects custom-objects data-patterns enable
+set shared admin-role Honeypot role device webui objects custom-objects spyware enable
+set shared admin-role Honeypot role device webui objects custom-objects vulnerability enable
+set shared admin-role Honeypot role device webui objects custom-objects url-category enable
+set shared admin-role Honeypot role device webui objects security-profile-groups enable
+set shared admin-role Honeypot role device webui objects schedules enable
+set shared admin-role Honeypot role device webui network interfaces enable
+set shared admin-role Honeypot role device webui network virtual-wires enable
+set shared admin-role Honeypot role device webui network ipsec-tunnels enable
+set shared admin-role Honeypot role device webui network dns-proxy enable
+set shared admin-role Honeypot role device webui network global-protect portals enable
+set shared admin-role Honeypot role device webui network global-protect gateways enable
+set shared admin-role Honeypot role device webui network global-protect mdm enable
+set shared admin-role Honeypot role device webui network qos enable
+set shared admin-role Honeypot role device webui device config-audit enable
+set shared admin-role Honeypot role device webui device admin-roles read-only
+set shared admin-role Honeypot role device xmlapi report enable
+set shared admin-role Honeypot role device xmlapi log enable
+set shared admin-role Honeypot role device xmlapi config enable
+set shared admin-role Honeypot role device xmlapi op enable
+set shared admin-role Honeypot role device xmlapi commit enable
+set shared admin-role Honeypot role device xmlapi user-id enable
+set shared admin-role Honeypot role device xmlapi export enable
+set shared admin-role Honeypot role device xmlapi import enable
+set shared admin-role Honeypot role device restapi 
+set shared admin-role "Configuration Admins" role device cli superreader
+set shared admin-role "Configuration Admins" role device webui acc enable
+set shared admin-role "Configuration Admins" role device webui monitor logs traffic enable
+set shared admin-role "Configuration Admins" role device webui monitor logs threat enable
+set shared admin-role "Configuration Admins" role device webui monitor logs url enable
+set shared admin-role "Configuration Admins" role device webui monitor logs wildfire enable
+set shared admin-role "Configuration Admins" role device webui monitor logs data-filtering enable
+set shared admin-role "Configuration Admins" role device webui monitor logs hipmatch enable
+set shared admin-role "Configuration Admins" role device webui monitor logs configuration enable
+set shared admin-role "Configuration Admins" role device webui monitor logs system enable
+set shared admin-role "Configuration Admins" role device webui monitor logs alarm enable
+set shared admin-role "Configuration Admins" role device webui monitor packet-capture enable
+set shared admin-role "Configuration Admins" role device webui monitor app-scope enable
+set shared admin-role "Configuration Admins" role device webui monitor session-browser enable
+set shared admin-role "Configuration Admins" role device webui monitor botnet enable
+set shared admin-role "Configuration Admins" role device webui monitor pdf-reports manage-pdf-summary enable
+set shared admin-role "Configuration Admins" role device webui monitor pdf-reports pdf-summary-reports enable
+set shared admin-role "Configuration Admins" role device webui monitor pdf-reports user-activity-report enable
+set shared admin-role "Configuration Admins" role device webui monitor pdf-reports report-groups enable
+set shared admin-role "Configuration Admins" role device webui monitor pdf-reports email-scheduler enable
+set shared admin-role "Configuration Admins" role device webui monitor pdf-reports saas-application-usage-report enable
+set shared admin-role "Configuration Admins" role device webui monitor custom-reports application-statistics enable
+set shared admin-role "Configuration Admins" role device webui monitor custom-reports data-filtering-log enable
+set shared admin-role "Configuration Admins" role device webui monitor custom-reports threat-log enable
+set shared admin-role "Configuration Admins" role device webui monitor custom-reports threat-summary enable
+set shared admin-role "Configuration Admins" role device webui monitor custom-reports traffic-log enable
+set shared admin-role "Configuration Admins" role device webui monitor custom-reports traffic-summary enable
+set shared admin-role "Configuration Admins" role device webui monitor custom-reports url-log enable
+set shared admin-role "Configuration Admins" role device webui monitor custom-reports hipmatch enable
+set shared admin-role "Configuration Admins" role device webui monitor view-custom-reports enable
+set shared admin-role "Configuration Admins" role device webui monitor application-reports enable
+set shared admin-role "Configuration Admins" role device webui monitor threat-reports enable
+set shared admin-role "Configuration Admins" role device webui monitor url-filtering-reports enable
+set shared admin-role "Configuration Admins" role device webui monitor traffic-reports enable
+set shared admin-role "Configuration Admins" role device webui objects addresses enable
+set shared admin-role "Configuration Admins" role device webui objects address-groups enable
+set shared admin-role "Configuration Admins" role device webui objects regions enable
+set shared admin-role "Configuration Admins" role device webui objects applications enable
+set shared admin-role "Configuration Admins" role device webui objects application-groups enable
+set shared admin-role "Configuration Admins" role device webui objects application-filters enable
+set shared admin-role "Configuration Admins" role device webui objects services enable
+set shared admin-role "Configuration Admins" role device webui objects service-groups enable
+set shared admin-role "Configuration Admins" role device webui objects tags enable
+set shared admin-role "Configuration Admins" role device webui objects global-protect hip-objects enable
+set shared admin-role "Configuration Admins" role device webui objects global-protect hip-profiles enable
+set shared admin-role "Configuration Admins" role device webui objects dynamic-block-lists enable
+set shared admin-role "Configuration Admins" role device webui objects custom-objects data-patterns enable
+set shared admin-role "Configuration Admins" role device webui objects custom-objects spyware enable
+set shared admin-role "Configuration Admins" role device webui objects custom-objects vulnerability enable
+set shared admin-role "Configuration Admins" role device webui objects custom-objects url-category enable
+set shared admin-role "Configuration Admins" role device webui objects security-profiles antivirus enable
+set shared admin-role "Configuration Admins" role device webui objects security-profiles anti-spyware enable
+set shared admin-role "Configuration Admins" role device webui objects security-profiles vulnerability-protection enable
+set shared admin-role "Configuration Admins" role device webui objects security-profiles url-filtering enable
+set shared admin-role "Configuration Admins" role device webui objects security-profiles file-blocking enable
+set shared admin-role "Configuration Admins" role device webui objects security-profiles data-filtering enable
+set shared admin-role "Configuration Admins" role device webui objects security-profiles dos-protection enable
+set shared admin-role "Configuration Admins" role device webui objects security-profile-groups enable
+set shared admin-role "Configuration Admins" role device webui objects log-forwarding enable
+set shared admin-role "Configuration Admins" role device webui objects decryption decryption-profile enable
+set shared admin-role "Configuration Admins" role device webui objects schedules enable
+set shared admin-role "Configuration Admins" role device webui network interfaces enable
+set shared admin-role "Configuration Admins" role device webui network zones enable
+set shared admin-role "Configuration Admins" role device webui network vlans enable
+set shared admin-role "Configuration Admins" role device webui network virtual-wires enable
+set shared admin-role "Configuration Admins" role device webui network virtual-routers enable
+set shared admin-role "Configuration Admins" role device webui network ipsec-tunnels enable
+set shared admin-role "Configuration Admins" role device webui network dhcp enable
+set shared admin-role "Configuration Admins" role device webui network dns-proxy enable
+set shared admin-role "Configuration Admins" role device webui network global-protect portals enable
+set shared admin-role "Configuration Admins" role device webui network global-protect gateways enable
+set shared admin-role "Configuration Admins" role device webui network global-protect mdm enable
+set shared admin-role "Configuration Admins" role device webui network qos enable
+set shared admin-role "Configuration Admins" role device webui network network-profiles ike-gateways enable
+set shared admin-role "Configuration Admins" role device webui network network-profiles ipsec-crypto enable
+set shared admin-role "Configuration Admins" role device webui network network-profiles ike-crypto enable
+set shared admin-role "Configuration Admins" role device webui network network-profiles tunnel-monitor enable
+set shared admin-role "Configuration Admins" role device webui network network-profiles interface-mgmt enable
+set shared admin-role "Configuration Admins" role device webui network network-profiles zone-protection enable
+set shared admin-role "Configuration Admins" role device webui network network-profiles qos-profile enable
+set shared admin-role "Configuration Admins" role device webui device setup management enable
+set shared admin-role "Configuration Admins" role device webui device setup interfaces enable
+set shared admin-role "Configuration Admins" role device webui device setup operations enable
+set shared admin-role "Configuration Admins" role device webui device setup telemetry enable
+set shared admin-role "Configuration Admins" role device webui device setup services enable
+set shared admin-role "Configuration Admins" role device webui device setup content-id enable
+set shared admin-role "Configuration Admins" role device webui device setup wildfire enable
+set shared admin-role "Configuration Admins" role device webui device setup session enable
+set shared admin-role "Configuration Admins" role device webui device setup hsm enable
+set shared admin-role "Configuration Admins" role device webui device config-audit enable
+set shared admin-role "Configuration Admins" role device webui device admin-roles read-only
+set shared admin-role "Configuration Admins" role device webui device user-identification enable
+set shared admin-role "Configuration Admins" role device webui device vm-info-source enable
+set shared admin-role "Configuration Admins" role device webui device high-availability enable
+set shared admin-role "Configuration Admins" role device webui device certificate-management certificates enable
+set shared admin-role "Configuration Admins" role device webui device certificate-management certificate-profile enable
+set shared admin-role "Configuration Admins" role device webui device certificate-management ocsp-responder enable
+set shared admin-role "Configuration Admins" role device webui device block-pages enable
+set shared admin-role "Configuration Admins" role device webui device log-settings system enable
+set shared admin-role "Configuration Admins" role device webui device log-settings config enable
+set shared admin-role "Configuration Admins" role device webui device log-settings hipmatch enable
+set shared admin-role "Configuration Admins" role device webui device log-settings cc-alarm enable
+set shared admin-role "Configuration Admins" role device webui device log-settings manage-log enable
+set shared admin-role "Configuration Admins" role device webui device server-profile snmp-trap enable
+set shared admin-role "Configuration Admins" role device webui device server-profile syslog enable
+set shared admin-role "Configuration Admins" role device webui device server-profile email enable
+set shared admin-role "Configuration Admins" role device webui device server-profile netflow enable
+set shared admin-role "Configuration Admins" role device webui device server-profile radius enable
+set shared admin-role "Configuration Admins" role device webui device server-profile ldap enable
+set shared admin-role "Configuration Admins" role device webui device server-profile kerberos enable
+set shared admin-role "Configuration Admins" role device webui device local-user-database users enable
+set shared admin-role "Configuration Admins" role device webui device local-user-database user-groups enable
+set shared admin-role "Configuration Admins" role device webui device authentication-profile enable
+set shared admin-role "Configuration Admins" role device webui device authentication-sequence enable
+set shared admin-role "Configuration Admins" role device webui device access-domain enable
+set shared admin-role "Configuration Admins" role device webui device scheduled-log-export enable
+set shared admin-role "Configuration Admins" role device webui device software read-only
+set shared admin-role "Configuration Admins" role device webui device global-protect-client enable
+set shared admin-role "Configuration Admins" role device webui device dynamic-updates enable
+set shared admin-role "Configuration Admins" role device webui device licenses enable
+set shared admin-role "Configuration Admins" role device webui device support enable
+set shared admin-role "Configuration Admins" role device webui device master-key enable
+set shared admin-role "Configuration Admins" role device webui privacy show-full-ip-addresses enable
+set shared admin-role "Configuration Admins" role device webui privacy show-user-names-in-logs-and-reports enable
+set shared admin-role "Configuration Admins" role device webui privacy view-pcap-files enable
+set shared admin-role "Configuration Admins" role device webui commit device enable
+set shared admin-role "Configuration Admins" role device webui commit commit-for-other-admins enable
+set shared admin-role "Configuration Admins" role device webui commit object-level-changes enable
+set shared admin-role "Configuration Admins" role device webui global system-alarms enable
+set shared admin-role "Configuration Admins" role device xmlapi report enable
+set shared admin-role "Configuration Admins" role device xmlapi log enable
+set shared admin-role "Configuration Admins" role device xmlapi config enable
+set shared admin-role "Configuration Admins" role device xmlapi op enable
+set shared admin-role "Configuration Admins" role device xmlapi commit enable
+set shared admin-role "Configuration Admins" role device xmlapi user-id enable
+set shared admin-role "Configuration Admins" role device xmlapi export enable
+set shared admin-role "Configuration Admins" role device xmlapi import enable
+set shared admin-role "Configuration Admins" role device restapi 
+set shared admin-role "Configuration Admins" description "Users with access to local device settings."
+set shared admin-role "Policy Admins" role device cli deviceadmin
+set shared admin-role "Policy Admins" role device webui policies security-rulebase enable
+set shared admin-role "Policy Admins" role device webui policies nat-rulebase enable
+set shared admin-role "Policy Admins" role device webui policies qos-rulebase enable
+set shared admin-role "Policy Admins" role device webui policies pbf-rulebase enable
+set shared admin-role "Policy Admins" role device webui policies ssl-decryption-rulebase enable
+set shared admin-role "Policy Admins" role device webui policies application-override-rulebase enable
+set shared admin-role "Policy Admins" role device webui policies authentication-rulebase enable
+set shared admin-role "Policy Admins" role device webui policies dos-rulebase enable
+set shared admin-role "Policy Admins" role device webui device setup management read-only
+set shared admin-role "Policy Admins" role device webui device setup interfaces read-only
+set shared admin-role "Policy Admins" role device webui device setup operations read-only
+set shared admin-role "Policy Admins" role device webui device setup telemetry read-only
+set shared admin-role "Policy Admins" role device webui device setup services read-only
+set shared admin-role "Policy Admins" role device webui device setup content-id read-only
+set shared admin-role "Policy Admins" role device webui device setup wildfire read-only
+set shared admin-role "Policy Admins" role device webui device setup session read-only
+set shared admin-role "Policy Admins" role device webui device setup hsm read-only
+set shared admin-role "Policy Admins" role device webui device config-audit enable
+set shared admin-role "Policy Admins" role device xmlapi report enable
+set shared admin-role "Policy Admins" role device xmlapi log enable
+set shared admin-role "Policy Admins" role device xmlapi config enable
+set shared admin-role "Policy Admins" role device xmlapi op enable
+set shared admin-role "Policy Admins" role device xmlapi commit enable
+set shared admin-role "Policy Admins" role device xmlapi user-id enable
+set shared admin-role "Policy Admins" role device xmlapi export enable
+set shared admin-role "Policy Admins" role device xmlapi import enable
+set shared admin-role "Policy Admins" role device restapi 
+set shared admin-role "Policy Admins" description "Users with access to firewall policy rules."
+set shared ssl-tls-service-profile 
+set shared log-settings syslog Splunk server "Splunk 9.1.1" transport UDP
+set shared log-settings syslog Splunk server "Splunk 9.1.1" port 514
+set shared log-settings syslog Splunk server "Splunk 9.1.1" format BSD
+set shared log-settings syslog Splunk server "Splunk 9.1.1" server 172.20.241.20
+set shared log-settings syslog Splunk server "Splunk 9.1.1" facility LOG_USER
+set shared log-settings profiles default match-list traffic send-syslog Splunk
+set shared log-settings profiles default match-list traffic log-type traffic
+set shared log-settings profiles default match-list traffic filter "All Logs"
+set shared log-settings profiles default match-list traffic send-to-panorama no
+set shared log-settings profiles default match-list auth send-syslog Splunk
+set shared log-settings profiles default match-list auth log-type auth
+set shared log-settings profiles default match-list auth filter "All Logs"
+set shared log-settings profiles default match-list auth send-to-panorama no
+set shared log-settings profiles default match-list data send-syslog Splunk
+set shared log-settings profiles default match-list data log-type data
+set shared log-settings profiles default match-list data filter "All Logs"
+set shared log-settings profiles default match-list data send-to-panorama no
+set shared log-settings profiles default match-list gtp send-syslog Splunk
+set shared log-settings profiles default match-list gtp log-type gtp
+set shared log-settings profiles default match-list gtp filter "All Logs"
+set shared log-settings profiles default match-list gtp send-to-panorama no
+set shared log-settings profiles default match-list threat send-syslog Splunk
+set shared log-settings profiles default match-list threat log-type threat
+set shared log-settings profiles default match-list threat filter "All Logs"
+set shared log-settings profiles default match-list threat send-to-panorama no
+set shared log-settings profiles default match-list tunnel send-syslog Splunk
+set shared log-settings profiles default match-list tunnel log-type tunnel
+set shared log-settings profiles default match-list tunnel filter "All Logs"
+set shared log-settings profiles default match-list tunnel send-to-panorama no
+set shared log-settings profiles default match-list url send-syslog Splunk
+set shared log-settings profiles default match-list url log-type url
+set shared log-settings profiles default match-list url filter "All Logs"
+set shared log-settings profiles default match-list url send-to-panorama no
+set shared log-settings profiles default match-list wildfire send-syslog Splunk
+set shared log-settings profiles default match-list wildfire log-type wildfire
+set shared log-settings profiles default match-list wildfire filter "All Logs"
+set shared log-settings profiles default match-list wildfire send-to-panorama no
+set shared log-settings system match-list Splunk send-syslog Splunk
+set shared log-settings system match-list Splunk filter "All Logs"
+set shared log-settings config match-list Splunk send-syslog Splunk
+set shared log-settings config match-list Splunk filter "All Logs"
+set shared log-settings userid match-list Splunk send-syslog Splunk
+set shared log-settings userid match-list Splunk filter "All Logs"
+set shared log-settings hipmatch match-list Splunk send-syslog Splunk
+set shared log-settings hipmatch match-list Splunk filter "All Logs"
+set zone Public network layer3 ethernet1/1
+set zone Internal network layer3 ethernet1/2
+set zone External network layer3 ethernet1/3
+set zone trusted network layer3 
+set zone User network layer3 ethernet1/4
+set threats vulnerability 41111 signature standard Bruteforce order-free no
+set threats vulnerability 41111 signature standard Bruteforce scope protocol-data-unit
+set threats vulnerability 41111 default-action alert 
+set threats vulnerability 41111 cve agata
+set threats vulnerability 41111 reference charity
+set threats vulnerability 41111 vendor dogma
+set threats vulnerability 41111 bugtraq redteam
+set threats vulnerability 41111 threatname "Bruteforce Protection"
+set threats vulnerability 41111 severity informational
+set threats vulnerability 41111 direction client2server
+set threats vulnerability 41111 affected-host client yes
+set tag Internal color color4
+set tag External color color20
+set tag Public color color2
+set tag Wkst color color40
+set tag Windows_10 color color23
+set tag Docker color color28
+set tag User color color6
+set tag Ubuntu_Web color color15
+set tag 2019 color color7
+set tag Splunk color color13
+set tag E-Comm color color21
+set tag Fedora color color5
+set tag Debian color color34
+set tag Emergency color color1
+set service-group 
+set service All-Web protocol tcp port 8000,80,443
+set service All-Web protocol tcp override no 
+set schedule 
+set rulebase security rules PUBLIC2EXTERNAL option disable-server-response-inspection no
+set rulebase security rules PUBLIC2EXTERNAL from Public
+set rulebase security rules PUBLIC2EXTERNAL to External
+set rulebase security rules PUBLIC2EXTERNAL source Public_Hosts
+set rulebase security rules PUBLIC2EXTERNAL destination any
+set rulebase security rules PUBLIC2EXTERNAL source-user any
+set rulebase security rules PUBLIC2EXTERNAL category any
+set rulebase security rules PUBLIC2EXTERNAL application any
+set rulebase security rules PUBLIC2EXTERNAL service any
+set rulebase security rules PUBLIC2EXTERNAL action allow
+set rulebase security rules PUBLIC2EXTERNAL log-start no
+set rulebase security rules PUBLIC2EXTERNAL log-end yes
+set rulebase security rules PUBLIC2EXTERNAL negate-source no
+set rulebase security rules PUBLIC2EXTERNAL negate-destination no
+set rulebase security rules PUBLIC2EXTERNAL source-hip any
+set rulebase security rules PUBLIC2EXTERNAL group-tag Emergency
+set rulebase security rules PUBLIC2EXTERNAL disabled yes
+set rulebase security rules PUBLIC2INTERNAL option disable-server-response-inspection no
+set rulebase security rules PUBLIC2INTERNAL from Public
+set rulebase security rules PUBLIC2INTERNAL to Internal
+set rulebase security rules PUBLIC2INTERNAL source Public_Hosts
+set rulebase security rules PUBLIC2INTERNAL destination Internal_Hosts
+set rulebase security rules PUBLIC2INTERNAL source-user any
+set rulebase security rules PUBLIC2INTERNAL category any
+set rulebase security rules PUBLIC2INTERNAL application any
+set rulebase security rules PUBLIC2INTERNAL service any
+set rulebase security rules PUBLIC2INTERNAL action allow
+set rulebase security rules PUBLIC2INTERNAL log-start no
+set rulebase security rules PUBLIC2INTERNAL log-end yes
+set rulebase security rules PUBLIC2INTERNAL negate-source no
+set rulebase security rules PUBLIC2INTERNAL negate-destination no
+set rulebase security rules PUBLIC2INTERNAL source-hip any
+set rulebase security rules PUBLIC2INTERNAL group-tag Emergency
+set rulebase security rules PUBLIC2INTERNAL disabled yes
+set rulebase security rules INTERNAL2PUBLIC option disable-server-response-inspection no
+set rulebase security rules INTERNAL2PUBLIC from Internal
+set rulebase security rules INTERNAL2PUBLIC to Public
+set rulebase security rules INTERNAL2PUBLIC source Internal_Hosts
+set rulebase security rules INTERNAL2PUBLIC destination Public_Hosts
+set rulebase security rules INTERNAL2PUBLIC source-user any
+set rulebase security rules INTERNAL2PUBLIC category any
+set rulebase security rules INTERNAL2PUBLIC application any
+set rulebase security rules INTERNAL2PUBLIC service any
+set rulebase security rules INTERNAL2PUBLIC action allow
+set rulebase security rules INTERNAL2PUBLIC log-start no
+set rulebase security rules INTERNAL2PUBLIC log-end yes
+set rulebase security rules INTERNAL2PUBLIC negate-source no
+set rulebase security rules INTERNAL2PUBLIC negate-destination no
+set rulebase security rules INTERNAL2PUBLIC source-hip any
+set rulebase security rules INTERNAL2PUBLIC group-tag Emergency
+set rulebase security rules INTERNAL2PUBLIC disabled yes
+set rulebase security rules DNS_Outbound profile-setting group Sec_Group
+set rulebase security rules DNS_Outbound application dns
+set rulebase security rules DNS_Outbound service application-default
+set rulebase security rules DNS_Outbound to External
+set rulebase security rules DNS_Outbound from [ Internal User ]
+set rulebase security rules DNS_Outbound source [ Internal_Hosts User_Hosts ]
+set rulebase security rules DNS_Outbound destination any
+set rulebase security rules DNS_Outbound source-user any
+set rulebase security rules DNS_Outbound category any
+set rulebase security rules DNS_Outbound source-hip any
+set rulebase security rules DNS_Outbound destination-hip any
+set rulebase security rules DNS_Outbound action allow
+set rulebase security rules DNS_Outbound log-start yes
+set rulebase security rules DNS_Outbound log-end yes
+set rulebase security rules DNS_Outbound log-setting Splunk
+set rulebase security rules NTP_Outbound profile-setting group Sec_Group
+set rulebase security rules NTP_Outbound application ntp
+set rulebase security rules NTP_Outbound service application-default
+set rulebase security rules NTP_Outbound to External
+set rulebase security rules NTP_Outbound from [ Internal User ]
+set rulebase security rules NTP_Outbound source [ Internal_Hosts User_Hosts ]
+set rulebase security rules NTP_Outbound destination any
+set rulebase security rules NTP_Outbound source-user any
+set rulebase security rules NTP_Outbound category any
+set rulebase security rules NTP_Outbound source-hip any
+set rulebase security rules NTP_Outbound destination-hip any
+set rulebase security rules NTP_Outbound action allow
+set rulebase security rules NTP_Outbound log-start yes
+set rulebase security rules NTP_Outbound log-setting Splunk
+set rulebase security rules All_Outbound application Outbound_Apps
+set rulebase security rules All_Outbound service application-default
+set rulebase security rules All_Outbound profile-setting group Sec_Group
+set rulebase security rules All_Outbound to External
+set rulebase security rules All_Outbound from [ Internal Public User ]
+set rulebase security rules All_Outbound source [ Internal_Hosts Public_Hosts User_Hosts ]
+set rulebase security rules All_Outbound destination any
+set rulebase security rules All_Outbound source-user any
+set rulebase security rules All_Outbound category any
+set rulebase security rules All_Outbound source-hip any
+set rulebase security rules All_Outbound destination-hip any
+set rulebase security rules All_Outbound action allow
+set rulebase security rules All_Outbound log-start yes
+set rulebase security rules All_Outbound log-setting Splunk
+set rulebase security rules External_to_E-Com application [ ping ssl web-browsing ]
+set rulebase security rules External_to_E-Com service application-default
+set rulebase security rules External_to_E-Com from External
+set rulebase security rules External_to_E-Com to Public
+set rulebase security rules External_to_E-Com source any
+set rulebase security rules External_to_E-Com destination Ext_E-Commerce
+set rulebase security rules External_to_E-Com source-user any
+set rulebase security rules External_to_E-Com category any
+set rulebase security rules External_to_E-Com source-hip any
+set rulebase security rules External_to_E-Com destination-hip any
+set rulebase security rules External_to_E-Com action allow
+set rulebase security rules External_to_E-Com log-setting Splunk
+set rulebase security rules External_to_E-Com profile-setting group Sec_Group
+set rulebase security rules External_to_E-Com log-start yes
+set rulebase security rules External_to_2019 application [ dns ping ]
+set rulebase security rules External_to_2019 service application-default
+set rulebase security rules External_to_2019 from External
+set rulebase security rules External_to_2019 to User
+set rulebase security rules External_to_2019 source any
+set rulebase security rules External_to_2019 destination Ext_2019
+set rulebase security rules External_to_2019 source-user any
+set rulebase security rules External_to_2019 category any
+set rulebase security rules External_to_2019 source-hip any
+set rulebase security rules External_to_2019 destination-hip any
+set rulebase security rules External_to_2019 action allow
+set rulebase security rules External_to_2019 log-setting Splunk
+set rulebase security rules External_to_2019 profile-setting group Sec_Group
+set rulebase security rules External_to_2019 log-start yes
+set rulebase security rules External_to_2019 disabled no
+set rulebase security rules External_to_2019-ldap application ldap
+set rulebase security rules External_to_2019-ldap service application-default
+set rulebase security rules External_to_2019-ldap from External
+set rulebase security rules External_to_2019-ldap to User
+set rulebase security rules External_to_2019-ldap source any
+set rulebase security rules External_to_2019-ldap destination Ext_2019
+set rulebase security rules External_to_2019-ldap source-user any
+set rulebase security rules External_to_2019-ldap category any
+set rulebase security rules External_to_2019-ldap source-hip any
+set rulebase security rules External_to_2019-ldap destination-hip any
+set rulebase security rules External_to_2019-ldap action allow
+set rulebase security rules External_to_2019-ldap log-setting Splunk
+set rulebase security rules External_to_2019-ldap profile-setting group Sec_Group
+set rulebase security rules External_to_2019-ldap log-start yes
+set rulebase security rules External_to_2019-ldap disabled yes
+set rulebase security rules External_to_Splunk application [ ping ssl web-browsing ]
+set rulebase security rules External_to_Splunk service All-Web
+set rulebase security rules External_to_Splunk from External
+set rulebase security rules External_to_Splunk to Public
+set rulebase security rules External_to_Splunk source any
+set rulebase security rules External_to_Splunk destination Ext_Splunk
+set rulebase security rules External_to_Splunk source-user any
+set rulebase security rules External_to_Splunk category any
+set rulebase security rules External_to_Splunk source-hip any
+set rulebase security rules External_to_Splunk destination-hip any
+set rulebase security rules External_to_Splunk action allow
+set rulebase security rules External_to_Splunk log-setting Splunk
+set rulebase security rules External_to_Splunk profile-setting group Sec_Group
+set rulebase security rules External_to_Splunk log-start yes
+set rulebase security rules External_to_Debian application [ dns ping ]
+set rulebase security rules External_to_Debian service application-default
+set rulebase security rules External_to_Debian profile-setting group Sec_Group
+set rulebase security rules External_to_Debian to Internal
+set rulebase security rules External_to_Debian from External
+set rulebase security rules External_to_Debian source any
+set rulebase security rules External_to_Debian destination Ext_Debian
+set rulebase security rules External_to_Debian source-user any
+set rulebase security rules External_to_Debian category any
+set rulebase security rules External_to_Debian source-hip any
+set rulebase security rules External_to_Debian destination-hip any
+set rulebase security rules External_to_Debian action allow
+set rulebase security rules External_to_Debian log-start yes
+set rulebase security rules External_to_Debian log-setting Splunk
+set rulebase security rules External_to_Fedora-Mail application [ imap ping pop3 smtp ssl web-browsing ]
+set rulebase security rules External_to_Fedora-Mail service application-default
+set rulebase security rules External_to_Fedora-Mail profile-setting group Sec_Group
+set rulebase security rules External_to_Fedora-Mail to Public
+set rulebase security rules External_to_Fedora-Mail from External
+set rulebase security rules External_to_Fedora-Mail source any
+set rulebase security rules External_to_Fedora-Mail destination Ext_Fedora_Web
+set rulebase security rules External_to_Fedora-Mail source-user any
+set rulebase security rules External_to_Fedora-Mail category any
+set rulebase security rules External_to_Fedora-Mail source-hip any
+set rulebase security rules External_to_Fedora-Mail destination-hip any
+set rulebase security rules External_to_Fedora-Mail action allow
+set rulebase security rules External_to_Fedora-Mail log-start yes
+set rulebase security rules External_to_Fedora-Mail log-setting Splunk
+set rulebase security rules Deny_From_External action deny
+set rulebase security rules Deny_From_External from External
+set rulebase security rules Deny_From_External to any
+set rulebase security rules Deny_From_External source any
+set rulebase security rules Deny_From_External destination any
+set rulebase security rules Deny_From_External application any
+set rulebase security rules Deny_From_External service any
+set rulebase security rules Deny_From_External profile-setting group Sec_Group
+set rulebase security rules Deny_From_External source-user any
+set rulebase security rules Deny_From_External category any
+set rulebase security rules Deny_From_External source-hip any
+set rulebase security rules Deny_From_External destination-hip any
+set rulebase security rules Deny_From_External log-start yes
+set rulebase security rules Deny_From_External log-setting Splunk
+set rulebase security rules AHHHH_LetMeIn action allow
+set rulebase security rules AHHHH_LetMeIn from [ Internal Public User ]
+set rulebase security rules AHHHH_LetMeIn to External
+set rulebase security rules AHHHH_LetMeIn source [ Internal_Hosts Public_Hosts User_Hosts ]
+set rulebase security rules AHHHH_LetMeIn destination any
+set rulebase security rules AHHHH_LetMeIn application Outbound_Apps
+set rulebase security rules AHHHH_LetMeIn service application-default
+set rulebase security rules AHHHH_LetMeIn profile-setting group Sec_Group
+set rulebase security rules AHHHH_LetMeIn source-user any
+set rulebase security rules AHHHH_LetMeIn category any
+set rulebase security rules AHHHH_LetMeIn source-hip any
+set rulebase security rules AHHHH_LetMeIn destination-hip any
+set rulebase security rules AHHHH_LetMeIn log-start yes
+set rulebase security rules AHHHH_LetMeIn log-setting Splunk
+set rulebase security rules AHHHH_LetMeIn disabled yes
+set rulebase security rules Logs application [ splunk web-browsing ]
+set rulebase security rules Logs service All-Web
+set rulebase security rules Logs disabled no
+set rulebase security rules Logs profile-setting group Sec_Group
+set rulebase security rules Logs to Public
+set rulebase security rules Logs from [ Internal Public User ]
+set rulebase security rules Logs source [ Internal_Hosts Public_Hosts User_Hosts ]
+set rulebase security rules Logs destination Pub_Splunk
+set rulebase security rules Logs source-user any
+set rulebase security rules Logs category any
+set rulebase security rules Logs source-hip any
+set rulebase security rules Logs destination-hip any
+set rulebase security rules Logs action allow
+set rulebase security rules Logs log-start yes
+set rulebase security rules Logs log-end yes
+set rulebase security rules InternalNetworks_to_InternalNetworks profile-setting group Sec_Group
+set rulebase security rules InternalNetworks_to_InternalNetworks to [ Internal Public User ]
+set rulebase security rules InternalNetworks_to_InternalNetworks from [ Internal Public User ]
+set rulebase security rules InternalNetworks_to_InternalNetworks source [ Internal_Hosts Public_Hosts User_Hosts ]
+set rulebase security rules InternalNetworks_to_InternalNetworks destination [ Internal_Hosts Public_Hosts User_Hosts ]
+set rulebase security rules InternalNetworks_to_InternalNetworks source-user any
+set rulebase security rules InternalNetworks_to_InternalNetworks category any
+set rulebase security rules InternalNetworks_to_InternalNetworks application Internal_Apps
+set rulebase security rules InternalNetworks_to_InternalNetworks service All-Web
+set rulebase security rules InternalNetworks_to_InternalNetworks source-hip any
+set rulebase security rules InternalNetworks_to_InternalNetworks destination-hip any
+set rulebase security rules InternalNetworks_to_InternalNetworks action allow
+set rulebase security rules InternalNetworks_to_InternalNetworks log-start yes
+set rulebase security rules InternalNetworks_to_InternalNetworks log-setting Splunk
+set rulebase security rules DENYALL action deny
+set rulebase security rules DENYALL from any
+set rulebase security rules DENYALL to any
+set rulebase security rules DENYALL source any
+set rulebase security rules DENYALL destination any
+set rulebase security rules DENYALL application any
+set rulebase security rules DENYALL service any
+set rulebase security rules DENYALL source-user any
+set rulebase security rules DENYALL category any
+set rulebase security rules DENYALL source-hip any
+set rulebase security rules DENYALL destination-hip any
+set rulebase security rules DENYALL log-start yes
+set rulebase security rules DENYALL log-setting Splunk
+set rulebase security rules DENYALL disabled yes
+set rulebase nat rules PA source-translation static-ip translated-address 172.25.21.150
+set rulebase nat rules PA source-translation static-ip bi-directional yes
+set rulebase nat rules PA to External
+set rulebase nat rules PA from User
+set rulebase nat rules PA source 172.20.242.150
+set rulebase nat rules PA destination any
+set rulebase nat rules PA service any
+set rulebase nat rules PA nat-type ipv4
+set rulebase nat rules PA to-interface any
+set rulebase nat rules "User NAT" source-translation dynamic-ip-and-port translated-address 172.25.21.152
+set rulebase nat rules "User NAT" to External
+set rulebase nat rules "User NAT" from User
+set rulebase nat rules "User NAT" source User
+set rulebase nat rules "User NAT" destination any
+set rulebase nat rules "User NAT" service any
+set rulebase nat rules "User NAT" nat-type ipv4
+set rulebase nat rules "Public NAT" source-translation dynamic-ip-and-port translated-address 172.25.21.151
+set rulebase nat rules "Public NAT" to External
+set rulebase nat rules "Public NAT" from Public
+set rulebase nat rules "Public NAT" source Public
+set rulebase nat rules "Public NAT" destination any
+set rulebase nat rules "Public NAT" service any
+set rulebase nat rules "Public NAT" nat-type ipv4
+set rulebase nat rules "Internal NAT" source-translation dynamic-ip-and-port translated-address 172.25.21.150
+set rulebase nat rules "Internal NAT" to External
+set rulebase nat rules "Internal NAT" from Internal
+set rulebase nat rules "Internal NAT" source Internal
+set rulebase nat rules "Internal NAT" destination any
+set rulebase nat rules "Internal NAT" service any
+set rulebase nat rules "Internal NAT" nat-type ipv4
+set rulebase nat rules "CentOS e-comm" source-translation static-ip translated-address 172.25.21.11
+set rulebase nat rules "CentOS e-comm" source-translation static-ip bi-directional yes
+set rulebase nat rules "CentOS e-comm" to External
+set rulebase nat rules "CentOS e-comm" from Public
+set rulebase nat rules "CentOS e-comm" source 172.20.241.30
+set rulebase nat rules "CentOS e-comm" destination any
+set rulebase nat rules "CentOS e-comm" service any
+set rulebase nat rules "CentOS e-comm" nat-type ipv4
+set rulebase nat rules "CentOS e-comm" to-interface any
+set rulebase nat rules "CentOS e-comm" disabled no
+set rulebase nat rules "Ubuntu Srv" source-translation static-ip translated-address 172.25.21.23
+set rulebase nat rules "Ubuntu Srv" source-translation static-ip bi-directional yes
+set rulebase nat rules "Ubuntu Srv" to External
+set rulebase nat rules "Ubuntu Srv" from User
+set rulebase nat rules "Ubuntu Srv" source 172.20.242.10
+set rulebase nat rules "Ubuntu Srv" destination any
+set rulebase nat rules "Ubuntu Srv" service any
+set rulebase nat rules "Ubuntu Srv" nat-type ipv4
+set rulebase nat rules "Ubuntu Srv" to-interface any
+set rulebase nat rules "Ubuntu Srv" disabled no
+set rulebase nat rules Splunk source-translation static-ip translated-address 172.25.21.9
+set rulebase nat rules Splunk source-translation static-ip bi-directional yes
+set rulebase nat rules Splunk to External
+set rulebase nat rules Splunk from Public
+set rulebase nat rules Splunk source 172.20.241.20
+set rulebase nat rules Splunk destination any
+set rulebase nat rules Splunk service any
+set rulebase nat rules Splunk nat-type ipv4
+set rulebase nat rules Splunk to-interface any
+set rulebase nat rules "Fedora webmail" source-translation static-ip translated-address 172.25.21.39
+set rulebase nat rules "Fedora webmail" source-translation static-ip bi-directional yes
+set rulebase nat rules "Fedora webmail" to External
+set rulebase nat rules "Fedora webmail" from Public
+set rulebase nat rules "Fedora webmail" source 172.20.241.40
+set rulebase nat rules "Fedora webmail" destination any
+set rulebase nat rules "Fedora webmail" service any
+set rulebase nat rules "Fedora webmail" nat-type ipv4
+set rulebase nat rules "Fedora webmail" to-interface any
+set rulebase nat rules "2012 AD-DNS" source-translation static-ip translated-address 172.25.21.27
+set rulebase nat rules "2012 AD-DNS" source-translation static-ip bi-directional yes
+set rulebase nat rules "2012 AD-DNS" to External
+set rulebase nat rules "2012 AD-DNS" from User
+set rulebase nat rules "2012 AD-DNS" source 172.20.242.200
+set rulebase nat rules "2012 AD-DNS" destination any
+set rulebase nat rules "2012 AD-DNS" service any
+set rulebase nat rules "2012 AD-DNS" nat-type ipv4
+set rulebase nat rules "2012 AD-DNS" to-interface any
+set rulebase nat rules 2016 source-translation static-ip translated-address 172.25.21.97
+set rulebase nat rules 2016 source-translation static-ip bi-directional yes
+set rulebase nat rules 2016 to External
+set rulebase nat rules 2016 from Internal
+set rulebase nat rules 2016 source 172.20.240.10
+set rulebase nat rules 2016 destination any
+set rulebase nat rules 2016 service any
+set rulebase nat rules 2016 nat-type ipv4
+set rulebase nat rules 2016 to-interface any
+set rulebase nat rules "Debian DNS" from Internal
+set rulebase nat rules "Debian DNS" source 172.20.240.20
+set rulebase nat rules "Debian DNS" destination any
+set rulebase nat rules "Debian DNS" service any
+set rulebase nat rules "Debian DNS" nat-type ipv4
+set rulebase nat rules "Debian DNS" source-translation static-ip bi-directional yes
+set rulebase nat rules "Debian DNS" source-translation static-ip translated-address 172.25.21.20
+set rulebase nat rules "Debian DNS" to External
+set rulebase application-override rules 
+set profiles hip-objects Brian description "I hope I don't get fired."
+set profiles data-objects Backup pattern-type regex pattern Idiot regex ch@ngme
+set profiles data-objects Backup pattern-type regex pattern Idiot file-type any
+set profiles hip-profiles PAN-SA-2015-0006 match 'not "Brian"'
+set profiles hip-profiles PAN-SA-2015-0006 description "First Name"
+set profiles custom-url-category 
+set profile-group Sec_Group virus default
+set profile-group Sec_Group spyware strict
+set profile-group Sec_Group vulnerability strict
+set profile-group Sec_Group wildfire-analysis default
+set import network interface [ ethernet1/1 ethernet1/2 ethernet1/3 ethernet1/4 ]
+set global-protect global-protect-gateway 
+set global-protect global-protect-portal 
+set global-protect global-protect-mdm travis host 1.2.3.4
+set global-protect global-protect-mdm travis port 1234
+set application-group Outbound_Apps members [ web-browsing ssl apt-get yum git-base github google-base ms-update pastebin sourceforge-base subversion-base ping ocsp paloalto-updates pan-db-cloud ]
+set application-group Internal_Apps members [ ntp dns ssh ping web-browsing ssl mysql splunk ]
+set application-group Log_Apps members [ splunk ssl web-browsing ]
+set application-filter "Garcia loves chunkymonkey" category [ business-systems collaboration general-internet media networking unknown ]
+set application 
+set address-group Internal_Hosts static [ Int_Debian Int_Docker ]
+set address-group Public_Hosts static [ Pub_E-Commerce Pub_Fedora_Web Pub_Splunk ]
+set address-group User_Hosts static [ 2019 Ubuntu_Web Ubuntu_Wkst ]
+set address User ip-netmask 172.20.242.0/24
+set address Public ip-netmask 172.20.241.0/24
+set address Internal ip-netmask 172.20.240.0/24
+set address Private1 ip-range 10.0.0.0-10.255.255.255
+set address Private2 ip-range 172.16.0.0-172.31.255.255
+set address Private3 ip-range 192.168.0.0-192.168.255.255
+set address Int_Debian ip-netmask 172.20.240.20
+set address Int_Debian tag Debian
+set address Pub_E-Commerce ip-netmask 172.20.241.30
+set address Pub_E-Commerce tag E-Comm
+set address 2019 ip-netmask 172.20.242.50
+set address 2019 tag 2019
+set address Pub_Fedora_Web ip-netmask 172.20.241.40
+set address Pub_Fedora_Web tag Fedora
+set address Pub_Splunk ip-netmask 172.20.241.20
+set address Pub_Splunk tag Splunk
+set address Ubuntu_Web ip-netmask 172.20.242.10
+set address Ubuntu_Web tag Ubuntu_Web
+set address Int_Docker ip-netmask 172.20.240.10
+set address Int_Docker tag Docker
+set address Ubuntu_Wkst ip-netmask 172.20.242.100
+set address Ubuntu_Wkst tag Wkst
+set address Windows_10 ip-netmask 172.31.21.5
+set address Windows_10 tag Windows_10
+set address Ext_2019 ip-netmask 172.25.21.27
+set address Ext_Debian ip-netmask 172.25.21.20
+set address Ext_Ubuntu_Web ip-netmask 172.25.21.23
+set address Ext_Splunk ip-netmask 172.25.21.9
+set address Ext_E-Commerce ip-netmask 172.25.21.11
+set address Ext_Fedora_Web ip-netmask 172.25.21.39
+set mgt-config users admin phash $1$eqgomlvi$hChZl6XmkgMbzkufzBGoT/
+set mgt-config users admin permissions role-based superuser yes
+set mgt-config users administrator phash $1$fvlrcegi$Hl/otBYrhE2hbaWH2fNDE/
+set mgt-config users administrator permissions role-based superuser yes
