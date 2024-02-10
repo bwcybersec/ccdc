@@ -11,8 +11,6 @@ set deviceconfig system service disable-snmp no
 set deviceconfig system snmp-setting snmp-system 
 set deviceconfig system hostname PA-VM
 set deviceconfig system default-gateway 172.20.242.254
-set deviceconfig system dns-setting servers primary 10.0.96.11
-set deviceconfig system dns-setting servers secondary 10.0.1.10
 set deviceconfig system server-verification yes
 set deviceconfig system ntp-servers primary-ntp-server ntp-server-address 172.20.240.23
 set deviceconfig system ntp-servers primary-ntp-server authentication-type none 
