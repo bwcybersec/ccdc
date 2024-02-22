@@ -1,3 +1,4 @@
+configure
 set tag Internal color color4
 set tag External color color20
 set tag Public color color2
@@ -546,3 +547,4 @@ delete profiles hip-profiles PAN-SA-2015-0006
 set import network interface [ ethernet1/1 ethernet1/2 ethernet1/3 ethernet1/4 ]
 delete global-protect global-protect-mdm travis
 delete application-filter "Garcia loves chunkymonkey" 
+commit
