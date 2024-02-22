@@ -10,7 +10,7 @@ Invoke-WebRequest https://live.sysinternals.com/Sysmon64.exe -Outfile Sysmon.exe
 #Invoke-WebRequest https://raw.githubusercontent.com/olafhartong/sysmon-modular/master/sysmonconfig.xml -Outfile sysmonconfig.xml
 Invoke-WebREquest "https://raw.githubusercontent.com/bwcybersec/ccdc/main/ccdcsysmon.xml" -Outfile sysmonconfig.xml
 Start-Sleep -s 1
-Start-Process sysmon.exe -args "-accepteula -i c:\downloads\sysmonconfig.xml"
+sysmon.exe -accepteula -i c:\downloads\sysmonconfig.xml
 Start-Sleep -s 1
 Invoke-WebRequest https://live.sysinternals.com/Procmon64.exe -Outfile procmon.exe
 Invoke-WebRequest https://live.sysinternals.com/tcpview64.exe -Outfile tcptview.exe
