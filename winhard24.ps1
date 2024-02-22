@@ -1,8 +1,13 @@
-# Winhard
-Start-Transcript C:\WinhardLog.txt
+# BW-Winhard
+If (!(test-path C:\ccdc)){
+    New-Item -Path $path -ItemType Directory -erroraction SilentlyContinue  | Out-Null
+    Write-Host ""
+    Start-Sleep -s 1
+}
+Start-Transcript C:\ccdc\WinhardLog.txt
 Set-ExecutionPolicy Unrestricted -force
                                         ############## Function Row ##############
-#
+
 Function Continue_ {
     Write-Host -NoNewLine '----Press any key to continue----' -ForegroundColor Cyan; 
     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
@@ -14,34 +19,33 @@ Function CCDC_Directories {
     Write-Host "Starting Function: CCDC_Directories" -ForegroundColor Cyan
     Start-Sleep -s 1
     Do{
-    $global:ccdcpath = "c:\ccdc"
-    $global:threatpath = "$ccdcpath\ThreatHunting"
-    $global:configpath = "$ccdcpath\Config"
-    $global:regbackpath = "$ccdcpath\Regback"
-    $global:proofpath = "$ccdcpath\Proof"
+        $global:ccdcpath = "c:\ccdc"
+        $global:threatpath = "$ccdcpath\ThreatHunting"
+        $global:configpath = "$ccdcpath\Config"
+        $global:regbackpath = "$ccdcpath\Regback"
+        $global:proofpath = "$ccdcpath\Proof"
 
-    $paths = @($ccdcpath,$threatpath,$configpath,$regbackpath,$proofpath)
-    ForEach ($path in $paths){
-        Write-Host "Creating Directory: $path" -ForegroundColor Cyan
-        If (!(test-path $path)){
-            New-Item -Path $path -ItemType Directory -erroraction SilentlyContinue  | Out-Null
-            Write-Host ""
-            Start-Sleep -s 1
+        $paths = @($ccdcpath,$threatpath,$configpath,$regbackpath,$proofpath)
+        ForEach ($path in $paths){
+            Write-Host "Creating Directory: $path" -ForegroundColor Cyan
+            If (!(test-path $path)){
+                New-Item -Path $path -ItemType Directory -erroraction SilentlyContinue  | Out-Null
+                Write-Host ""
+                Start-Sleep -s 1
+            }
         }
-    }
-    $global:mambo = 0
-    # Checking for creation, if green, success, red fail. 
-    cls
-    Write-Host "Testing File Structure..." -ForegroundColor Cyan
-    ForEach ($path in $paths){
-        If (Test-Path $path){
-            #Write-Host "Found: $path" -ForegroundColor Green
-            $global:mambo += 1
+        $global:mambo = 0
+        cls
+        Write-Host "Testing File Structure..." -ForegroundColor Cyan
+        ForEach ($path in $paths){
+            If (Test-Path $path){
+                #Write-Host "Found: $path" -ForegroundColor Green
+                $global:mambo += 1
+            }
+            If (!(Test-Path $path)){
+                Write-Host "MISSING: $path" -ForegroundColor Red
+            }
         }
-        If (!(Test-Path $path)){
-            Write-Host "MISSING: $path" -ForegroundColor Red
-        }
-    }
     } Until ($global:mambo -eq 5)
     Write-Host "Function: CCDC_Directories   -   Complete" -ForegroundColor Green
     Continue_
@@ -52,36 +56,35 @@ Function Scan_Dirs {
     Write-Host "Starting Function: Scan_Dirs" -ForegroundColor Cyan
     Start-Sleep -s 1
     Do {
-    $global:scanpath = "$ccdcpath\PS-Scans"
-    $global:firewallpath = "$scanpath\Firewall"
-    $global:inboundpath = "$scanpath\Firewall\Inbound"
-    $global:outboundpath = "$scanpath\Firewall\Outbound"
-    $global:schtaskpath = "$scanpath\SchTasks"
-    $global:servicepath = "$scanpath\Services"
-    $global:discoverypath = "$ccdcpath\Discovery"
+        $global:scanpath = "$ccdcpath\PS-Scans"
+        $global:firewallpath = "$scanpath\Firewall"
+        $global:inboundpath = "$scanpath\Firewall\Inbound"
+        $global:outboundpath = "$scanpath\Firewall\Outbound"
+        $global:schtaskpath = "$scanpath\SchTasks"
+        $global:servicepath = "$scanpath\Services"
+        $global:discoverypath = "$ccdcpath\Discovery"
 
-    $paths = @($scanpath,$firewallpath,$inboundpath,$outboundpath,$schtaskpath,$servicepath,$discoverypath)
-    ForEach ($path in $paths){
-        Write-Host "Creating Directory: $path" -ForegroundColor Cyan
-        If (!(test-path $path)){
-            New-Item -Path $path -ItemType Directory -erroraction SilentlyContinue  | Out-Null
-            Write-Host ""
-            Start-Sleep -s 1
+        $paths = @($scanpath,$firewallpath,$inboundpath,$outboundpath,$schtaskpath,$servicepath,$discoverypath)
+        ForEach ($path in $paths){
+            Write-Host "Creating Directory: $path" -ForegroundColor Cyan
+            If (!(test-path $path)){
+                New-Item -Path $path -ItemType Directory -erroraction SilentlyContinue  | Out-Null
+                Write-Host ""
+                Start-Sleep -s 1
+            }
         }
-    }
-    $global:bamba = 0
-    # Checking for creation, if green, success, red fail. 
-    cls
-    Write-Host "Testing File Structure..." -ForegroundColor Cyan
-    ForEach ($path in $paths){
-        If (Test-Path $path){
-            #Write-Host "Found: $path" -ForegroundColor Green
-            $global:bamba += 1
+        $global:bamba = 0
+        cls
+        Write-Host "Testing File Structure..." -ForegroundColor Cyan
+        ForEach ($path in $paths){
+            If (Test-Path $path){
+                #Write-Host "Found: $path" -ForegroundColor Green
+                $global:bamba += 1
+            }
+            If (!(Test-Path $path)){
+                Write-Host "MISSING: $path" -ForegroundColor Red
+            }
         }
-        If (!(Test-Path $path)){
-            Write-Host "MISSING: $path" -ForegroundColor Red
-        }
-    }
     } Until ($global:bamba -eq 7)
     Write-Host "Function: Scan_Dirs   -   Complete" -ForegroundColor Green
     Continue_
@@ -91,9 +94,9 @@ Function Discovery_ {
     cls
     Write-Host "Starting Function: Discovery_" -ForegroundColor Cyan
     Start-Sleep -s 1
-    Get-NetFirewallRule | Where {$_.Direction -eq "Inbound"} | Where {$_.Enabled -eq "True"} | Select Name, DisplayName, Description, DisplayGroup, Profile, Action | Out-File $discoverypath\Active-Inbount-Rules.txt
-    Get-NetFirewallRule | Where {$_.Direction -eq "Outbound"} | Where {$_.Enabled -eq "True"} | Select Name, DisplayName, Description, DisplayGroup, Profile, Action | Out-File $discoverypath\Active-Outbount-Rules.txt
-    Get-ScheduledTask | Where {$_.State -ne "Disabled"} | Select Taskname , State, TaskPath | FL | Out-File $discoverypath\Active-ScheduledTasks.txt
+    Get-NetFirewallRule | Where-Object   {$_.Direction -eq "Inbound"} | Where-Object   {$_.Enabled -eq "True"} | Select-Object Name, DisplayName, Description, DisplayGroup, Profile, Action | Out-File $discoverypath\Active-Inbount-Rules.txt
+    Get-NetFirewallRule | Where-Object   {$_.Direction -eq "Outbound"} | Where-Object   {$_.Enabled -eq "True"} | Select-Object Name, DisplayName, Description, DisplayGroup, Profile, Action | Out-File $discoverypath\Active-Outbount-Rules.txt
+    Get-ScheduledTask | Where-Object   {$_.State -ne "Disabled"} | Select-Object Taskname , State, TaskPath | FL | Out-File $discoverypath\Active-ScheduledTasks.txt
     Write-Host "Function: Discovery_   -   Complete" -ForegroundColor Green
     Continue_
 }
@@ -217,38 +220,36 @@ Function Damage_Reversal {
     Start-Sleep -s 1
                 # Removing all saved credentials
     Write-Host "Removing all saved credentials..." -ForegroundColor Cyan
-    cmdkey /list | Where {$_ -like "*Target*"} | ForEach ($_) {cmdkey /delete $_.Substring('12')} 
+    cmdkey /list | Where-Object   {$_ -like "*Target*"} | ForEach ($_) {cmdkey /delete $_.Substring('12')} 
                 # Disable Default Accounts
     #net user Guest /active:no
                 # Show Local Users
-    $disUsers = Get-LocalUser | Where {$_.Name -ne $env:username}
+    $disUsers = Get-LocalUser | Where-Object   {$_.Name -ne $env:username}
     $totUsers = Get-LocalUser
     ForEach ($user in $disUsers){
         If ($user -ne $env:username){
             Write-Host "Account: $user - Disabled" -ForegroundColor Yellow
-	    Get-LocalUser | Where {$_.Name -ne $env:username} | Disable-LocalUser
+	    Get-LocalUser | Where-Object  {$_.Name -ne $env:username} | Disable-LocalUser
         }
     }    
     Get-LocalUser | Out-File $discoverypath\All-Local-Users.txt
-    Get-LocalUser | Where {$_.Enabled -eq "True"} | Out-file $discoverypath\All-Enabled-Local-Users.txt
+    Get-LocalUser | Where-Object   {$_.Enabled -eq "True"} | Out-file $discoverypath\All-Enabled-Local-Users.txt
     Get-Content "$discoverypath\All-Local-Users.txt"
     Write-Host "Check list for suspicious accounts..." -ForegroundColor Cyan
     Write-Host "Output saved to $discoverypath\All-Local-Users.txt" -ForegroundColor Green
     Write-Host "--Screenshot--" -ForegroundColor Yellow
-    Write-Host -NoNewLine 'Press any key to continue...';
-    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
-    Start-Sleep -s 1
+    Continue_
     cls
                 # Disabling IPv6
     $Adapters = Get-NetAdapterBinding | Where-Object ComponentID -EQ 'ms_tcpip6' | Select-Object Name
     ForEach ($adapter in $Adapters  ) { 
     Disable-NetAdapterBinding -Name $Adapters.Name -ComponentID ms_tcpip6}
     Write-Host "IPv6 Disabled..." -ForegroundColor Yellow
-                # Disable win features   (Telnet client seems to no longer be involved. Client however is found.)
+                # Disable win features
     Write-Host "Disabling Windows Features" -ForegroundColor Cyan
     $features = @("TelnetServer","TelnetClient","TFTP","SMB1Protocol","SMB1Protocol-Client","SMB1Protocol-Server","SMB1Protocol-Deprecation","SmbDirect","Printing-Foundation-Features","Printing-Foundation-InternetPrinting-Client","Printing-Foundation-LPDPrintService","Printing-Foundation-LPRPortMonitor")
     ForEach ($feature in $features){
-        $chk = Get-WindowsOptionalFeature -Online | Where {$_.FeatureName -like "*$feature*"} | Where {$_.State -eq "Enabled"}
+        $chk = Get-WindowsOptionalFeature -Online | Where-Object   {$_.FeatureName -like "*$feature*"} | Where-Object  {$_.State -eq "Enabled"}
         If($chk){
             Write-Host "Disabling feature: $feature" -ForegroundColor Yellow
             Disable-WindowsOptionalFeature -Online -FeatureName $feature -NoRestart | Out-File $discoverypath\DisabledFeatures.txt
@@ -258,18 +259,22 @@ Function Damage_Reversal {
             Add-Content $discoverypath\MissingFeatures.txt "Feature: $feature"
         }
     }
-    $enabledFeatures = (Get-WindowsOptionalFeature -Online | Where {$_.State -eq "Enabled"}).FeatureName | FT
-    Get-WindowsOptionalFeature -Online | Where {$_.State -eq "Enabled"} | FT
+    $enabledFeatures = (Get-WindowsOptionalFeature -Online | Where-Object  {$_.State -eq "Enabled"}).FeatureName | FT
+    Get-WindowsOptionalFeature -Online | Where-Object  {$_.State -eq "Enabled"} | FT
     Write-Host "Output saved to $discoverypath\EnabledFeatures.txt" -ForegroundColor Green
     Write-Host "--Screenshot--" -ForegroundColor Yellow
-    Write-Host -NoNewLine 'Press any key to continue...';
-    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
-    Start-Sleep -s 1
+    Continue_
     ForEach ($feature in $enabledFeatures){
         Add-Content $discoverypath\EnabledFeatures.txt "$feature" -force -erroraction silentlycontinue
     }
-                                        # Reg edits Get-ItemProperty
+                                        # Reg edits / Get-ItemProperty
     $regProof = "$proofpath\regproof.txt"
+                # Saving old reg
+    reg export HKLM $regbackpath\Oldhlkm.reg
+    reg export HKCU $regbackpath\Oldhkcu.reg
+    reg export HKCR $regbackpath\Oldhlcr.reg
+    reg export HKU $regbackpath\Oldhlku.reg
+    reg export HKCC $regbackpath\Oldhlcc.reg
                 # Changing Owner
     Add-Content $regProof "Changing registered owner..."
     REG query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion" /v RegisteredOwner | Add-Content $regProof
@@ -403,7 +408,7 @@ Function Damage_Reversal {
     REG add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\osk.exe" /v Debugger /t REG_SZ /d "systray.exe" /f | Out-Null
     REG query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\osk.exe" /v Debugger | Add-Content $regProof
 
-    #Sticky keys | Have converted, needs testing to confirm. 
+                #Sticky keys
     Write-Host "Taking over sticky keys"
     Set-Location C:\Windows\System32
     takeown /f sethc.exe | Out-Null
@@ -426,6 +431,9 @@ Function Win10 {
     cls
     Write-Host "Starting Function: Win10" -ForegroundColor Cyan
     Start-Sleep -s 1
+		        # Adding route
+    route add 172.25.$Team.0     mask 255.255.255.0 172.31.$Team.2     metric 1
+    Start-Sleep -s 1
     Write-Host "Configuring Win10 Banner..." -ForegroundColor Cyan
     REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Winlogon" /v legalnoticecaption /t REG_SZ /d "* * * * * * * * * * W A R N I N G * * * * * * * * * *" /f | Out-Null
     REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Winlogon" /v legalnoticetext /t REG_SZ /d "This computer system network is the property of $dName. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Company’s Acceptable Use of Information Technology Resources Policy ('AUP'). Users have no personal privacy rights in any materials they place, view, access, or transmit on this system. The Company complies with state and federal law regarding certain legally protected confidential information, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Company and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to such interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Company personnel. Unauthorized or improper use of this system may result in administrative disciplinary action, civil charges/criminal penalties, and/or other sanctions as set forth in the Company’s AUP. By continuing to use this system you indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF A $dName OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE." /f | Out-Null
@@ -447,30 +455,37 @@ Function WinServer{
     REG delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v legalnoticetext /f | Out-Null 
     REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v legalnoticetext /t REG_SZ /d "This computer system/network is the property of $dName. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Company’s Acceptable Use of Information Technology Resources Policy ('AUP'). Users have no personal privacy rights in any materials they place, view, access, or transmit on this system. The Company complies with state and federal law regarding certain legally protected confidential information, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Company and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to such interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Company personnel. Unauthorized or improper use of this system may result in administrative disciplinary action, civil charges/criminal penalties, and/or other sanctions as set forth in the Company’s AUP. By continuing to use this system you indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF A $dName OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE." | Out-Null
     REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v legalnoticecaption  | Out-Null 
-    REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v legalnoticetext  | Out-Null 
+    REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v legalnoticetext  | Out-Null
+    REG query "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\DNS\Parameters" /v TcpReceivePacketSize | Add-Content $regProof
+    reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\DNS\Parameters" /v TcpReceivePacketSize /t REG_DWORD /d 65280 /f
+    REG query "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\DNS\Parameters" /v TcpReceivePacketSize | Add-Content $regProof
+    Stop-Service Dns
+    start-sleep -s 1
+    Start-Service Dns
+    Start-Sleep -s 1
     Write-Host "--Screenshot--" -ForegroundColor Yellow
     Continue_
     
-                # Disable SMB1?
+                # Disable SMB1
     Write-Host "Disable SMB1 via Registry..." -ForegroundColor Cyan
     REG add "HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" /v "SMB1" /t REG_DWORD /d 0 /f | Out-Null
                 #LDAP 389
-    ECHO Create Firewall Rules for LDAP
+    Write-Host "Create Firewall Rules for LDAP" -ForegroundColor Cyan
     netsh advfirewall firewall add rule name="CCDC-LDAP Service" dir=in action=allow enable=yes profile=any localport=389 remoteip=$EComm,$WebMail,$PAMI protocol=tcp  | Out-Null
 
                 #LDAP 636
-    ECHO Create Firewall Rules for LDAP
+    Write-Host "Create Firewall Rules for LDAP" -ForegroundColor Cyan
     netsh advfirewall firewall add rule name="CCDC-LDAP Service SSL" dir=in action=allow enable=no profile=any localport=636 remoteip=$EComm,$WebMail,$PAMI protocol=tcp  | Out-Null
 
                 # KERBEROS
-    ECHO Create Firewall Rules for Kerberos
+    Write-Host "Create Firewall Rules for Kerberos" -ForegroundColor Cyan
     netsh advfirewall firewall add rule name="CCDC-Kerberos In UDP from Internal" dir=in action=allow enable=yes profile=any localport=88,464 remoteip=$EComm,$WebMail,$PAMI protocol=udp  | Out-Null
     netsh advfirewall firewall add rule name="CCDC-Kerberos In TCP from Internal" dir=in action=allow enable=yes profile=any localport=88,464 remoteip=$EComm,$WebMail,$PAMI protocol=tcp  | Out-Null
     netsh advfirewall firewall set rule group="CCDC-Kerberos Key Distribution Center (TCP-In)" new enable=yes  | Out-Null
     netsh advfirewall firewall set rule group="CCDC-Kerberos Key Distribution Center (UDP-In)" new enable=yes  | Out-Null
 
                 # DNS 53
-    ECHO Create Firewall Rules for DNS access for Internet and Intranet
+    Write-Host "Create Firewall Rules for DNS access for Internet and Intranet" -ForegroundColor Cyan
     netsh advfirewall firewall add rule name="CCDC-DNS In UDP from DNSNTP"  dir=in action=allow enable=yes profile=any remoteport=53 remoteip=$DNSNTP protocol=udp  | Out-Null
     netsh advfirewall firewall add rule name="CCDC-DNS Out UDP to DNSNTP" dir=out action=allow enable=yes profile=any remoteport=53 remoteip=$DNSNTP protocol=udp  | Out-Null
     netsh advfirewall firewall add rule name="CCDC-DNS In TCP from DNSNTP"  dir=in action=allow enable=yes profile=any remoteport=53 remoteip=$DNSNTP protocol=tcp  | Out-Null
@@ -492,7 +507,7 @@ Function WinServer{
     net localgroup "Remote Desktop Users" panuser /add   | Out-Null
 
                 # Calling Config_NTP_Server
-    #Config_NTP_Server
+    #Config_NTP_Server - Removed
     Continue_
 }
 
@@ -517,13 +532,11 @@ Function Docker {
     REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v legalnoticetext /t REG_SZ /d "This computer system/network is the property of $dName. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Company’s Acceptable Use of Information Technology Resources Policy (“AUP”). Users have no personal privacy rights in any materials they place, view, access, or transmit on this system. The Company complies with state and federal law regarding certain legally protected confidential information, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Company and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to such interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Company personnel. Unauthorized or improper use of this system may result in administrative disciplinary action, civil charges/criminal penalties, and/or other sanctions as set forth in the Company’s AUP. By continuing to use this system you indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF A $dName OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE." | Out-Null
 
     REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v legalnoticecaption | Out-Null 
-    REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v legalnoticetext | Out-Null 
+    REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v legalnoticetext | Out-Null
     Write-Host "--Screenshot--" -ForegroundColor Yellow
     Continue_
 
-    #call :s   # THIS IS FOUND NOWHERE
-
-                # Disable SMB1?
+                # Disable SMB1
     Write-Host "Disable SMB1 via Registry..." -ForegroundColor Cyan
     REG add "HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" /v "SMB1" /t REG_DWORD /d 0 /f
     Continue_
@@ -536,7 +549,7 @@ Function CCDC_ICACLS {
     Write-Host "Tighten CCDC ACL..." -ForegroundColor Cyan
     icacls $ccdcpath\* /inheritance:d 
     icacls $ccdcpath /inheritance:d 
-                    # Grants permission to only cur user
+                    # Grants permission to only cur user for ccdc dirs
     $Acl = Get-Acl $ccdcpath
     $Ar = New-Object System.Security.AccessControl.FileSystemAccessRule("$env:username", "FullControl", "ContainerInherit,ObjectInherit", "None", "Allow")
     $Acl.SetAccessRule($Ar)
@@ -552,8 +565,7 @@ Function CCDC_ICACLS {
     icacls $ccdcpath /remove:g "Authenticated Users" 
     icacls $ccdcpath /remove:g "Users" 
     icacls $ccdcpath\* /inheritance:e
-                # where does this file come from??
-    #icacls C:\ccdc\pfirewall.log /grant $env:username:F Administrators:F
+    icacls C:\ccdc\pfirewall.log /grant $env:username:F Administrators:F
     Continue_
 }
 
@@ -569,9 +581,9 @@ Function Export_Configs {
                 # Export Groups
     Get-LocalGroup | Out-File $configpath\Groups.txt
                 # Export Scheduled tasks
-    get-ScheduledTask | Select TaskName, State, TaskPath | FL | Out-File $threatpath\ScheduledTasks.txt
+    get-ScheduledTask | Select-Object TaskName, State, TaskPath | FL | Out-File $threatpath\ScheduledTasks.txt
                 # Export Services
-    get-service | Sort | Select DisplayName, Status | Out-File $threatpath\Services.txt
+    get-service | Sort | Select-Object DisplayName, Status | Out-File $threatpath\Services.txt
                 # Export Session
     query user | Out-File $threatpath\UserSessions.txt
                 # Export PSSession
@@ -585,7 +597,6 @@ Function Export_Configs {
     Continue_
 }
                                         ############## End of Function Row ##############
-
 
                         ############## Beginning of script ##############
 
@@ -621,7 +632,7 @@ Do{
     $hostanswer = Read-Host "Is this Information correct?  Y/N"
 }  Until (($hostanswer -eq "Y") -or ($hostanswer -eq "y"))
 
-                # 3.. Team Check
+                # 3. Team Check
 If ($setExt) {
     Do{
         cls               
@@ -636,9 +647,6 @@ If ($setExt) {
 
                 # 4. Setting CCDC directories
 CCDC_Directories
-		# Adding route
-route add 172.25.21.0     mask 255.255.255.0 172.31.21.2     metric 1
-Start-Sleep -s 1
 
 Scan_Dirs
 
@@ -674,8 +682,8 @@ Continue_
                 # 9. run function Damage_Reversal
 Damage_Reversal
 
-                # 10. Setup TCPDump  - unsure
-# Investigate
+                # 10. Setup TCPDump
+# Removed
 
                 # 11. Apply Box specific rules
 $curhost
@@ -684,11 +692,12 @@ $curhost
 CCDC_ICACLS
 
                 # 13. Config_NTP_Server
-# Investiage
+# Removed
 
                 # 14. Export
 Export_Configs
 Stop-Transcript
 Write-Host "Process complete..." -ForegroundColor Green
 Continue_
+Set-ExecutionPolicy Restricted -force
 #Exit 0
