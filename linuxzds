@@ -60,10 +60,10 @@ else
 		EXPECTED_OS="centos"
 		VERSION_ID=6 # Probably?
 	else
-		EXPECTED_OS="fedora"
+		EXPECTED_OS="fedora"							
 	fi
 
-	if [[ EXPECTED_OS = "centos" && VERSION_ID = 7]]; then;
+	if [ "$EXPECTED_OS $VERSION_ID" = "centos 7" ]; then
 		cp /etc/yum.repos.d/CentOS-Base.repo{,.zdsbak}
 		cat >/etc/yum.repos.d/CentOS-Base.repo <<'EOF'
 [base]
