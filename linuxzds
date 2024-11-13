@@ -33,7 +33,7 @@ EOF
 			apt-get update
 			apt-get install firefox
 			popd
-		fi
+		fi		
 	fi
 
 	expected_dist=apt
@@ -52,13 +52,20 @@ else
 
 	EXPECTED_OS="redhat"
 
+
 	if [[ -e /etc/os-release ]]; then
-		EXPECTED_OS=$(awk 'BEGIN {FS="=";}; /^ID=/ {print $2}' /etc/os-release)
+		EXPECTED_OS=$(awk 'BEGIN {FS="=";}; /^ID=/ {gsub("\"","",$2);print $2}' /etc/os-release)
+		VERSION_ID=$(awk 'BEGIN {FS="=";}; /^VERSION_ID=/ {gsub("\"","",$2);print $2}' /etc/os-release)
 	elif [[ -e /etc/centos-release ]]; then
 		EXPECTED_OS="centos"
-		if grep 'centos:7' /etc/os-release; then
-			cp /etc/yum.repos.d/CentOS-Base.repo{,.zdsbak}
-			cat >/etc/yum.repos.d/CentOS-Base.repo <<'EOF'
+		VERSION_ID=6 # Probably?
+	else
+		EXPECTED_OS="fedora"
+	fi
+
+	if [[ EXPECTED_OS = "centos" && VERSION_ID = 7]]; then;
+		cp /etc/yum.repos.d/CentOS-Base.repo{,.zdsbak}
+		cat >/etc/yum.repos.d/CentOS-Base.repo <<'EOF'
 [base]
 name=CentOS-$releasever - Base
 baseurl=https://vault.centos.org/centos/$releasever/os/$basearch/
@@ -77,12 +84,7 @@ baseurl=https://vault.centos.org/centos/$releasever/extras/$basearch/
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 EOF
-			yum makecache
-		fi
-	else
-		EXPECTED_OS="fedora"
-	fi
-
+	fi	
 	if [[ ! EXPECTED_OS = "fedora" ]]; then
 		yum install -y epel-release
 	fi
