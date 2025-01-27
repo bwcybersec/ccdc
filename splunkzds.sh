@@ -27,17 +27,14 @@ mkdir -p /opt/splunk/etc/deployment-apps/uf_limits_unlimited/local
 mkdir -p /opt/splunk/etc/system/local
 mkdir -p /opt/splunk/etc/deployment-apps/Splunk_TA_stream/local
 
+cat <<EOF >/opt/splunk
+
 #conf file set up for TA *nix
 cat <<EOF >/opt/splunk/etc/deployment-apps/ccdc_linux_inputs/local/inputs.conf
-#[monitor:///var/log]
-#index=main
-#disabled = false
-#blacklist1=/var/log/audit.log
-#blacklist2=/var/log/auth.log
-#blacklist3=/var/log/secure
-#blacklist4=/var/log/kern.log
-#blacklist5=/var/log/zds/clamscan.log
-#blacklist6=/var/log/clamav/freshclam.log
+[monitor:///var/log/zds/*]
+index=main
+disabled=false
+sourcetype=zds:log
 
 [monitor:///var/log/syslog]
 index=main
@@ -49,17 +46,12 @@ index=main
 disabled=false
 sourcetype=syslog
 
-[monitor:///var/log/zds/*]
+[monitor:///var/log/audit/audit.log]
 index=main
 disabled=false
-sourcetype=zds:log
+sourcetype=linux:audit:enriched
 
 [monitor:///var/log/.../access.log]
-index=main
-disabled=false
-sourcetype=access_combined
-
-[monitor:///var/log/.../access_log]
 index=main
 disabled=false
 sourcetype=access_combined
@@ -69,10 +61,24 @@ index=main
 disabled=false
 sourcetype=linux:audit:enriched
 
-[monitor:///var/log/audit/audit.log]
+[monitor:///var/log/.../access_log]
 index=main
 disabled=false
-sourcetype=linux:audit:enriched
+sourcetype=access_combined
+
+#[monitor:///var/log]
+#index=main
+#disabled = false
+#blacklist1=/var/log/audit.log
+#blacklist2=/var/log/auth.log
+#blacklist3=/var/log/secure
+#blacklist4=/var/log/kern.log
+#blacklist5=/var/log/zds/clamscan.log
+#blacklist6=/var/log/clamav/freshclam.log
+
+[journald://journald]
+index=syslognt
+journalctl-include-fields = PRIORITY,CMD,EXE
 
 [monitor:///var/log/secure]
 index=main
@@ -205,6 +211,9 @@ git config --global http.sslVerify false
 /opt/splunk/bin/splunk cmd python -mpip install wheel
 /opt/splunk/bin/splunk cmd python -mpip install git+https://github.com/HurricaneLabs/sbclient
 
+# undocumented api gaming
+sed -i 's/apps.splunk/splunkbase.splunk/' /opt/splunk/lib/python*/site-packages/sbclient.py
+
 # entering your Splunkbase username and password to make sbclient work
 while :; do
 	read -p 'Splunkbase Username:' uservar
@@ -255,6 +264,7 @@ splunk_stream_app_location = http://$hostip:8000/en-us/custom/splunk_app_stream/
 disabled = 0
 
 EOF
-
+/opt/splunk/bin/splunk add index configs
+/opt/splunk/bin/splunk add index syslognt
 /opt/splunk/bin/splunk reload deploy-server
 /opt/splunk/bin/splunk enable listen 9997
