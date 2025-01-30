@@ -369,8 +369,8 @@ set rulebase security rules External_to_Debian destination-hip any
 set rulebase security rules External_to_Debian action allow
 set rulebase security rules External_to_Debian log-start yes
 set rulebase security rules External_to_Debian log-setting default
-set rulebase security rules External_to_Fedora-Mail application [ imap ping pop3 smtp ssl web-browsing ]
-set rulebase security rules External_to_Fedora-Mail service application-default
+set rulebase security rules External_to_Fedora-Mail application [ imap ping pop3 smtp web-browsing ]
+set rulebase security rules External_to_Fedora-Mail service [ imap pop3 smtp http ]
 set rulebase security rules External_to_Fedora-Mail profile-setting group Sec_Group
 set rulebase security rules External_to_Fedora-Mail to Public
 set rulebase security rules External_to_Fedora-Mail from External
