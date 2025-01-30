@@ -53,6 +53,14 @@ set profile-group Sec_Group spyware strict
 set profile-group Sec_Group vulnerability strict
 set profile-group Sec_Group wildfire-analysis default
 delete address "Google DNS" 
+set service ftp-cmd protocol tcp port 21
+set service ftp-data protocol tcp port 20
+set service http protocol tcp port 80
+set service imap protocol tcp port 143
+set service pop3 protocol tcp port 110
+set service smtp protocol tcp port 25
+set service ssh protocol tcp port 22
+set service telnet protocol tcp port 23
 set deviceconfig system service disable-telnet yes
 set deviceconfig system service disable-http no
 set deviceconfig system service disable-snmp yes
@@ -445,7 +453,7 @@ set rulebase security rules DENYALL category any
 set rulebase security rules DENYALL source-hip any
 set rulebase security rules DENYALL destination-hip any
 set rulebase security rules DENYALL log-start yes
-set rulebase security rules DENYALL log-setting Splunk
+set rulebase security rules DENYALL log-setting default
 set rulebase security rules DENYALL disabled yes
 set rulebase nat rules PA source-translation static-ip translated-address 172.25.21.150
 set rulebase nat rules PA source-translation static-ip bi-directional yes
