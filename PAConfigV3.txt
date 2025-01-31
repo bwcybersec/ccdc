@@ -48,11 +48,6 @@ set address Internal ip-netmask 172.20.240.0/24
 set application-group Outbound_Apps members [ web-browsing ssl apt-get yum git-base github google-base ms-update pastebin sourceforge-base subversion-base ping ocsp paloalto-updates pan-db-cloud ]
 set application-group Internal_Apps members [ ntp dns ssh ping web-browsing ssl mysql splunk ]
 set application-group Log_Apps members [ splunk ssl web-browsing syslog ]
-set profile-group Sec_Group virus default
-set profile-group Sec_Group spyware strict
-set profile-group Sec_Group vulnerability strict
-set profile-group Sec_Group wildfire-analysis default
-delete address "Google DNS" 
 set service ftp-cmd protocol tcp port 21
 set service ftp-data protocol tcp port 20
 set service http protocol tcp port 80
@@ -61,6 +56,11 @@ set service pop3 protocol tcp port 110
 set service smtp protocol tcp port 25
 set service ssh protocol tcp port 22
 set service telnet protocol tcp port 23
+set service all-web protocol tcp port 8000,80,443
+set service all-web protocol tcp override no 
+set service splunk-logs protocol udp port 514
+set service splunk-logs protocol udp override no 
+
 set deviceconfig system service disable-telnet yes
 set deviceconfig system service disable-http no
 set deviceconfig system service disable-snmp yes
@@ -234,10 +234,7 @@ set zone Internal network layer3 ethernet1/2
 set zone External network layer3 ethernet1/3
 set zone User network layer3 ethernet1/4
 delete threats vulnerability 41111 
-set service All-Web protocol tcp port 8000,80,443
-set service All-Web protocol tcp override no 
-set service Splunk-Logs protocol udp port 514
-set service Splunk-Logs protocol udp override no 
+
 set rulebase security rules any2any option disable-server-response-inspection no
 set rulebase security rules any2any from any
 set rulebase security rules any2any to any
@@ -342,7 +339,7 @@ set rulebase security rules External_to_2019-ldap profile-setting group Sec_Grou
 set rulebase security rules External_to_2019-ldap log-start yes
 set rulebase security rules External_to_2019-ldap disabled yes
 set rulebase security rules External_to_Splunk application [ ping ssl web-browsing ]
-set rulebase security rules External_to_Splunk service All-Web
+set rulebase security rules External_to_Splunk service all-web
 set rulebase security rules External_to_Splunk from External
 set rulebase security rules External_to_Splunk to Public
 set rulebase security rules External_to_Splunk source any
@@ -413,7 +410,7 @@ set rulebase security rules AHHHH_LetMeIn log-start yes
 set rulebase security rules AHHHH_LetMeIn log-setting default
 set rulebase security rules AHHHH_LetMeIn disabled yes
 set rulebase security rules Logs application Log_Apps
-set rulebase security rules Logs service [ All-Web Splunk-Logs ]
+set rulebase security rules Logs service [ all-web splunk-logs ]
 set rulebase security rules Logs disabled no
 set rulebase security rules Logs profile-setting group Sec_Group
 set rulebase security rules Logs to Public
@@ -435,7 +432,7 @@ set rulebase security rules InternalNetworks_to_InternalNetworks destination [ I
 set rulebase security rules InternalNetworks_to_InternalNetworks source-user any
 set rulebase security rules InternalNetworks_to_InternalNetworks category any
 set rulebase security rules InternalNetworks_to_InternalNetworks application Internal_Apps
-set rulebase security rules InternalNetworks_to_InternalNetworks service All-Web
+set rulebase security rules InternalNetworks_to_InternalNetworks service all-web
 set rulebase security rules InternalNetworks_to_InternalNetworks source-hip any
 set rulebase security rules InternalNetworks_to_InternalNetworks destination-hip any
 set rulebase security rules InternalNetworks_to_InternalNetworks action allow
@@ -556,3 +553,5 @@ set import network interface [ ethernet1/1 ethernet1/2 ethernet1/3 ethernet1/4 ]
 delete global-protect global-protect-mdm travis
 delete application-filter "Garcia loves chunkymonkey" 
 commit
+show admin-sessions
+delete admin-sessions 
