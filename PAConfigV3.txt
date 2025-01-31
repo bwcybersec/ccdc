@@ -48,6 +48,11 @@ set address Internal ip-netmask 172.20.240.0/24
 set application-group Outbound_Apps members [ web-browsing ssl apt-get yum git-base github google-base ms-update pastebin sourceforge-base subversion-base ping ocsp paloalto-updates pan-db-cloud ]
 set application-group Internal_Apps members [ ntp dns ssh ping web-browsing ssl mysql splunk ]
 set application-group Log_Apps members [ splunk ssl web-browsing syslog ]
+set profile-group Sec_Group virus default
+set profile-group Sec_Group spyware strict
+set profile-group Sec_Group vulnerability strict
+set profile-group Sec_Group wildfire-analysis default
+delete address "Google DNS"
 set service ftp-cmd protocol tcp port 21
 set service ftp-data protocol tcp port 20
 set service http protocol tcp port 80
