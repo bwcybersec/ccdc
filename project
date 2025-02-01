@@ -12,9 +12,9 @@ curl -ko smarterfw "https://raw.githubusercontent.com/bwcybersec/ccdc/main/smart
 curl -ko linuxzds "https://raw.githubusercontent.com/bwcybersec/ccdc/main/linuxzds"
 curl -ko splunkzds "https://raw.githubusercontent.com/bwcybersec/ccdc/main/splunkzds.sh"
 curl -ko PAConfigV3.txt "https://raw.githubusercontent.com/bwcybersec/ccdc/main/PAConfigV3.txt"
-cp splunkzds splunkzds.sh
 curl -ko winhard24.ps1 "https://raw.githubusercontent.com/bwcybersec/ccdc/main/winhard24.ps1"
 curl -ko win10down.ps1 "https://raw.githubusercontent.com/bwcybersec/ccdc/main/win10down.ps1"
+cp splunkzds splunkzds.sh
 if type -P python3; then
 	python3 -m http.server &
 	>~/stageserver.log
