@@ -23,11 +23,20 @@ $QUAGSIRE -F OUTPUT
 
 $QUAGSIRE -A INPUT -i lo -j ACCEPT
 $QUAGSIRE -A INPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
+$QUAGSIRE -A INPUT -p icmp -j ACCEPT
 applaud
 read -p "Enter host (virt_debian,virt_ubuweb,virt_ubuwkst,virt_centos,virt_splunk,virt_fedora):" CLODSIRE_HOST
 case $CLODSIRE_HOST in
 virt_debian)
 cat >> clodsire << applaud
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.10 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.100 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.20 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.241.30 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.241.40 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.10 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.200 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.241.20 --dport 161 -j ACCEPT
 $QUAGSIRE -A INPUT -p udp -s 172.20.242.10 --dport 123 -j ACCEPT
 $QUAGSIRE -A INPUT -p udp -s 172.20.242.100 --dport 123 -j ACCEPT
 $QUAGSIRE -A INPUT -p udp -s 172.20.240.20 --dport 123 -j ACCEPT
@@ -36,6 +45,11 @@ $QUAGSIRE -A INPUT -p udp -s 172.20.241.40 --dport 123 -j ACCEPT
 $QUAGSIRE -A INPUT -p udp -s 172.20.240.10 --dport 123 -j ACCEPT
 $QUAGSIRE -A INPUT -p udp -s 172.20.242.200 --dport 123 -j ACCEPT
 $QUAGSIRE -A INPUT -p udp -s 172.20.241.20 --dport 123 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp --dport 53 -j ACCEPT
+applaud
+;;
+virt_ubuweb)
+cat >> clodsire << applaud
 $QUAGSIRE -A INPUT -p udp -s 172.20.242.10 --dport 161 -j ACCEPT
 $QUAGSIRE -A INPUT -p udp -s 172.20.242.100 --dport 161 -j ACCEPT
 $QUAGSIRE -A INPUT -p udp -s 172.20.240.20 --dport 161 -j ACCEPT
@@ -44,11 +58,6 @@ $QUAGSIRE -A INPUT -p udp -s 172.20.241.40 --dport 161 -j ACCEPT
 $QUAGSIRE -A INPUT -p udp -s 172.20.240.10 --dport 161 -j ACCEPT
 $QUAGSIRE -A INPUT -p udp -s 172.20.242.200 --dport 161 -j ACCEPT
 $QUAGSIRE -A INPUT -p udp -s 172.20.241.20 --dport 161 -j ACCEPT
-$QUAGSIRE -A INPUT -p udp --dport 53 -j ACCEPT
-applaud
-;;
-virt_ubuweb)
-cat >> clodsire << applaud
 $QUAGSIRE -A INPUT -p tcp -s 172.20.242.10 --dport 8000 -j ACCEPT
 $QUAGSIRE -A INPUT -p tcp -s 172.20.242.100 --dport 8000 -j ACCEPT
 $QUAGSIRE -A INPUT -p tcp -s 172.20.240.20 --dport 8000 -j ACCEPT
@@ -57,14 +66,6 @@ $QUAGSIRE -A INPUT -p tcp -s 172.20.241.40 --dport 8000 -j ACCEPT
 $QUAGSIRE -A INPUT -p tcp -s 172.20.240.10 --dport 8000 -j ACCEPT
 $QUAGSIRE -A INPUT -p tcp -s 172.20.242.200 --dport 8000 -j ACCEPT
 $QUAGSIRE -A INPUT -p tcp -s 172.20.241.20 --dport 8000 -j ACCEPT
-$QUAGSIRE -A INPUT -p udp -s 172.20.242.10 --dport 161 -j ACCEPT
-$QUAGSIRE -A INPUT -p udp -s 172.20.242.100 --dport 161 -j ACCEPT
-$QUAGSIRE -A INPUT -p udp -s 172.20.240.20 --dport 161 -j ACCEPT
-$QUAGSIRE -A INPUT -p udp -s 172.20.241.30 --dport 161 -j ACCEPT
-$QUAGSIRE -A INPUT -p udp -s 172.20.241.40 --dport 161 -j ACCEPT
-$QUAGSIRE -A INPUT -p udp -s 172.20.240.10 --dport 161 -j ACCEPT
-$QUAGSIRE -A INPUT -p udp -s 172.20.242.200 --dport 161 -j ACCEPT
-$QUAGSIRE -A INPUT -p udp -s 172.20.241.20 --dport 161 -j ACCEPT
 applaud
 ;;
 virt_ubuwkst)
@@ -94,7 +95,14 @@ applaud
 ;;
 virt_splunk)
 cat >> clodsire << applaud
-$QUAGSIRE -A INPUT -p udp -s 172.20.242.150 --dport 514 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.10 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.100 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.20 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.241.30 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.241.40 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.10 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.200 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.241.20 --dport 161 -j ACCEPT
 $QUAGSIRE -A INPUT -p tcp -s 172.20.242.10 --dport 8089 -j ACCEPT
 $QUAGSIRE -A INPUT -p tcp -s 172.20.242.100 --dport 8089 -j ACCEPT
 $QUAGSIRE -A INPUT -p tcp -s 172.20.240.20 --dport 8089 -j ACCEPT
@@ -109,14 +117,7 @@ $QUAGSIRE -A INPUT -p tcp -s 172.20.241.30 --dport 9997 -j ACCEPT
 $QUAGSIRE -A INPUT -p tcp -s 172.20.241.40 --dport 9997 -j ACCEPT
 $QUAGSIRE -A INPUT -p tcp -s 172.20.240.10 --dport 9997 -j ACCEPT
 $QUAGSIRE -A INPUT -p tcp -s 172.20.242.200 --dport 9997 -j ACCEPT
-$QUAGSIRE -A INPUT -p udp -s 172.20.242.10 --dport 161 -j ACCEPT
-$QUAGSIRE -A INPUT -p udp -s 172.20.242.100 --dport 161 -j ACCEPT
-$QUAGSIRE -A INPUT -p udp -s 172.20.240.20 --dport 161 -j ACCEPT
-$QUAGSIRE -A INPUT -p udp -s 172.20.241.30 --dport 161 -j ACCEPT
-$QUAGSIRE -A INPUT -p udp -s 172.20.241.40 --dport 161 -j ACCEPT
-$QUAGSIRE -A INPUT -p udp -s 172.20.240.10 --dport 161 -j ACCEPT
-$QUAGSIRE -A INPUT -p udp -s 172.20.242.200 --dport 161 -j ACCEPT
-$QUAGSIRE -A INPUT -p udp -s 172.20.241.20 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.150 --dport 514 -j ACCEPT
 $QUAGSIRE -A INPUT -p tcp --dport 8000 -j ACCEPT
 applaud
 ;;
@@ -130,8 +131,8 @@ $QUAGSIRE -A INPUT -p udp -s 172.20.241.40 --dport 161 -j ACCEPT
 $QUAGSIRE -A INPUT -p udp -s 172.20.240.10 --dport 161 -j ACCEPT
 $QUAGSIRE -A INPUT -p udp -s 172.20.242.200 --dport 161 -j ACCEPT
 $QUAGSIRE -A INPUT -p udp -s 172.20.241.20 --dport 161 -j ACCEPT
-$QUAGSIRE -A INPUT -p tcp --dport 25 -j ACCEPT
 $QUAGSIRE -A INPUT -p tcp --dport 110 -j ACCEPT
+$QUAGSIRE -A INPUT -p tcp --dport 25 -j ACCEPT
 applaud
 ;;
 esac
@@ -224,107 +225,108 @@ EOF
 chmod +x /usr/local/bin/webon
 $QUAGSIRE -A OUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
 $QUAGSIRE -A OUTPUT -o lo -j ACCEPT
+$QUAGSIRE -A OUTPUT -p icmp -j ACCEPT
 applaud
 case $CLODSIRE_HOST in
 virt_debian)
 cat >> clodsire << applaud
-$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.20 --dport 8000 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.20 --dport 8089 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.20 --dport 9997 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.30 --dport 80 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.20 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.30 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.20 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.40 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 0.0.0.0/0 --dport 123 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.20 --dport 8089 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.20 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.40 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.242.200 --dport 53 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.20 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.30 --dport 161 -j ACCEPT
 applaud
 ;;
 virt_ubuweb)
 cat >> clodsire << applaud
-$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.20 --dport 8000 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.20 --dport 8089 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.20 --dport 9997 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.20 --dport 8089 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.240.20 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.30 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.20 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.241.40 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.242.200 --dport 53 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.20 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.30 --dport 161 -j ACCEPT
 applaud
 ;;
 virt_ubuwkst)
 cat >> clodsire << applaud
-$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.150 --dport 443 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.20 --dport 8000 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.20 --dport 8089 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.20 --dport 9997 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.30 --dport 80 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.20 --dport 8089 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.240.20 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.30 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.20 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.40 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.150 --dport 22 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.150 --dport 80 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.150 --dport 443 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.40 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.242.200 --dport 53 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.20 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.30 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.150 --dport 80 -j ACCEPT
 applaud
 ;;
 virt_centos)
 cat >> clodsire << applaud
-$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.20 --dport 8000 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.20 --dport 8089 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.20 --dport 9997 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.20 --dport 8089 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.240.20 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.30 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.20 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.241.40 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.242.200 --dport 53 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.20 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.30 --dport 161 -j ACCEPT
 applaud
 ;;
 virt_splunk)
 cat >> clodsire << applaud
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.240.20 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.30 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.20 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.241.40 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.242.200 --dport 53 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.20 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.30 --dport 161 -j ACCEPT
 applaud
 ;;
 virt_fedora)
 cat >> clodsire << applaud
-$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.20 --dport 8000 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.20 --dport 8089 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.10 --dport 8000 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.200 --dport 636 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.20 --dport 9997 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.240.20 --dport 123 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.20 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.100 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.30 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.20 --dport 161 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.40 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.200 --dport 389 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.200 --dport 636 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.241.20 --dport 8089 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.20 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.40 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.10 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.242.200 --dport 53 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.20 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.241.30 --dport 161 -j ACCEPT
 applaud
 ;;
 esac
