@@ -4,10 +4,10 @@ Set-Location c:\downloads
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls, [Net.SecurityProtocolType]::Tls11, [Net.SecurityProtocolType]::Tls12, [Net.SecurityProtocolType]::Ssl3
 
 Write-Output "Download: weboff"
-Invoke-WebRequest "https://raw.githubusercontent.com/bwcybersec/ccdc/main/weboff.cmd" -Outfile weboff.com
+Invoke-WebRequest "https://raw.githubusercontent.com/bwcybersec/ccdc/main/weboff.cmd" -Outfile weboff.cmd
 
 Write-Output "Download: webon"
-Invoke-WebRequest "https://raw.githubusercontent.com/bwcybersec/ccdc/main/webon.cmd" -Outfile webon.com
+Invoke-WebRequest "https://raw.githubusercontent.com/bwcybersec/ccdc/main/webon.cmd" -Outfile webon.cmd
 
 Write-Output "Download: Autoruns.zip"
 Invoke-WebRequest https://download.sysinternals.com/files/Autoruns.zip -Outfile Autoruns.zip
