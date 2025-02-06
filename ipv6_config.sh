@@ -50,23 +50,29 @@ function disable_ipv6() {
 
 function deb_config_ipv6() {
 
-    ip -6 addr add 2001:db8:2::200/64 dev ens33
-    ip -6 route add  default via 2001:db8:2::1 dev ens33
+    int=$(ip route | grep default | awk '{print $5}')
+
+    ip -6 addr add 2001:db8:2::200/64 dev $int
+    ip -6 route add  default via 2001:db8:2::1 dev $int
 
 }
 
 
 function ubu_web_config_ipv6() {
 
-    ip -6 addr add 2001:db8:1::200/64 dev ens33
-    ip -6 route add  default via 2001:db8:1::1 dev ens33
+    int=$(ip route | grep default | awk '{print $5}')
+
+    ip -6 addr add 2001:db8:1::200/64 dev $int
+    ip -6 route add  default via 2001:db8:1::1 dev $int
 
 }
 
 function ubu_work_config_ipv6() {
 
-    ip -6 addr add 2001:db8:1::100/64 dev ens33
-    ip -6 route add default via 2001:db8:1::1 dev ens33
+    int=$(ip route | grep default | awk '{print $5}')
+
+    ip -6 addr add 2001:db8:1::100/64 dev $int
+    ip -6 route add default via 2001:db8:1::1 dev $int
 
 }
 
