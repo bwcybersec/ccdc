@@ -13,46 +13,53 @@ set tag E-Comm color color21
 set tag Fedora color color5
 set tag Debian color color34
 set tag Emergency color color1
+set address User ip-netmask 172.20.242.0/24
+set address Public ip-netmask 172.20.241.0/24
+set address Internal ip-netmask 172.20.240.0/24
 set address Int_Debian ip-netmask 172.20.240.20
 set address Int_Debian tag Debian
 set address Pub_E-Commerce ip-netmask 172.20.241.30
 set address Pub_E-Commerce tag E-Comm
-set address 2019 ip-netmask 172.20.242.50
-set address 2019 tag 2019
+set address "Int_2019 AD" ip-netmask 172.20.242.200
+set address "Int_2019 AD" tag 2019
 set address Pub_Fedora_Web ip-netmask 172.20.241.40
 set address Pub_Fedora_Web tag Fedora
 set address Pub_Splunk ip-netmask 172.20.241.20
 set address Pub_Splunk tag Splunk
 set address Ubuntu_Web ip-netmask 172.20.242.10
 set address Ubuntu_Web tag Ubuntu_Web
-set address Int_Docker ip-netmask 172.20.240.10
-set address Int_Docker tag Docker
-set address Ubuntu_Wkst ip-netmask 172.20.242.100
+set address Int_2019 ip-netmask 172.20.240.10
+set address Int_2019 tag Docker
+set address Ubuntu_Wkst ip-netmask 172.20.242.102
 set address Ubuntu_Wkst tag Wkst
-set address Windows_10 ip-netmask 172.31.21.5
+set address Windows_10 ip-netmask 172.31.35.5
 set address Windows_10 tag Windows_10
-set address Ext_2019 ip-netmask 172.25.21.27
-set address Ext_Debian ip-netmask 172.25.21.20
-set address Ext_Ubuntu_Web ip-netmask 172.25.21.23
-set address Ext_Splunk ip-netmask 172.25.21.9
-set address Ext_E-Commerce ip-netmask 172.25.21.11
-set address Ext_Fedora_Web ip-netmask 172.25.21.39
+set address "Ext_2019 AD" ip-netmask 172.25.35.27
+set address Ext_Debian ip-netmask 172.25.35.20
+set address Ext_Ubuntu_Web ip-netmask 172.25.35.23
+set address Ext_Splunk ip-netmask 172.25.35.9
+set address Ext_E-Commerce ip-netmask 172.25.35.11
+set address Ext_Fedora_Web ip-netmask 172.25.35.39
 set address PANOS ip-netmask 172.20.242.150
 set address PANOS tag User
-set address-group Internal_Hosts static [ Int_Debian Int_Docker ]
-set address-group Public_Hosts static [ Pub_E-Commerce Pub_Fedora_Web Pub_Splunk ]
-set address-group User_Hosts static [ 2019 PANOS Ubuntu_Web Ubuntu_Wkst ]
-set address User ip-netmask 172.20.242.0/24
-set address Public ip-netmask 172.20.241.0/24
-set address Internal ip-netmask 172.20.240.0/24
-set application-group Outbound_Apps members [ web-browsing ssl apt-get yum git-base github google-base ms-update pastebin sourceforge-base subversion-base ping ocsp paloalto-updates pan-db-cloud ]
-set application-group Internal_Apps members [ ntp dns ssh ping web-browsing ssl mysql splunk ]
+set address Int_IPv6_Debian ip-netmask 2001:db8:2::200/64
+set address IPv6_Internal_Interface ip-netmask 2001:db8:2::1
+set address IPv6_User_Interface ip-netmask 2001:db8:1::1
+set address PAN_Internal_GW ip-netmask 172.20.240.254
+set address PAN_User_GW ip-netmask 172.20.242.254
+set address PAN_Public_GW ip-netmask 172.20.241.254
+set address-group Internal_Hosts static [ Int_Debian Int_2019 ]
+set address-group Public_Hosts static [ Pub_E-Commerce Pub_Fedora_Web Pub_Splunk  ]
+set address-group User_Hosts static [ "Int_2019 AD" PANOS Ubuntu_Web Ubuntu_Wkst  ]
+set address-group PAN_Interfaces static [ PAN_Internal_GW PAN_Public_GW PAN_User_GW ]
+set application-group Outbound_Apps members [ web-browsing ssl apt-get yum git-base github google-base ms-update pastebin sourceforge-base subversion-base ping  ocsp paloalto-updates pan-db-cloud dns soap dns-base ]
+set application-group Internal_Apps members [ ntp dns ssh ping web-browsing ssl  mysql splunk snmp snmp-trap ]
 set application-group Log_Apps members [ splunk ssl web-browsing syslog ]
 set profile-group Sec_Group virus default
 set profile-group Sec_Group spyware strict
 set profile-group Sec_Group vulnerability strict
 set profile-group Sec_Group wildfire-analysis default
-delete address "Google DNS"
+delete address "Google DNS" 
 set service ftp-cmd protocol tcp port 21
 set service ftp-data protocol tcp port 20
 set service http protocol tcp port 80
@@ -63,13 +70,28 @@ set service ssh protocol tcp port 22
 set service telnet protocol tcp port 23
 set service all-web protocol tcp port 8000,80,443
 set service all-web protocol tcp override no 
-set service splunk-logs protocol udp port 514
-set service splunk-logs protocol udp override no 
-
+set service splunk-logs protocol tcp port 9997,8089,8000
+set service splunk-logs protocol tcp override no 
+set service snmp protocol udp port 161
+set service snmp protocol udp override no 
+set service splunk-PA protocol udp port 514
+set service splunk-PA protocol udp override no 
+set deviceconfig system ip-address 172.20.242.150
+set deviceconfig system netmask 255.255.255.0
+set deviceconfig system update-server updates.paloaltonetworks.com
+set deviceconfig system update-schedule threats recurring weekly day-of-week wednesday
+set deviceconfig system update-schedule threats recurring weekly at 01:02
+set deviceconfig system update-schedule threats recurring weekly action download-only
 set deviceconfig system service disable-telnet yes
-set deviceconfig system service disable-http no
+set deviceconfig system service disable-http yes
 set deviceconfig system service disable-snmp yes
-set deviceconfig system ntp-servers primary-ntp-server ntp-server-address 172.20.240.23
+set deviceconfig system snmp-setting snmp-system 
+set deviceconfig system hostname PA-VM
+set deviceconfig system default-gateway 172.20.242.254
+set deviceconfig system dns-setting servers primary 8.8.8.8
+set deviceconfig system dns-setting servers secondary 1.1.1.1
+set deviceconfig system server-verification yes
+set deviceconfig system ntp-servers primary-ntp-server ntp-server-address 172.20.240.20
 set deviceconfig system ntp-servers primary-ntp-server authentication-type none 
 set deviceconfig system ntp-servers secondary-ntp-server ntp-server-address 172.20.241.27
 set deviceconfig system device-telemetry device-health-performance yes
@@ -79,28 +101,91 @@ set deviceconfig system device-telemetry region Americas
 set deviceconfig system permitted-ip 172.20.241.0/24 
 set deviceconfig system permitted-ip 172.20.242.0/24 
 set deviceconfig system permitted-ip 172.20.240.0/24 
-    set deviceconfig system login-banner "This computer system/network is the property of allsafe.com. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Company's Acceptable Use of Information Technology Resources Policy (AUP).  Users have no personal privacy rights in any material law regarding certain legally protected confidential information, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Company and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to such interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Company personnel. Unauthorized or improper use of this system may result in administrative disciplinary action, civil charges, criminal penalties, and/or other sanctions as set forth in the Company's AUP.  By continuing to use this system, yo u indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF A allsafe.com OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE."
+set deviceconfig system login-banner "This computer system/network is the property of allsafe.com. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Company's Acceptable Use of Information Technology Resources Policy (AUP). Users have no personal privacy rights in any material law regarding certain legally protected confidential in formation, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Company and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to su ch interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Company personnel. Unauthorized or improper use of this system may result in administrative disciplinary action, civil charges, criminal penalties, and/or other sanctions as set forth in the Company's AUP. By continuing to use this system, you indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF A allsafe.com OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE."
 set deviceconfig system ack-login-banner yes
-
 set deviceconfig setting config rematch yes
 set deviceconfig setting management idle-timeout 0
 set deviceconfig setting management quota-settings 
 set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement enable no
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement min-interval 200
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement max-interval 600
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement hop-limit 64
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement reachable-time unspecified
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement retransmission-timer unspecified
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement lifetime 1800
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement managed-flag no
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement other-flag no
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement enable-consistency-check no
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery router-advertisement link-mtu unspecified
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery enable-dad no
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery reachable-time 30
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery ns-interval 1
+set network interface ethernet ethernet1/1 layer3 ipv6 neighbor-discovery dad-attempts 1
 set network interface ethernet ethernet1/1 layer3 ipv6 enabled no
+set network interface ethernet ethernet1/1 layer3 ipv6 enabled no
+set network interface ethernet ethernet1/1 layer3 ipv6 interface-id EUI-64
+set network interface ethernet ethernet1/1 layer3 untagged-sub-interface no
 set network interface ethernet ethernet1/1 layer3 interface-management-profile Base
 set network interface ethernet ethernet1/1 layer3 lldp enable no
-set network interface ethernet ethernet1/2 layer3 ipv6 neighbor-discovery router-advertisement enable no
+set network interface ethernet ethernet1/2 comment INTERNAL
+set network interface ethernet ethernet1/2 layer3 ipv6 neighbor-discovery enable-dad no
+set network interface ethernet ethernet1/2 layer3 ipv6 neighbor-discovery reachable-time 30
+set network interface ethernet ethernet1/2 layer3 ipv6 neighbor-discovery ns-interval 1
+set network interface ethernet ethernet1/2 layer3 ipv6 neighbor-discovery dad-attempts 1
 set network interface ethernet ethernet1/2 layer3 ipv6 enabled no
+set network interface ethernet ethernet1/2 layer3 ipv6 interface-id EUI-64
+set network interface ethernet ethernet1/2 layer3 ipv6 address 2001:db8:2::1/64  advertise enable no
+set network interface ethernet ethernet1/2 layer3 ipv6 address 2001:db8:2::1/64  advertise valid-lifetime 2592000
+set network interface ethernet ethernet1/2 layer3 ipv6 address 2001:db8:2::1/64  advertise preferred-lifetime 604800
+set network interface ethernet ethernet1/2 layer3 ipv6 address 2001:db8:2::1/64  advertise onlink-flag yes
+set network interface ethernet ethernet1/2 layer3 ipv6 address 2001:db8:2::1/64  advertise auto-config-flag yes
+set network interface ethernet ethernet1/2 layer3 ipv6 address 2001:db8:2::1/64  enable-on-interface yes
+set network interface ethernet ethernet1/2 layer3 untagged-sub-interface no
 set network interface ethernet ethernet1/2 layer3 interface-management-profile Base
+set network interface ethernet ethernet1/2 layer3 ip 172.20.240.254/24 
 set network interface ethernet ethernet1/2 layer3 lldp enable no
+set network interface ethernet ethernet1/2 layer3 ndp-proxy enabled no
+set network interface ethernet ethernet1/3 link-speed auto
+set network interface ethernet ethernet1/3 link-duplex auto
+set network interface ethernet ethernet1/3 link-state auto
+set network interface ethernet ethernet1/3 comment EXTERNAL
 set network interface ethernet ethernet1/3 layer3 ipv6 neighbor-discovery router-advertisement enable no
+set network interface ethernet ethernet1/3 layer3 ipv6 neighbor-discovery router-advertisement min-interval 200
+set network interface ethernet ethernet1/3 layer3 ipv6 neighbor-discovery router-advertisement max-interval 600
+set network interface ethernet ethernet1/3 layer3 ipv6 neighbor-discovery router-advertisement hop-limit 64
+set network interface ethernet ethernet1/3 layer3 ipv6 neighbor-discovery router-advertisement reachable-time unspecified
+set network interface ethernet ethernet1/3 layer3 ipv6 neighbor-discovery router-advertisement retransmission-timer unspecified
+set network interface ethernet ethernet1/3 layer3 ipv6 neighbor-discovery router-advertisement lifetime 1800
+set network interface ethernet ethernet1/3 layer3 ipv6 neighbor-discovery router-advertisement managed-flag no
+set network interface ethernet ethernet1/3 layer3 ipv6 neighbor-discovery router-advertisement other-flag no
+set network interface ethernet ethernet1/3 layer3 ipv6 neighbor-discovery router-advertisement enable-consistency-check no
+set network interface ethernet ethernet1/3 layer3 ipv6 neighbor-discovery router-advertisement link-mtu unspecified
+set network interface ethernet ethernet1/3 layer3 ipv6 neighbor-discovery enable-dad no
+set network interface ethernet ethernet1/3 layer3 ipv6 neighbor-discovery reachable-time 30
+set network interface ethernet ethernet1/3 layer3 ipv6 neighbor-discovery ns-interval 1
+set network interface ethernet ethernet1/3 layer3 ipv6 neighbor-discovery dad-attempts 1
 set network interface ethernet ethernet1/3 layer3 ipv6 enabled no
+set network interface ethernet ethernet1/3 layer3 ipv6 interface-id EUI-64
+set network interface ethernet ethernet1/3 layer3 untagged-sub-interface no
 set network interface ethernet ethernet1/3 layer3 interface-management-profile Base
+set network interface ethernet ethernet1/3 layer3 ip 172.31.35.2/29 
+set network interface ethernet ethernet1/3 layer3 ndp-proxy enabled no
 set network interface ethernet ethernet1/3 layer3 lldp enable no
-set network interface ethernet ethernet1/4 layer3 ipv6 neighbor-discovery router-advertisement enable no
-set network interface ethernet ethernet1/4 layer3 ipv6 enabled no
+set network interface ethernet ethernet1/4 layer3 ipv6 enabled no 
+set network interface ethernet ethernet1/4 layer3 ipv6 address 2001:db8:1::1/64  advertise enable no
+set network interface ethernet ethernet1/4 layer3 ipv6 address 2001:db8:1::1/64  advertise valid-lifetime 2592000
+set network interface ethernet ethernet1/4 layer3 ipv6 address 2001:db8:1::1/64  advertise preferred-lifetime 604800
+set network interface ethernet ethernet1/4 layer3 ipv6 address 2001:db8:1::1/64  advertise onlink-flag yes
+set network interface ethernet ethernet1/4 layer3 ipv6 address 2001:db8:1::1/64  advertise auto-config-flag yes
+set network interface ethernet ethernet1/4 layer3 ipv6 address 2001:db8:1::1/64  enable-on-interface yes
+set network interface ethernet ethernet1/4 layer3 ip 172.20.242.254/24 
 set network interface ethernet ethernet1/4 layer3 interface-management-profile Base
 set network interface ethernet ethernet1/4 layer3 lldp enable no
+set network interface ethernet ethernet1/4 layer3 ndp-proxy enabled no
+set network interface ethernet ethernet1/4 comment USER
+set network profiles monitor-profile default interval 3
+set network profiles monitor-profile default threshold 5
+set network profiles monitor-profile default action wait-recover
 set network profiles interface-management-profile Base http no
 set network profiles interface-management-profile Base https no
 set network profiles interface-management-profile Base http-ocsp no
@@ -110,11 +195,51 @@ set network profiles interface-management-profile Base userid-service yes
 set network profiles interface-management-profile Base ping yes
 set network profiles interface-management-profile Base response-pages yes
 set network profiles interface-management-profile Base telnet no
+
+set network virtual-router RT1 protocol bgp enable no
+set network virtual-router RT1 protocol bgp dampening-profile default cutoff 1.25
+set network virtual-router RT1 protocol bgp dampening-profile default reuse 0.5
+set network virtual-router RT1 protocol bgp dampening-profile default max-hold-time 900
+set network virtual-router RT1 protocol bgp dampening-profile default decay-half-life-reachable 300
+set network virtual-router RT1 protocol bgp dampening-profile default decay-half-life-unreachable 900
+set network virtual-router RT1 protocol bgp dampening-profile default enable yes
+set network virtual-router RT1 protocol bgp routing-options med always-compare-med no
+set network virtual-router RT1 protocol bgp routing-options med deterministic-med-comparison yes
+set network virtual-router RT1 protocol bgp routing-options aggregate aggregate-med yes
+set network virtual-router RT1 protocol bgp routing-options graceful-restart enable yes
+set network virtual-router RT1 protocol bgp routing-options graceful-restart stale-route-time 120
+set network virtual-router RT1 protocol bgp routing-options graceful-restart local-restart-time 120
+set network virtual-router RT1 protocol bgp routing-options graceful-restart max-peer-restart-time 120
+set network virtual-router RT1 protocol bgp routing-options as-format 2-byte
+set network virtual-router RT1 protocol bgp routing-options default-local-preference 100
+set network virtual-router RT1 protocol bgp reject-default-route yes
+set network virtual-router RT1 protocol bgp allow-redist-default-route no
+set network virtual-router RT1 protocol bgp install-route no
+set network virtual-router RT1 protocol rip enable no
+set network virtual-router RT1 protocol ospf enable no
+set network virtual-router RT1 protocol ospfv3 enable no
+set network virtual-router RT1 admin-dists static 10
+set network virtual-router RT1 admin-dists ospf-int 30
+set network virtual-router RT1 admin-dists ospf-ext 110
+set network virtual-router RT1 admin-dists ibgp 200
+set network virtual-router RT1 admin-dists ebgp 20
+set network virtual-router RT1 admin-dists rip 120
+set network virtual-router RT1 interface [ ethernet1/1 ethernet1/2 ethernet1/3 ethernet1/4 ]
+set network virtual-router RT1 routing-table ip static-route default path-monitor enable no
+set network virtual-router RT1 routing-table ip static-route default path-monitor failure-condition any
+set network virtual-router RT1 routing-table ip static-route default path-monitor hold-time 2
+set network virtual-router RT1 routing-table ip static-route default nexthop ip-address 172.31.35.1
+set network virtual-router RT1 routing-table ip static-route default bfd profile None
+set network virtual-router RT1 routing-table ip static-route default interface ethernet1/3
+set network virtual-router RT1 routing-table ip static-route default metric 10
+set network virtual-router RT1 routing-table ip static-route default destination 0.0.0.0/0
+set network virtual-router RT1 routing-table ip static-route default route-table unicast 
+set network virtual-router RT1 ecmp algorithm ip-modulo 
 set network profiles zone-protection-profile Default discard-overlapping-tcp-segment-mismatch yes
 set network profiles zone-protection-profile Default discard-unknown-option yes
 set network profiles zone-protection-profile Default tcp-reject-non-syn yes
 set network profiles zone-protection-profile Default flood tcp-syn enable yes
-set network profiles zone-protection-profile Default flood tcp-syn syn-cookies maximal-rate 500 activate-rate 100 alarm-rate 100
+set network profiles zone-protection-profile Default flood tcp-syn syn-cookies maximal-rate 500 activate-rate 100 alarm-rate 100 
 set network profiles zone-protection-profile Default flood icmp enable yes
 set network profiles zone-protection-profile Default flood icmp red activate-rate 1000 alarm-rate 1000 maximal-rate 5000
 set network profiles zone-protection-profile Default flood udp enable yes
@@ -123,7 +248,8 @@ set network profiles zone-protection-profile Default flood other-ip enable yes
 set network profiles zone-protection-profile Default flood other-ip red activate-rate 1000 alarm-rate 1000 maximal-rate 5000
 set network profiles zone-protection-profile Default flood icmpv6 enable no
 set network profiles zone-protection-profile Default flood icmpv6 red activate-rate 1000 alarm-rate 1000 maximal-rate 5000
-set network qos profile default class-bandwidth-type mbps class class1 priority real-time
+
+set network qos profile default class-bandwidth-type mbps class class1 priority  real-time
 set network qos profile default class-bandwidth-type mbps class class2 priority high
 set network qos profile default class-bandwidth-type mbps class class3 priority high
 set network qos profile default class-bandwidth-type mbps class class4 priority medium
@@ -131,28 +257,28 @@ set network qos profile default class-bandwidth-type mbps class class5 priority 
 set network qos profile default class-bandwidth-type mbps class class6 priority low
 set network qos profile default class-bandwidth-type mbps class class7 priority low
 set network qos profile default class-bandwidth-type mbps class class8 priority low
+set network dhcp interface ethernet1/4 server option lease timeout 1440
+set network dhcp interface ethernet1/4 server option gateway 172.20.242.254
+set network dhcp interface ethernet1/4 server option dns primary 172.20.241.27
+set network dhcp interface ethernet1/4 server option dns secondary 172.20.240.23
+set network dhcp interface ethernet1/4 server ip-pool [ 172.20.242.101-172.20.242.150 172.20.242.110-172.20.242.150 172.20.242.50-172.20.242.99 ]
+set network dhcp interface ethernet1/4 server mode disabled
+set network dhcp interface ethernet1/4 server probe-ip yes
 set network dhcp interface ethernet1/1 server option lease timeout 1440
 set network dhcp interface ethernet1/1 server option gateway 172.20.241.254
 set network dhcp interface ethernet1/1 server option dns primary 172.20.241.27
 set network dhcp interface ethernet1/1 server option dns secondary 172.20.240.23
-set network dhcp interface ethernet1/1 server ip-pool [ 172.20.241.110-172.20.241.150 172.20.241.50-172.20.241.99 ]
+set network dhcp interface ethernet1/1 server ip-pool [ 172.20.241.101-172.20.241.150 172.20.241.110-172.20.241.150 172.20.241.50-172.20.241.99 ]
 set network dhcp interface ethernet1/1 server mode disabled
 set network dhcp interface ethernet1/1 server probe-ip yes
 set network dhcp interface ethernet1/2 server option lease timeout 1440
 set network dhcp interface ethernet1/2 server option gateway 172.20.240.254
 set network dhcp interface ethernet1/2 server option dns primary 172.20.241.27
 set network dhcp interface ethernet1/2 server option dns secondary 172.20.240.23
-set network dhcp interface ethernet1/2 server ip-pool [ 172.20.240.110-172.20.240.150 172.20.240.50-172.20.240.99 ]
+set network dhcp interface ethernet1/2 server ip-pool [ 172.20.240.101-172.20.240.150 172.20.240.110-172.20.240.150 172.20.240.50-172.20.240.99 ]
 set network dhcp interface ethernet1/2 server mode disabled
 set network dhcp interface ethernet1/2 server probe-ip yes
-set network dhcp interface ethernet1/4 server option lease timeout 1440
-set network dhcp interface ethernet1/4 server option gateway 172.20.242.254
-set network dhcp interface ethernet1/4 server option dns primary 172.20.241.27
-set network dhcp interface ethernet1/4 server option dns secondary 172.20.240.23
-set network dhcp interface ethernet1/4 server ip-pool [ 172.20.242.110-172.20.242.150 172.20.242.50-172.20.242.99 ]
-set network dhcp interface ethernet1/4 server mode disabled
-set network dhcp interface ethernet1/4 server probe-ip yes
-delete network dns-proxy mark 
+delete network dns-proxy mark
 set shared botnet configuration http dynamic-dns enabled yes
 set shared botnet configuration http dynamic-dns threshold 5
 set shared botnet configuration http malware-sites enabled yes
@@ -174,8 +300,8 @@ set shared botnet configuration unknown-applications unknown-udp session-length 
 set shared botnet configuration unknown-applications unknown-udp session-length minimum-bytes 50
 set shared botnet report topn 100
 set shared botnet report scheduled yes
-delete shared admin-role Honeypot 
-delete shared admin-role "Configuration Admins" 
+delete shared admin-role Honeypot
+delete shared admin-role "Configuration Admins"
 delete shared admin-role "Policy Admins"
 set shared log-settings syslog Splunk server "Splunk 9.1.1" transport UDP
 set shared log-settings syslog Splunk server "Splunk 9.1.1" port 514
@@ -238,30 +364,61 @@ set zone Public network layer3 ethernet1/1
 set zone Internal network layer3 ethernet1/2
 set zone External network layer3 ethernet1/3
 set zone User network layer3 ethernet1/4
-delete threats vulnerability 41111 
-
-set rulebase security rules any2any option disable-server-response-inspection no
-set rulebase security rules any2any from any
-set rulebase security rules any2any to any
-set rulebase security rules any2any source any
-set rulebase security rules any2any destination any
-set rulebase security rules any2any source-user any
-set rulebase security rules any2any category any
-set rulebase security rules any2any application any
-set rulebase security rules any2any service any
-set rulebase security rules any2any action allow
-set rulebase security rules any2any log-start no
-set rulebase security rules any2any log-end yes
-set rulebase security rules any2any negate-source no
-set rulebase security rules any2any negate-destination no
-set rulebase security rules any2any source-hip any
-set rulebase security rules any2any disabled yes
+delete threats vulnerability 41111
+set rulebase security rules PUBLIC2EXTERNAL option disable-server-response-inspection no
+set rulebase security rules PUBLIC2EXTERNAL from Public
+set rulebase security rules PUBLIC2EXTERNAL to External
+set rulebase security rules PUBLIC2EXTERNAL source any
+set rulebase security rules PUBLIC2EXTERNAL destination any
+set rulebase security rules PUBLIC2EXTERNAL source-user any
+set rulebase security rules PUBLIC2EXTERNAL category any
+set rulebase security rules PUBLIC2EXTERNAL application any
+set rulebase security rules PUBLIC2EXTERNAL service any
+set rulebase security rules PUBLIC2EXTERNAL action allow
+set rulebase security rules PUBLIC2EXTERNAL log-start no
+set rulebase security rules PUBLIC2EXTERNAL log-end yes
+set rulebase security rules PUBLIC2EXTERNAL negate-source no
+set rulebase security rules PUBLIC2EXTERNAL negate-destination no
+set rulebase security rules PUBLIC2EXTERNAL source-hip any
+set rulebase security rules PUBLIC2EXTERNAL disabled yes
+set rulebase security rules PUBLIC2INTERNAL option disable-server-response-inspection no
+set rulebase security rules PUBLIC2INTERNAL from Public
+set rulebase security rules PUBLIC2INTERNAL to Internal
+set rulebase security rules PUBLIC2INTERNAL source any
+set rulebase security rules PUBLIC2INTERNAL destination any
+set rulebase security rules PUBLIC2INTERNAL source-user any
+set rulebase security rules PUBLIC2INTERNAL category any
+set rulebase security rules PUBLIC2INTERNAL application any
+set rulebase security rules PUBLIC2INTERNAL service any
+set rulebase security rules PUBLIC2INTERNAL action allow
+set rulebase security rules PUBLIC2INTERNAL log-start no
+set rulebase security rules PUBLIC2INTERNAL log-end yes
+set rulebase security rules PUBLIC2INTERNAL negate-source no
+set rulebase security rules PUBLIC2INTERNAL negate-destination no
+set rulebase security rules PUBLIC2INTERNAL source-hip any
+set rulebase security rules PUBLIC2INTERNAL disabled yes
+set rulebase security rules INTERNAL2PUBLIC option disable-server-response-inspection no
+set rulebase security rules INTERNAL2PUBLIC from Internal
+set rulebase security rules INTERNAL2PUBLIC to Public
+set rulebase security rules INTERNAL2PUBLIC source any
+set rulebase security rules INTERNAL2PUBLIC destination any
+set rulebase security rules INTERNAL2PUBLIC source-user any
+set rulebase security rules INTERNAL2PUBLIC category any
+set rulebase security rules INTERNAL2PUBLIC application any
+set rulebase security rules INTERNAL2PUBLIC service any
+set rulebase security rules INTERNAL2PUBLIC action allow
+set rulebase security rules INTERNAL2PUBLIC log-start no
+set rulebase security rules INTERNAL2PUBLIC log-end yes
+set rulebase security rules INTERNAL2PUBLIC negate-source no
+set rulebase security rules INTERNAL2PUBLIC negate-destination no
+set rulebase security rules INTERNAL2PUBLIC source-hip any
+set rulebase security rules INTERNAL2PUBLIC disabled yes
 set rulebase security rules DNS_Outbound profile-setting group Sec_Group
-set rulebase security rules DNS_Outbound application dns
+set rulebase security rules DNS_Outbound application [ dns dns-base ]
 set rulebase security rules DNS_Outbound service application-default
 set rulebase security rules DNS_Outbound to External
 set rulebase security rules DNS_Outbound from [ Internal User ]
-set rulebase security rules DNS_Outbound source [ Internal_Hosts User_Hosts ]
+set rulebase security rules DNS_Outbound source [ "Int_2019 AD" Int_Debian ]
 set rulebase security rules DNS_Outbound destination any
 set rulebase security rules DNS_Outbound source-user any
 set rulebase security rules DNS_Outbound category any
@@ -276,7 +433,7 @@ set rulebase security rules NTP_Outbound application ntp
 set rulebase security rules NTP_Outbound service application-default
 set rulebase security rules NTP_Outbound to External
 set rulebase security rules NTP_Outbound from [ Internal User ]
-set rulebase security rules NTP_Outbound source [ Internal_Hosts User_Hosts ]
+set rulebase security rules NTP_Outbound source [ "Int_2019 AD" Int_Debian ]
 set rulebase security rules NTP_Outbound destination any
 set rulebase security rules NTP_Outbound source-user any
 set rulebase security rules NTP_Outbound category any
@@ -313,12 +470,12 @@ set rulebase security rules External_to_E-Com action allow
 set rulebase security rules External_to_E-Com log-setting default
 set rulebase security rules External_to_E-Com profile-setting group Sec_Group
 set rulebase security rules External_to_E-Com log-start yes
-set rulebase security rules External_to_2019 application [ dns ping ]
+set rulebase security rules External_to_2019 application [ dns web-browsing ping ]
 set rulebase security rules External_to_2019 service application-default
 set rulebase security rules External_to_2019 from External
 set rulebase security rules External_to_2019 to User
 set rulebase security rules External_to_2019 source any
-set rulebase security rules External_to_2019 destination Ext_2019
+set rulebase security rules External_to_2019 destination "Ext_2019 AD"
 set rulebase security rules External_to_2019 source-user any
 set rulebase security rules External_to_2019 category any
 set rulebase security rules External_to_2019 source-hip any
@@ -328,23 +485,8 @@ set rulebase security rules External_to_2019 log-setting default
 set rulebase security rules External_to_2019 profile-setting group Sec_Group
 set rulebase security rules External_to_2019 log-start yes
 set rulebase security rules External_to_2019 disabled no
-set rulebase security rules External_to_2019-ldap application ldap
-set rulebase security rules External_to_2019-ldap service application-default
-set rulebase security rules External_to_2019-ldap from External
-set rulebase security rules External_to_2019-ldap to User
-set rulebase security rules External_to_2019-ldap source any
-set rulebase security rules External_to_2019-ldap destination Ext_2019
-set rulebase security rules External_to_2019-ldap source-user any
-set rulebase security rules External_to_2019-ldap category any
-set rulebase security rules External_to_2019-ldap source-hip any
-set rulebase security rules External_to_2019-ldap destination-hip any
-set rulebase security rules External_to_2019-ldap action allow
-set rulebase security rules External_to_2019-ldap log-setting default
-set rulebase security rules External_to_2019-ldap profile-setting group Sec_Group
-set rulebase security rules External_to_2019-ldap log-start yes
-set rulebase security rules External_to_2019-ldap disabled yes
-set rulebase security rules External_to_Splunk application [ ping ssl web-browsing ]
-set rulebase security rules External_to_Splunk service all-web
+set rulebase security rules External_to_Splunk application [ ssl web-browsing ]
+set rulebase security rules External_to_Splunk service [ all-web ]
 set rulebase security rules External_to_Splunk from External
 set rulebase security rules External_to_Splunk to Public
 set rulebase security rules External_to_Splunk source any
@@ -357,6 +499,20 @@ set rulebase security rules External_to_Splunk action allow
 set rulebase security rules External_to_Splunk log-setting default
 set rulebase security rules External_to_Splunk profile-setting group Sec_Group
 set rulebase security rules External_to_Splunk log-start yes
+set rulebase security rules External_to_Splunk_ICMP application [ ping ]
+set rulebase security rules External_to_Splunk_ICMP service application-default
+set rulebase security rules External_to_Splunk_ICMP from External
+set rulebase security rules External_to_Splunk_ICMP to Public
+set rulebase security rules External_to_Splunk_ICMP source any
+set rulebase security rules External_to_Splunk_ICMP destination Ext_Splunk
+set rulebase security rules External_to_Splunk_ICMP source-user any
+set rulebase security rules External_to_Splunk_ICMP category any
+set rulebase security rules External_to_Splunk_ICMP source-hip any
+set rulebase security rules External_to_Splunk_ICMP destination-hip any
+set rulebase security rules External_to_Splunk_ICMP action allow
+set rulebase security rules External_to_Splunk_ICMP log-setting default
+set rulebase security rules External_to_Splunk_ICMP profile-setting group Sec_Group
+set rulebase security rules External_to_Splunk_ICMP log-start yes
 set rulebase security rules External_to_Debian application [ dns ping ]
 set rulebase security rules External_to_Debian service application-default
 set rulebase security rules External_to_Debian profile-setting group Sec_Group
@@ -372,7 +528,7 @@ set rulebase security rules External_to_Debian action allow
 set rulebase security rules External_to_Debian log-start yes
 set rulebase security rules External_to_Debian log-setting default
 set rulebase security rules External_to_Fedora-Mail application [ imap ping pop3 smtp web-browsing ]
-set rulebase security rules External_to_Fedora-Mail service [ imap pop3 smtp http ]
+set rulebase security rules External_to_Fedora-Mail service application-default
 set rulebase security rules External_to_Fedora-Mail profile-setting group Sec_Group
 set rulebase security rules External_to_Fedora-Mail to Public
 set rulebase security rules External_to_Fedora-Mail from External
@@ -399,28 +555,13 @@ set rulebase security rules Deny_From_External source-hip any
 set rulebase security rules Deny_From_External destination-hip any
 set rulebase security rules Deny_From_External log-start yes
 set rulebase security rules Deny_From_External log-setting default
-set rulebase security rules AHHHH_LetMeIn action allow
-set rulebase security rules AHHHH_LetMeIn from [ Internal Public User ]
-set rulebase security rules AHHHH_LetMeIn to External
-set rulebase security rules AHHHH_LetMeIn source [ Internal_Hosts Public_Hosts User_Hosts ]
-set rulebase security rules AHHHH_LetMeIn destination any
-set rulebase security rules AHHHH_LetMeIn application Outbound_Apps
-set rulebase security rules AHHHH_LetMeIn service application-default
-set rulebase security rules AHHHH_LetMeIn profile-setting group Sec_Group
-set rulebase security rules AHHHH_LetMeIn source-user any
-set rulebase security rules AHHHH_LetMeIn category any
-set rulebase security rules AHHHH_LetMeIn source-hip any
-set rulebase security rules AHHHH_LetMeIn destination-hip any
-set rulebase security rules AHHHH_LetMeIn log-start yes
-set rulebase security rules AHHHH_LetMeIn log-setting default
-set rulebase security rules AHHHH_LetMeIn disabled yes
 set rulebase security rules Logs application Log_Apps
 set rulebase security rules Logs service [ all-web splunk-logs ]
 set rulebase security rules Logs disabled no
 set rulebase security rules Logs profile-setting group Sec_Group
 set rulebase security rules Logs to Public
 set rulebase security rules Logs from [ Internal Public User ]
-set rulebase security rules Logs source [ Internal_Hosts Public_Hosts User_Hosts ]
+set rulebase security rules Logs source [ Internal_Hosts Public_Hosts User_Hosts  ]
 set rulebase security rules Logs destination Pub_Splunk
 set rulebase security rules Logs source-user any
 set rulebase security rules Logs category any
@@ -429,20 +570,49 @@ set rulebase security rules Logs destination-hip any
 set rulebase security rules Logs action allow
 set rulebase security rules Logs log-start yes
 set rulebase security rules Logs log-end yes
-set rulebase security rules InternalNetworks_to_InternalNetworks profile-setting group Sec_Group
+set rulebase security rules InternalNetworks_to_InternalNetworks profile-setting  group Sec_Group
 set rulebase security rules InternalNetworks_to_InternalNetworks to [ Internal Public User ]
 set rulebase security rules InternalNetworks_to_InternalNetworks from [ Internal Public User ]
-set rulebase security rules InternalNetworks_to_InternalNetworks source [ Internal_Hosts Public_Hosts User_Hosts ]
-set rulebase security rules InternalNetworks_to_InternalNetworks destination [ Internal_Hosts Public_Hosts User_Hosts ]
+set rulebase security rules InternalNetworks_to_InternalNetworks source [ Internal_Hosts IPv6_Internal_Interface IPv6_User_Interface PAN_Interfaces Public_Hosts  User_Hosts ]
+set rulebase security rules InternalNetworks_to_InternalNetworks destination [ Internal_Hosts IPv6_Internal_Interface IPv6_User_Interface PAN_Interfaces      Public_Hosts User_Hosts ]
 set rulebase security rules InternalNetworks_to_InternalNetworks source-user any
 set rulebase security rules InternalNetworks_to_InternalNetworks category any
-set rulebase security rules InternalNetworks_to_InternalNetworks application Internal_Apps
-set rulebase security rules InternalNetworks_to_InternalNetworks service all-web
+set rulebase security rules InternalNetworks_to_InternalNetworks application [ Internal_Apps ipv6 ipv6-frag ipv6-icmp ipv6-icmp-base ipv6-nonxt ipv6-opts ipv6-route ]
+set rulebase security rules InternalNetworks_to_InternalNetworks service application-default
 set rulebase security rules InternalNetworks_to_InternalNetworks source-hip any
-set rulebase security rules InternalNetworks_to_InternalNetworks destination-hip any
+set rulebase security rules InternalNetworks_to_InternalNetworks destination-hip  any
 set rulebase security rules InternalNetworks_to_InternalNetworks action allow
 set rulebase security rules InternalNetworks_to_InternalNetworks log-start yes
 set rulebase security rules InternalNetworks_to_InternalNetworks log-setting default
+set rulebase security rules ICMPv6 to any
+set rulebase security rules ICMPv6 from any
+set rulebase security rules ICMPv6 source any
+set rulebase security rules ICMPv6 destination any
+set rulebase security rules ICMPv6 source-user any
+set rulebase security rules ICMPv6 category any
+set rulebase security rules ICMPv6 application [ ipv6 ipv6-frag ipv6-icmp ipv6-icmp-base ipv6-nonxt ipv6-opts ipv6-route ]
+set rulebase security rules ICMPv6 service application-default
+set rulebase security rules ICMPv6 source-hip any
+set rulebase security rules ICMPv6 destination-hip any
+set rulebase security rules ICMPv6 action allow
+set rulebase security rules ICMPv6 log-setting default
+set rulebase security rules ICMPv6 disabled yes
+set rulebase security rules any2any option disable-server-response-inspection no
+set rulebase security rules any2any from any
+set rulebase security rules any2any to any
+set rulebase security rules any2any source any
+set rulebase security rules any2any destination any
+set rulebase security rules any2any source-user any
+set rulebase security rules any2any category any
+set rulebase security rules any2any application any
+set rulebase security rules any2any service any
+set rulebase security rules any2any action allow
+set rulebase security rules any2any log-start no
+set rulebase security rules any2any log-end yes
+set rulebase security rules any2any negate-source no
+set rulebase security rules any2any negate-destination no
+set rulebase security rules any2any source-hip any
+set rulebase security rules any2any disabled yes
 set rulebase security rules DENYALL action deny
 set rulebase security rules DENYALL from any
 set rulebase security rules DENYALL to any
@@ -456,8 +626,8 @@ set rulebase security rules DENYALL source-hip any
 set rulebase security rules DENYALL destination-hip any
 set rulebase security rules DENYALL log-start yes
 set rulebase security rules DENYALL log-setting default
-set rulebase security rules DENYALL disabled yes
-set rulebase nat rules PA source-translation static-ip translated-address 172.25.21.150
+set rulebase security rules DENYALL disabled no
+set rulebase nat rules PA source-translation static-ip translated-address 172.25.35.150
 set rulebase nat rules PA source-translation static-ip bi-directional yes
 set rulebase nat rules PA to External
 set rulebase nat rules PA from User
@@ -467,28 +637,31 @@ set rulebase nat rules PA service any
 set rulebase nat rules PA nat-type ipv4
 set rulebase nat rules PA to-interface any
 set rulebase nat rules PA disabled yes
-set rulebase nat rules "User NAT" source-translation dynamic-ip-and-port translated-address 172.25.21.152
+set rulebase nat rules "User NAT" source-translation dynamic-ip-and-port translated-address 172.25.35.152
 set rulebase nat rules "User NAT" to External
 set rulebase nat rules "User NAT" from User
 set rulebase nat rules "User NAT" source User
 set rulebase nat rules "User NAT" destination any
 set rulebase nat rules "User NAT" service any
 set rulebase nat rules "User NAT" nat-type ipv4
-set rulebase nat rules "Public NAT" source-translation dynamic-ip-and-port translated-address 172.25.21.151
+set rulebase nat rules "User NAT" disabled yes
+set rulebase nat rules "Public NAT" source-translation dynamic-ip-and-port translated-address 172.25.35.151
 set rulebase nat rules "Public NAT" to External
 set rulebase nat rules "Public NAT" from Public
 set rulebase nat rules "Public NAT" source Public
 set rulebase nat rules "Public NAT" destination any
 set rulebase nat rules "Public NAT" service any
 set rulebase nat rules "Public NAT" nat-type ipv4
-set rulebase nat rules "Internal NAT" source-translation dynamic-ip-and-port translated-address 172.25.21.150
+set rulebase nat rules "Public NAT" disabled yes
+set rulebase nat rules "Internal NAT" source-translation dynamic-ip-and-port translated-address 172.25.35.150
 set rulebase nat rules "Internal NAT" to External
 set rulebase nat rules "Internal NAT" from Internal
 set rulebase nat rules "Internal NAT" source Internal
 set rulebase nat rules "Internal NAT" destination any
 set rulebase nat rules "Internal NAT" service any
 set rulebase nat rules "Internal NAT" nat-type ipv4
-set rulebase nat rules "CentOS e-comm" source-translation static-ip translated-address 172.25.21.11
+set rulebase nat rules "Internal NAT" disabled yes
+set rulebase nat rules "CentOS e-comm" source-translation static-ip translated-address 172.25.35.11
 set rulebase nat rules "CentOS e-comm" source-translation static-ip bi-directional yes
 set rulebase nat rules "CentOS e-comm" to External
 set rulebase nat rules "CentOS e-comm" from Public
@@ -498,8 +671,8 @@ set rulebase nat rules "CentOS e-comm" service any
 set rulebase nat rules "CentOS e-comm" nat-type ipv4
 set rulebase nat rules "CentOS e-comm" to-interface any
 set rulebase nat rules "CentOS e-comm" disabled no
-set rulebase nat rules "Ubuntu Srv" source-translation static-ip translated-address 172.25.21.23
-set rulebase nat rules "Ubuntu Srv" source-translation static-ip bi-directional yes
+set rulebase nat rules "Ubuntu Srv" source-translation static-ip translated-address 172.25.35.23
+set rulebase nat rules "Ubuntu Srv" source-translation static-ip bi-directional  yes
 set rulebase nat rules "Ubuntu Srv" to External
 set rulebase nat rules "Ubuntu Srv" from User
 set rulebase nat rules "Ubuntu Srv" source 172.20.242.10
@@ -508,7 +681,7 @@ set rulebase nat rules "Ubuntu Srv" service any
 set rulebase nat rules "Ubuntu Srv" nat-type ipv4
 set rulebase nat rules "Ubuntu Srv" to-interface any
 set rulebase nat rules "Ubuntu Srv" disabled no
-set rulebase nat rules Splunk source-translation static-ip translated-address 172.25.21.9
+set rulebase nat rules Splunk source-translation static-ip translated-address 172.25.35.9
 set rulebase nat rules Splunk source-translation static-ip bi-directional yes
 set rulebase nat rules Splunk to External
 set rulebase nat rules Splunk from Public
@@ -517,7 +690,7 @@ set rulebase nat rules Splunk destination any
 set rulebase nat rules Splunk service any
 set rulebase nat rules Splunk nat-type ipv4
 set rulebase nat rules Splunk to-interface any
-set rulebase nat rules "Fedora webmail" source-translation static-ip translated-address 172.25.21.39
+set rulebase nat rules "Fedora webmail" source-translation static-ip translated-address 172.25.35.39
 set rulebase nat rules "Fedora webmail" source-translation static-ip bi-directional yes
 set rulebase nat rules "Fedora webmail" to External
 set rulebase nat rules "Fedora webmail" from Public
@@ -526,37 +699,42 @@ set rulebase nat rules "Fedora webmail" destination any
 set rulebase nat rules "Fedora webmail" service any
 set rulebase nat rules "Fedora webmail" nat-type ipv4
 set rulebase nat rules "Fedora webmail" to-interface any
-set rulebase nat rules "2012 AD-DNS" source-translation static-ip translated-address 172.25.21.27
-set rulebase nat rules "2012 AD-DNS" source-translation static-ip bi-directional yes
-set rulebase nat rules "2012 AD-DNS" to External
-set rulebase nat rules "2012 AD-DNS" from User
-set rulebase nat rules "2012 AD-DNS" source 172.20.242.200
-set rulebase nat rules "2012 AD-DNS" destination any
-set rulebase nat rules "2012 AD-DNS" service any
-set rulebase nat rules "2012 AD-DNS" nat-type ipv4
-set rulebase nat rules "2012 AD-DNS" to-interface any
-set rulebase nat rules 2016 source-translation static-ip translated-address 172.25.21.97
-set rulebase nat rules 2016 source-translation static-ip bi-directional yes
-set rulebase nat rules 2016 to External
-set rulebase nat rules 2016 from Internal
-set rulebase nat rules 2016 source 172.20.240.10
-set rulebase nat rules 2016 destination any
-set rulebase nat rules 2016 service any
-set rulebase nat rules 2016 nat-type ipv4
-set rulebase nat rules 2016 to-interface any
+set rulebase nat rules "2019 AD-DNS" source-translation static-ip translated-address 172.25.35.27
+set rulebase nat rules "2019 AD-DNS" source-translation static-ip bi-directional yes
+set rulebase nat rules "2019 AD-DNS" to External
+set rulebase nat rules "2019 AD-DNS" from User
+set rulebase nat rules "2019 AD-DNS" source 172.20.242.200
+set rulebase nat rules "2019 AD-DNS" destination any
+set rulebase nat rules "2019 AD-DNS" service any
+set rulebase nat rules "2019 AD-DNS" nat-type ipv4
+set rulebase nat rules "2019 AD-DNS" to-interface any
+set rulebase nat rules 2019 source-translation static-ip translated-address 172.25.35.97
+set rulebase nat rules 2019 source-translation static-ip bi-directional yes
+set rulebase nat rules 2019 to External
+set rulebase nat rules 2019 from Internal
+set rulebase nat rules 2019 source 172.20.240.10
+set rulebase nat rules 2019 destination any
+set rulebase nat rules 2019 service any
+set rulebase nat rules 2019 nat-type ipv4
+set rulebase nat rules 2019 to-interface any
 set rulebase nat rules "Debian DNS" from Internal
 set rulebase nat rules "Debian DNS" source 172.20.240.20
 set rulebase nat rules "Debian DNS" destination any
 set rulebase nat rules "Debian DNS" service any
 set rulebase nat rules "Debian DNS" nat-type ipv4
 set rulebase nat rules "Debian DNS" source-translation static-ip bi-directional yes
-set rulebase nat rules "Debian DNS" source-translation static-ip translated-address 172.25.21.20
+set rulebase nat rules "Debian DNS" source-translation static-ip translated-address 172.25.35.20
 set rulebase nat rules "Debian DNS" to External
+set rulebase nat rules "Workstation NAT" source-translation dynamic-ip-and-port translated-address 172.25.35.102
+set rulebase nat rules "Workstation NAT" to External
+set rulebase nat rules "Workstation NAT" from User
+set rulebase nat rules "Workstation NAT" source 172.20.242.102
+set rulebase nat rules "Workstation NAT" destination any
+set rulebase nat rules "Workstation NAT" service any
 delete profiles data-objects Backup
 delete profiles hip-profiles PAN-SA-2015-0006
-set import network interface [ ethernet1/1 ethernet1/2 ethernet1/3 ethernet1/4 ]
-delete global-protect global-protect-mdm travis
-delete application-filter "Garcia loves chunkymonkey" 
+set import network interface [ ethernet1/1 ethernet1/2 ethernet1/3 ethernet1/4 ] 
+delete application-filter "Garcia loves chunkymonkey"
 commit
-show admin-sessions
-delete admin-sessions 
+exit
+delete admin-sessions
