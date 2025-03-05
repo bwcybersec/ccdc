@@ -1,0 +1,66 @@
+#!/bin/bash
+
+VULPIX="http://172.20.242.10:8000"
+KABUTO="172.20.241.20"
+
+export PATH=/sbin:/usr/sbin:/usr/local/sbin:$PATH
+
+# Backup configs
+mkdir /var/zds
+mkdir /var/zds/timezone
+cp -r /etc /var/zds/etc_backup
+
+mkdir -p /var/zds/integrity
+
+# Set user passwords and sweep keys
+mkdir -p /var/zds/bash_hist
+mkdir -p /var/zds/auth_keys
+mkdir -p /var/log/zds
+mkdir -p /var/zds/bad
+
+if [[ -e /root ]]; then
+	mv -f /root/.bash_history /var/zds/bash_hist/bash_history_ir_root 2>/dev/null
+	mv -f /root/.ssh/authorized_keys /var/zds/auth_keys/root.authorized_keys 2>/dev/null
+fi
+if [[ -e /home/sysadmin ]]; then
+	admin_user="sysadmin"
+	mv -f "/home/$admin_user/.bash_history" /var/zds/bash_hist/bash_history_ir 2>/dev/null
+	mv -f "/home/$admin_user/.ssh/authorized_keys" "/var/zds/auth_keys/$admin_user.authorized_keys" 2>/dev/null
+fi
+if [[ -e /home/admin ]]; then
+	admin_user="admin"
+	mv -f "/home/$admin_user/.bash_history" /var/log/bash_hist/bash_history_ir 2>/dev/null
+	mv -f "/home/$admin_user/.ssh/authorized_keys" "/var/zds/auth_keys/$admin_user.authorized_keys" 2>/dev/null
+fi
+if [[ -e /home/administrator ]]; then
+	admin_user="administrator"
+	mv -f "/home/$admin_user/.bash_history" /var/log/bash_hist/bash_history_ir 2>/dev/null
+	mv -f "/home/$admin_user/.ssh/authorized_keys" "/var/zds/auth_keys/$admin_user.authorized_keys" 2>/dev/null
+fi
+
+chmod 700 /var/log/bash_hist
+chmod 700 /var/log/auth_keys
+
+# No root login ssh
+#sed -i 's/#\?\(PermitRootLogin\s*\).*$/\1 no/' /etc/ssh/sshd_config
+
+# no red team bad red team
+# chattr -i /etc/group /etc/shadow /etc/passwd
+chown root:root /etc/group
+if [ $(getent group shadow) ]; then
+	chown root:shadow /etc/shadow
+else
+	chown root:root /etc/shadow
+fi
+chown root:root /etc/passwd
+chown root:root /etc/sudoers
+
+netstat -an | grep LISTEN | tee netstat.log
+
+mv $(which dd) /var/zds
+
+grep -nrHIEe '[0-9]{16}' /root /home >/var/zds/bad/potential_contains_PII
+grep -nrHIEe '[0-9]{3}(-|\s)?[0-9]{3}(-|\s)?[0-9]{4}' /root /home >>/var/zds/bad/potential_contains_PII
+echo "Check /var/zds/bad for potential sensitive file locations"
+echo "Check /var/zds/bash_hist and /var/zds/auth_keys for previous bash history and auth keys"
+echo "Check /var/zds/integrity for integrity data"
