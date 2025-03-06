@@ -101,7 +101,7 @@ Function Discovery_ {
     #Continue_
 }
 
-Function Set_Internal_IPs {
+Function Set_Internal_IPs_V {
     cls
     Write-Host "Starting Function: Set_Internal_IPs" -ForegroundColor Cyan
     Start-Sleep -s 1
@@ -121,11 +121,40 @@ Function Set_Internal_IPs {
     Write-Host "DNS-NTP: $DNSNTP"
     Write-Host "Ubuntu-18-Web: $Ubuntu18Web"
     Write-Host "Ubuntu-Wrk: $UbuntuWrk"
-    Write-Host "PA MI: $PAMI"
     Write-Host "AD-DNS: $ADDNS"
     Write-Host "Splunk: $Splunk"
     Write-Host "E-Commerce: $Ecomm"
     Write-Host "WebMail: $WebMail"
+    Write-Host "-----------------------------"
+    Write-Host ""
+    Write-Host "Function: Set_Internal_IPs   -   Complete" -ForegroundColor Green
+    #Continue_
+}
+Function Set_Internal_IPs_H {
+    cls
+    Write-Host "Starting Function: Set_Internal_IPs" -ForegroundColor Cyan
+    Start-Sleep -s 1
+    $global:Email = "172.20.240.11"
+    $global:DNSNTP = "172.20.240.23"
+    $global:Ubuntu18Web = "172.20.240.5"
+    $global:SnipeIT = "172.20.240.97"
+    $global:ADDNS = "172.20.241.27"
+    $global:Splunk = "172.20.241.3"
+    $global:UbuntuWork = "172.20.242.100"
+    $global:HardWin10 = "172.20.242.100"
+    $global:Internal = @($Email,$DNSNTP,$Ubuntu18Web, $SnipeIT, $ADDNS,$Splunk ,$UbuntuWork, $HardWin10)
+    cls
+    Write-Host "----IPs set for Internal config:----" -ForegroundColor Green
+    Write-host "-----------------------------"
+    Write-Host "Email: $Email"
+    Write-Host "DNS-NTP: $DNSNTP"
+    Write-Host "Ubuntu-18-Web: $Ubuntu18Web"
+    Write-Host "Snipe-IT: $SnipeIT"
+    Write-Host "PA MI: $PAMI"
+    Write-Host "AD-DNS: $ADDNS"
+    Write-Host "Security Onion: $Splunk"
+    Write-Host "Ubuntu Workstation: $UbuntuWork"
+    Write-Host "Windows 10 Workstation: $HardWin10"
     Write-Host "-----------------------------"
     Write-Host ""
     Write-Host "Function: Set_Internal_IPs   -   Complete" -ForegroundColor Green
@@ -145,7 +174,7 @@ Function Set_External_IPs {
     $global:Splunk = "172.25.$Team.9"
     $global:WebMail = "172.25.$Team.39"
     $global:EComm = "172.25.$Team.11"
-    $global:Internal = @($Docker,$DNSNTP,$Ubuntu14Web,$UbuntuWrk,$PAMI,$ADDNS,$Splunk,$EComm,$WebMail)
+    $global:Internal = @($Docker,$DNSNTP,$Ubuntu18Web,$UbuntuWrk,$PAMI,$ADDNS,$Splunk,$EComm,$WebMail)
     cls
     Write-Host "----IPs set for External config:----" -ForegroundColor Cyan
     Write-host "-----------------------------"
@@ -194,7 +223,7 @@ Function Bulk_Firewall {
                 # Log OUT to Splunk - May need re configure.
     netsh advfirewall firewall add rule name="CCDC-Splunk Logs"       new dir=out action=allow enable=yes protocol=tcp profile=any remoteport=8000,8089,9997 remoteip=$Splunk  | Out-Null
                 # Webshare access
-    netsh advfirewall firewall add rule name="CCDC-Web Share OUT"    new dir=out action=allow enable=yes protocol=tcp profile=any remoteport=8000 remoteip=$Ubuntu14Web  | Out-Null
+    netsh advfirewall firewall add rule name="CCDC-Web Share OUT"    new dir=out action=allow enable=yes protocol=tcp profile=any remoteport=8000 remoteip=$Ubuntu18Web  | Out-Null
                 # Internet Access
     netsh advfirewall firewall add rule name="CCDC-Web Regional"        new dir=out action=allow enable=yes protocol=tcp profile=any remoteip=any remoteport=80,443  | Out-Null
     netsh advfirewall firewall add rule name="CCDC-DNS Regional"        new dir=out action=allow enable=yes protocol=udp profile=any remoteport=53  | Out-Null
@@ -268,7 +297,7 @@ Function Damage_Reversal {
         Add-Content $discoverypath\EnabledFeatures.txt "$feature" -force -erroraction silentlycontinue
     }
                                         # Reg edits / Get-ItemProperty
-    $regProof = "$proofpath\regproof.txt"
+    $global:regProof = "$proofpath\regproof.txt"
                 # Saving old reg
     reg export HKLM $regbackpath\Oldhlkm.reg
     reg export HKCU $regbackpath\Oldhkcu.reg
@@ -311,11 +340,11 @@ Function Damage_Reversal {
     REG query "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" | Add-Content $regProof
 
                 # Clear remote registry paths
-    Add-Content $regProof "Clear Remote Registry Paths:"
-    REG query "HKLM\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedExactPaths" /v Machine | Add-Content $regProof
+    #Add-Content $regProof "Clear Remote Registry Paths:"
+    #REG query "HKLM\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedExactPaths" /v Machine | Add-Content $regProof
     #REG add "HKLM\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedExactPaths" /v Machine /t REG_MULTI_SZ /d $null /f | Out-Null
-    New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedExactPaths" -Name 'Machine' -Value "" -Force
-    REG query "HKLM\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedExactPaths" /v Machine | Add-Content $regProof
+    #New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedExactPaths" -Name 'Machine' -Value "" -Force
+    #REG query "HKLM\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedExactPaths" /v Machine | Add-Content $regProof
 
     REG query "HKLM\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedPaths" /v Machine | Add-Content $regProof
     New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedPaths" -Name 'Machine' -Value "" -Force | Out-Null
@@ -421,7 +450,7 @@ Function Damage_Reversal {
     $ar2 = New-Object system.security.AccessControl.FileSystemAccessRule("$env:username", "FullControl","Allow")
     $Acl2.SetAccessRule($ar2)
     Set-Acl systray.exe -AclObject $Acl2
-    move-item sethc.exe sethc.old.exe | Out-Null
+    move-item sethc.exe sethc.old.exe -Force | Out-Null
     copy-item systray.exe sethc.exe | Out-Null
     Write-Host "Function: Damage_Reversal   -   Complete" -ForegroundColor Green
     #Continue_
@@ -541,7 +570,46 @@ Function Docker {
     REG add "HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" /v "SMB1" /t REG_DWORD /d 0 /f
     #Continue_
 }
+Function Email {
+    Write-Host "Did you know that Windows 2012 Email server uses a different version of powershell? This causes this entire script to crash. Ain't that neat!"
+}
+Function Unknown_Host {
+        
+    CCDC_Directories
 
+    Scan_Dirs
+
+    Discovery_
+
+    #Firewall rules
+    $global:Splunk = Read-Host "What IP is Splunk at?"
+    netsh advfirewall firewall set rule name=all new enable=no
+        #Pings
+    netsh advfirewall firewall add rule name="CCDC-Allow Pings Out!" new dir=in  action=allow enable=yes protocol=icmpv4:8,any profile=any  | Out-Null
+    netsh advfirewall firewall add rule name="CCDC-Allow Pings In!"  new dir=out action=allow enable=yes protocol=icmpv4:8,any profile=any  | Out-Null
+        #Web Access
+    netsh advfirewall firewall add rule name="CCDC-Web Regional"        new dir=out action=allow enable=no protocol=tcp profile=any remoteip=any remoteport=80,443  | Out-Null
+    netsh advfirewall firewall add rule name="CCDC-DNS Regional"        new dir=out action=allow enable=no protocol=udp profile=any remoteport=53  | Out-Null
+        #Splunk
+    netsh advfirewall firewall add rule name="CCDC-Splunk Logs"       new dir=out action=allow enable=yes protocol=tcp profile=any remoteport=8000,8089,9997 remoteip=$Splunk  | Out-Null
+        #Potential Scored Services
+    netsh advfirewall firewall add rule name="CCDC-SMTP"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=25  | Out-Null
+    netsh advfirewall firewall add rule name="CCDC-POP3"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=110  | Out-Null
+    netsh advfirewall firewall add rule name="CCDC-DNS"  new dir=in action=allow enable=yes protocol=udp profile=any localport=53  | Out-Null
+    netsh advfirewall firewall add rule name="CCDC-FTP"  new dir=in action=allow enable=no protocol=tcp profile=any localport=20,21  | Out-Null
+    netsh advfirewall firewall add rule name="CCDC-Webserver"  new dir=in action=allow enable=no protocol=udp profile=any localport=80,443  | Out-Null
+
+    Damage_Reversal
+
+    Splunk_Logging
+
+    CCDC_ICACLS
+
+    Export_Configs
+
+    exit
+
+}
 Function CCDC_ICACLS {
     cls
     Write-Host "Starting Function: CCDC_ICACLS" -ForegroundColor Cyan
@@ -611,21 +679,22 @@ If (!($curRoll)){
 Do{
     cls
     Write-Host "------Host Options------"
-    Write-Host "[1] - Win10"
-    Write-Host "[2] - WinServer"
+    Write-Host "[1] - Win10-Virt"
+    Write-Host "[2] - WinServer-Virt"
     Write-Host "[3] - Docker"
+    Write-Host "[4] - Email"
+    Write-Host "[5] - WinServer-Hard"
+    Write-Host "[6] - Win10-Hard"
+    Write-Host "[7] - Unknown Host"
     $curhost = Read-Host "Which host are you on? (type the corresponding number)"
-    If ($curhost -eq 1){
-        $curhost = "Win10"
-        $setExt = "True"
-    }
-    If ($curhost -eq 2){
-        $curhost = "WinServer"
-        $setInt = "True"
-    }
-    If ($curhost -eq 3){
-        $curhost = "Docker"
-        $setInt = "True"
+    switch ($curhost) {
+        1 {$curhost = "Win10-Virt"}
+        2 {$curhost = "WinServer-Virt"; Set_Internal_IPs_V }
+        3 {$curhost = "Docker";Set_Internal_IPs_V}
+        4 {$curhost = "Email"; Set_Internal_IPs_H}
+        5 {$curhost = "WinServer-Hard"; Set_Internal_IPs_H}
+        6 {$curhost = "Win10-Hard"; Set_Internal_IPs_H}
+        7 {Unknown_Host}
     }
     cls
     Write-Host "Selection: $curhost" -ForegroundColor Yellow
@@ -633,7 +702,7 @@ Do{
 }  Until (($hostanswer -eq "Y") -or ($hostanswer -eq "y"))
 
                 # 3. Team Check
-If ($setExt) {
+If ($curhost -eq "Win10-Virt") {
     Do{
         cls               
         $teamNum = Read-Host "Please enter your team number (1-12)"
@@ -643,6 +712,7 @@ If ($setExt) {
     }  Until (($teamanswer -eq "Y") -or ($teamanswer -eq "y"))
     $teamNum = [int]$teamNum
     $Team = $teamNum + '20'
+    Set_External_IPs
 }
 
                 # 4. Setting CCDC directories
@@ -652,12 +722,7 @@ Scan_Dirs
 
 Discovery_
                 # 5. Setting IPs
-If ($setExt){
-    Set_External_IPs
-}
-If ($setInt){
-    Set_Internal_IPs
-}
+#Moved into host check (External in Team Check
 
                 # 6. Domain Name 
 Do{
@@ -686,8 +751,13 @@ Damage_Reversal
 # Removed
 
                 # 11. Apply Box specific rules
-$curhost
-& $curhost
+switch -Wildcard ($curhost) {
+    "WinServer*" {Winserver}
+    "Win10-Virt" {Win10}
+    "Email" {Email}
+    "Docker" {Docker}
+}
+
 
                 # 12. Tighten CCDC ACLs
 CCDC_ICACLS
