@@ -117,7 +117,6 @@ set network interface ethernet ethernet1/4 layer3 interface-management-profile B
 set network interface ethernet ethernet1/4 layer3 lldp enable no
 set network interface ethernet ethernet1/4 layer3 ndp-proxy enabled no
 set network interface ethernet ethernet1/4 comment USER
-set network virtual-wire 
 set network profiles monitor-profile default interval 3
 set network profiles monitor-profile default threshold 5
 set network profiles monitor-profile default action wait-recover
