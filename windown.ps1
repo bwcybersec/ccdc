@@ -1,6 +1,6 @@
 Set-ExecutionPolicy -scope currentuser unrestricted 
-New-Item -Path C:\ccdc -ItemType Directory -erroraction SilentlyContinue
-Set-Location c:\ccdc
+New-Item -Path C:\download -ItemType Directory -erroraction SilentlyContinue
+Set-Location c:\download
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls, [Net.SecurityProtocolType]::Tls11, [Net.SecurityProtocolType]::Tls12, [Net.SecurityProtocolType]::Ssl3
 
 Write-Output "Download: weboff"
@@ -56,4 +56,5 @@ Expand-Archive .\ProcessExplorer.zip c:\ccdc -Force
 #Invoke-WebRequest https://github.com/ION28/BLUESPAWN/releases/download/v0.5.1-alpha/BLUESPAWN-client-x64.exe -Outfile BLUESPAWN-client-x64.exe
 #Invoke-WebRequest https://www.winpcap.org/windump/install/bin/windump_3_9_5/WinDump.exe -Outfile Windump.exe
 Set-ExecutionPolicy Restricted -force
+
 
