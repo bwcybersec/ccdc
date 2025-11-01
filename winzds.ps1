@@ -281,146 +281,15 @@ Function Damage_Reversal {
     }
                                         # Reg edits / Get-ItemProperty
     $global:regProof = "$proofpath\regproof.txt"
-                # Saving old reg
-    reg export HKLM $regbackpath\Oldhlkm.reg
-    reg export HKCU $regbackpath\Oldhkcu.reg
-    reg export HKCR $regbackpath\Oldhlcr.reg
-    reg export HKU $regbackpath\Oldhlku.reg
-    reg export HKCC $regbackpath\Oldhlcc.reg
-                # Changing Owner
-    Add-Content $regProof "Changing registered owner..."
-    REG query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion" /v RegisteredOwner | Add-Content $regProof
-    REG add "HKLM\Software\Microsoft\Windows NT\CurrentVersion" /v RegisteredOwner /t REG_SZ /d blueteam /f
-    REG query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion" /v RegisteredOwner | Add-Content $regProof
-                # Turning on UAC
-    Add-Content $regProof "UAC:"
-    REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v EnableLUA | Add-Content $regProof
-    REG add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v EnableLUA /t REG_DWORD /d 1 /f 
-    REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v EnableLUA | Add-Content $regProof
-
-                #Disable admin autologon
-    Add-Content $regProof "Disable Admin autologin:"
-    REG query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v AutoAdminLogon | Add-Content $regProof
-    REG add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v AutoAdminLogon /t REG_DWORD /d 0 /f 
-    REG query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v AutoAdminLogon | Add-Content $regProof
-
-                # Windows Updates
-    Add-Content $regProof "Disabling Windows Updates"
-    REG query "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\WindowsUpdate" /v DisableWindowsUpdateAccess | Add-Content $regProof
-    REG add "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\WindowsUpdate" /v DisableWindowsUpdateAccess /t Reg_DWORD /d 0 /f | Out-Null
-    REG query "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\WindowsUpdate" /v DisableWindowsUpdateAccess | Add-Content $regProof
-
-    REG query "HKLM\Software\Policies\Microsoft\Windows\WindowsUpdate" /v DisableWindowsUpdateAccess | Add-Content $regProof
-    REG add "HKLM\Software\Policies\Microsoft\Windows\WindowsUpdate" /v DisableWindowsUpdateAccess /t Reg_DWORD /d 0 /f | Out-Null
-    REG query "HKLM\Software\Policies\Microsoft\Windows\WindowsUpdate" /v DisableWindowsUpdateAccess  | Add-Content $regProof
-
-    REG query "HKLM\SYSTEM\Internet Communication Management\Internet Communication" /v DisableWindowsUpdateAccess | Add-Content $regProof
-    REG add "HKLM\SYSTEM\Internet Communication Management\Internet Communication" /v DisableWindowsUpdateAccess /t Reg_DWORD /d 0 /f | Out-Null
-    REG query "HKLM\SYSTEM\Internet Communication Management\Internet Communication" /v DisableWindowsUpdateAccess | Add-Content $regProof
-
-    REG query "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" | Add-Content $regProof
-    REG add "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v NoWindowsUpdate /t Reg_DWORD /d 0 /f | Out-Null
-    REG query "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" | Add-Content $regProof
-
-                # Clear remote registry paths
-    Add-Content $regProof "Clear Remote Registry Paths:"
-    REG query "HKLM\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedExactPaths" /v Machine | Add-Content $regProof
-    REG add "HKLM\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedExactPaths" /v Machine /t REG_MULTI_SZ /d $null /f | Out-Null
-    New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedExactPaths" -Name 'Machine' -Value "" -Force
-    REG query "HKLM\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedExactPaths" /v Machine | Add-Content $regProof
-
-    REG query "HKLM\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedPaths" /v Machine | Add-Content $regProof
-    New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedPaths" -Name 'Machine' -Value "" -Force | Out-Null
-    REG query "HKLM\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedPaths" /v Machine | Add-Content $regProof
-
-                # Unhide Files
-    Add-Content $regProof "Unhide Files:"
-    REG query "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v Hidden | Add-Content $regProof
-    REG add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v Hidden /t REG_DWORD /d 1 /f
-    REG query "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v Hidden | Add-Content $regProof
-
-                # Unhide System Files
-    Add-Content $regProof "Unhide system files:"
-    REG query "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v ShowSuperHidden | Add-Content $regProof
-    REG add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v ShowSuperHidden /t REG_DWORD /d 1 /f | Out-Null
-    REG query "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v ShowSuperHidden | Add-Content $regProof
-
-                # Fix Local Security Authority
-    Add-Content $regProof "Restrictanonymous:"
-    REG query "HKLM\SYSTEM\CurrentControlSet\Control\LSA" /v restrictanonymous | Add-Content $regProof
-    REG add "HKLM\SYSTEM\CurrentControlSet\Control\LSA" /v restrictanonymous /t REG_DWORD /d 1 /f | Out-Null
-    REG query "HKLM\SYSTEM\CurrentControlSet\Control\LSA" /v restrictanonymous | Add-Content $regProof
-
-                # Restrict Anonymous SAM
-    Add-Content $regproof "Restrict anonymous sam:"
-    REG query "HKLM\SYSTEM\CurrentControlSet\Control\LSA" /v restrictanonymoussam | Add-Content $regProof
-    REG add "HKLM\SYSTEM\CurrentControlSet\Control\LSA" /v restrictanonymoussam /t REG_DWORD /d 1 /f | Out-Null
-    REG query "HKLM\SYSTEM\CurrentControlSet\Control\LSA" /v restrictanonymoussam | Add-Content $regProof
-
-                # Change everyone includes Anonymous
-    Add-Content $regProof "Change everyone includes anonymous:"
-    REG query "HKLM\SYSTEM\CurrentControlSet\Control\LSA" /v everyoneincludesanonymous | Add-Content $regProof
-    REG add "HKLM\SYSTEM\CurrentControlSet\Control\LSA" /v everyoneincludesanonymous /t REG_DWORD /d 0 /f | Out-Null
-    REG query "HKLM\SYSTEM\CurrentControlSet\Control\LSA" /v everyoneincludesanonymous | Add-Content $regProof
-
-                # Turn off Local Machine Hash
-    Add-Content $regProof "Turn off Local Machine Hash:"
-    REG query "HKLM\SYSTEM\CurrentControlSet\Control\LSA" /v NoLMHash | Add-Content $regProof
-    REG add "HKLM\SYSTEM\CurrentControlSet\Control\LSA" /v NoLMHash /t REG_DWORD /d 1 /f | Out-Null
-    REG query "HKLM\SYSTEM\CurrentControlSet\Control\LSA" /v NoLMHash  | Add-Content $regProof
-
-                # Change Notification Packages
-    Add-Content $regProof "Change notification packages:"
-    REG query "HKLM\SYSTEM\CurrentControlSet\Control\LSA" /v "Notification Packages"  | Add-Content $regProof
-    REG add "HKLM\SYSTEM\CurrentControlSet\Control\LSA" /v "Notification Packages" /t REG_MULTI_SZ /d "scecli" /f | Out-Null
-    REG query "HKLM\SYSTEM\CurrentControlSet\Control\LSA" /v "Notification Packages"  | Add-Content $regProof
-
-                # Delete image hijack that kills task manager
-    Add-Content $regProof "Re-enable task manager:"
-    REG query "HKLM\Software\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\taskmgr.exe" /v Debugger | Add-Content $regProof
-    REG delete "HKLM\Software\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\taskmgr.exe" /f /v Debugger | Out-Null
-    REG query "HKLM\Software\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\taskmgr.exe" /v Debugger | Add-Content $regProof
     
-                # Re-enable task manager
-    Add-Content $regProof "Re-enable task manager 2:"
-    REG query "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v DisableTaskMgr | Add-Content $regProof
-    REG delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v DisableTaskMgr /f | Out-Null
-
-                # Re-enable CMD Prompt
-    Add-Content $regProof "Re-enable cmd prompt:"
-    REG query "HKCU\Software\Policies\Microsoft\Windows\System" /v DisableCMD | Add-Content $regProof
-    REG delete "HKCU\Software\Policies\Microsoft\Windows\System" /v DisableCMD /f | Out-Null
-
-                # Enable Windows Defender
-    Add-Content $regProof "Re-enable Windows Defender:"
-    REG query "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender" /v DisableAntiSpyware | Add-Content $regProof
-    REG delete "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender" /v DisableAntiSpyware /f | Out-Null
-                # Change setting to NOT store plaintext passwords
-    Add-Content $regProof "Removing stored plaintext passwords:"
-    REG query "HKLM\SYSTEM\CurrentControlSet\services\LanmanWorkstation\Parametersn" /v EnablePlainTextPassword | Add-Content $regProof
-    REG add "HKLM\SYSTEM\CurrentControlSet\services\LanmanWorkstation\Parameters" /v EnablePlainTextPassword /t REG_DWORD /d 0 /f | Out-Null
-    REG query "HKLM\SYSTEM\CurrentControlSet\services\LanmanWorkstation\Parameters" /v EnablePlainTextPassword | Add-Content $regProof
-                # Delete use Machine ID
-    Add-Content $regProof "Delete use machine id:"
-    REG query "HKLM\SYSTEM\CurrentControlSet\Control\LSA" /v UseMachineID | Add-Content $regProof
-    REG delete "HKLM\SYSTEM\CurrentControlSet\Control\LSA" /v UseMachineID /f | Out-Null
-
-                # Show Hidden Users in GUI
-    Add-Content $regProof "Show hidden users in gui:"
-    REG query "HKLM\Software\Microsoft\WindowsNT\CurrentVersion\Winlogon\SpecialAccounts" | Add-Content $regProof
-    Reg delete "HKLM\Software\Microsoft\WindowsNT\CurrentVersion\Winlogon\SpecialAccounts" /f | Out-Null
-
-                # Disable Possible Backdoors
-    Add-Content $regProof "Disable possible backdoors"
-    REG query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\utilman.exe" /v "Debugger" | Add-Content $regProof
-    REG add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\utilman.exe" /v "Debugger" /t REG_SZ /d "systray.exe" /f | Out-Null
-    REG query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\utilman.exe" /v "Debugger" | Add-Content $regProof
-
-    REG query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\osk.exe" /v Debugger | Add-Content $regProof
-    REG add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\osk.exe" /v Debugger /t REG_SZ /d "systray.exe" /f | Out-Null
-    REG query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\osk.exe" /v Debugger | Add-Content $regProof
-
-                #Sticky keys
+	# Saving old reg
+    reg export HKLM $regbackpath\Oldhklm.reg
+    reg export HKCU $regbackpath\Oldhkcu.reg
+    reg export HKCR $regbackpath\Oldhkcr.reg
+    reg export HKLU $regbackpath\Oldhklu.reg
+    reg export HKCC $regbackpath\Oldhkcc.reg
+    
+	#Sticky keys
     Write-Host "Taking over sticky keys"
     Set-Location C:\Windows\System32
     takeown /f sethc.exe | Out-Null
