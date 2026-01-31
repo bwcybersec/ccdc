@@ -13,7 +13,6 @@
       shell: |
         echo "ZDS_TYPE=webmail" >> /etc/profile
         echo "webmail" > /var/zds/zds_type
-        chattr +i /var/zds/zds_type
       args:
         executable: /bin/bash 
 

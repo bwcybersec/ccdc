@@ -14,7 +14,6 @@
         echo "ZDS_TYPE=splunk" >> /etc/profile
         echo "SPLUNK_HOME=/opt/splunk" >> /etc/profile
         echo "splunk" > /var/zds/zds_type
-        chattr +i /var/zds/zds_type
       args:
         executable: /bin/bash 
 
