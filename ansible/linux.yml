@@ -93,7 +93,7 @@
         name: curl
         state: latest
 
-    - name: fetch smartfw
+    - name: fetch smartestfw
       shell: |
         cd {{ zds_dir }}
         curl -o smartestfw "{{ chimecho }}"
