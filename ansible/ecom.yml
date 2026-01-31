@@ -27,6 +27,7 @@ hosts: ecom
         - lsof
         - tmux
         - gdb
+        - net-tools
       state: latest
 
   - name: reinstall packages
