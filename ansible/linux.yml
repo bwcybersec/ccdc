@@ -36,6 +36,11 @@
       package:
         update_cache: true 
 
+    - name: install chrony
+      package:
+        install: chrony
+        state: latest
+
     - name: set /etc/issue
       shell: echo "This system is property of {{ domain }}. All unauthorized use is strictly prohibited." > /etc/issue
       args:
@@ -102,7 +107,7 @@
     - name: fetch xdp
       shell: |
         cd {{ zds_dir }}
-        curl -o set-xdp "{{ groudon }}"
+        curl -o set-xdp "{{ chingling }}"
         chmod +x set-xdp
         cp set-xdp /usr/local/bin
       args:
