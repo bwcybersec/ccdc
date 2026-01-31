@@ -1,114 +1,117 @@
 ---
-- hosts: linux
+- name: general tasks
+  hosts: linux
+  become: true
+    
   tasks:
-  - name: set env
-    shell: echo "ZDS_DIR={{ zds_dir }}" >> /etc/profile
-    args:
+    - name: set env
+      shell: echo "ZDS_DIR={{ zds_dir }}" >> /etc/profile
+      args:
+        executable: /bin/bash
+
+    - name: make directories
+      shell: | 
+        mkdir -p {{ zds_dir }}{etc,bad,home,root,{{ ansible_user }}}
+        mkdir -p /var/log/zds
+      args:
+        executable: /bin/bash 
+
+    - name: /etc backup
+      shell: cp -r /etc {{ zds_dir }}/etc 
+      args:
+        executable: /bin/bash 
+
+    - name: root backup
+      shell: cp -r /root {{ zds_dir }}/root; rm -rf /root/.ssh
+      args:
+        executable: /bin/bash 
+
+    - name: administrator backup
+      shell: |
+        cp -r /home/{{ ansible_user }} {{ zds_dir }}/{{ ansible_user }}
+      args:
+        executable: /bin/bash 
+
+    - name: refresh repos
+      package:
+        update_cache: true 
+
+    - name: set /etc/issue
+      shell: echo "This system is property of {{ domain }}. All unauthorized use is strictly prohibited." > /etc/issue
+      args:
       executable: /bin/bash
 
-  - name: make directories
-    shell: | 
-      mkdir -p {{ zds_dir }}{etc,bad,home,root,{{ ansible_user }}}
-      mkdir -p /var/log/zds
-    args:
-      executable: /bin/bash 
+    - name: set /etc/hosts
+      shell: |
+        echo "172.20.242.20    splunk01.{{ domain  }}" >> /etc/hosts
+        echo "172.20.242.30    ecom01.{{ domain }}" >> /etc/hosts
+        echo "172.20.242.40    webmail01.{{ domain }}" >> /etc/hosts
+        echo "172.20.242.200    wkst01.{{ domain }}" >> /etc/hosts
+      args:
+        executable: /bin/bash
 
-  - name: /etc backup
-    shell: cp -r /etc {{ zds_dir }}/etc 
-    args:
-      executable: /bin/bash 
+    - name: set /etc/resolv.conf
+      shell: |
+        echo "nameserver 8.8.8.8" >> /etc/resolv.conf
+        echo "nameserver 8.8.4.4" >> /etc/resolv.conf
+      args:
+        executable: /bin/bash
 
-  - name: root backup
-    shell: cp -r /root {{ zds_dir }}/root; rm -rf /root/.ssh
-    args:
-      executable: /bin/bash 
+    - name: sysctl toggles
+      shell: | 
+        echo "net.ipv6.conf.all.disable_ipv6=1" >> /etc/sysctl.d/net.conf
+        echo "net.ipv6.conf.default.disable_ipv6=1" >> /etc/sysctl.d/net.conf
+        echo "net.ipv6.conf.lo.disable_ipv6=1" >> /etc/sysctl.d/net.conf
+        echo "net.core.bpf_jit_enable=0" >> /etc/sysctl.d/bpf.conf
+        echo "net.core.bpf_jit_harden=2" >> /etc/sysctl.d/bpf.conf
+        echo "net.core.bpf_jit_limit=0" >> /etc/sysctl.d/bpf.conf
+        echo "kernel.unprivileged_bpf_disabled = 2" >> /etc/sysctl.d/bpf.conf
+      args:
+        executable: /bin/bash
 
-  - name: administrator backup
-    shell: |
-      cp -r /home/{{ ansible_user }} {{ zds_dir }}/{{ ansible_user }}
-    args:
-      executable: /bin/bash 
+    - name: no ssh for root
+      shell: sed -i 's/#\?\(PermitRootLogin\s*\).*$/\1 no/' /etc/ssh/sshd_config
+      args:
+        executable: /bin/bash 
 
-  - name: refresh repos
-    package:
-      update_cache: true 
+    - name: clean up ownership
+      shell: |
+        chown root:root /etc/group
+        chown root:root /etc/passwd
+        chown root:root /etc/sudoers
+        if [[ $(getent group shadow) ]]; then chown root:shadow /etc/shadow; else chown root:root /etc/shadow; fi
+      args:
+        executable: /bin/bash
 
-  - name: set /etc/issue
-    shell: echo "This system is property of {{ domain }}. All unauthorized use is strictly prohibited." > /etc/issue
-    args:
-      executable: /bin/bash
+    - name: set scheduled tasks
+      shell: |
+        touch /etc/clodsire
+        echo "@reboot root /etc/clodsire" >> /etc/crontab
+        echo '*/5 * * * * find / -type f -name "*.img" | xargs mv {{ zds_dir }}/bad' >> /etc/crontab
+      args:
+        executable: /bin/bash
 
-  - name: set /etc/hosts
-    shell: |
-      echo "172.20.242.20    splunk01.{{ domain  }}" >> /etc/hosts
-      echo "172.20.242.30    ecom01.{{ domain }}" >> /etc/hosts
-      echo "172.20.242.40    webmail01.{{ domain }}" >> /etc/hosts
-      echo "172.20.242.200    wkst01.{{ domain }}" >> /etc/hosts
-    args:
-      executable: /bin/bash
+    - name: fetch smartfw
+      shell: |
+        cd {{ zds_dir }}
+        curl -o smartestfw "{{ chimecho }}"
+        chmod +x smartestfw
+      args:
+        executable: /bin/bash
 
-  - name: set /etc/resolv.conf
-    shell: |
-      echo "nameserver 8.8.8.8" >> /etc/resolv.conf
-      echo "nameserver 8.8.4.4" >> /etc/resolv.conf
-    args:
-      executable: /bin/bash
+    - name: fetch xdp
+      shell: |
+        cd {{ zds_dir }}
+        curl -o set-xdp "{{ groudon }}"
+        chmod +x set-xdp
+        cp set-xdp /usr/local/bin
+      args:
+        executable: /bin/bash
 
-  - name: sysctl toggles
-    shell: | 
-      echo "net.ipv6.conf.all.disable_ipv6=1" >> /etc/sysctl.d/net.conf
-      echo "net.ipv6.conf.default.disable_ipv6=1" >> /etc/sysctl.d/net.conf
-      echo "net.ipv6.conf.lo.disable_ipv6=1" >> /etc/sysctl.d/net.conf
-      echo "net.core.bpf_jit_enable=0" >> /etc/sysctl.d/bpf.conf
-      echo "net.core.bpf_jit_harden=2" >> /etc/sysctl.d/bpf.conf
-      echo "net.core.bpf_jit_limit=0" >> /etc/sysctl.d/bpf.conf
-      echo "kernel.unprivileged_bpf_disabled = 2" >> /etc/sysctl.d/bpf.conf
-    args:
-      executable: /bin/bash
-
-  - name: no ssh for root
-    shell: sed -i 's/#\?\(PermitRootLogin\s*\).*$/\1 no/' /etc/ssh/sshd_config
-    args:
-      executable: /bin/bash 
-
-  - name: clean up ownership
-    shell: |
-      chown root:root /etc/group
-      chown root:root /etc/passwd
-      chown root:root /etc/sudoers
-      if [[ $(getent group shadow) ]]; then chown root:shadow /etc/shadow; else chown root:root /etc/shadow; fi
-    args:
-      executable: /bin/bash
-
-  - name: set scheduled tasks
-    shell: |
-      touch /etc/clodsire
-      echo "@reboot root /etc/clodsire" >> /etc/crontab
-      echo '*/5 * * * * find / -type f -name "*.img" | xargs mv {{ zds_dir }}/bad' >> /etc/crontab
-    args:
-      executable: /bin/bash
-
-  - name: fetch smartfw
-    shell: |
-      cd {{ zds_dir }}
-      curl -o smartestfw "{{ chimecho }}"
-      chmod +x smartestfw
-    args:
-      executable: /bin/bash
-
-  - name: fetch xdp
-    shell: |
-      cd {{ zds_dir }}
-      curl -o set-xdp "{{ groudon }}"
-      chmod +x set-xdp
-      cp set-xdp /usr/local/bin
-    args:
-      executable: /bin/bash
-
-  - name: search for PII
-    shell: |
-      grep -nrHIEe '[0-9]{16}' /root /home >> {{ zds_dir }}/bad/potentially_pii
-      grep -nrHIEe '[0-9]{3}(-|\s)?[0-9]{3}(-|\s)?[0-9]{4}' /root /home >> {{ zds_dir }}/bad/potentially_pii
-    args:
-      executable: /bin/bash
+    - name: search for PII
+      shell: |
+        grep -nrHIEe '[0-9]{16}' /root /home >> {{ zds_dir }}/bad/potentially_pii
+        grep -nrHIEe '[0-9]{3}(-|\s)?[0-9]{3}(-|\s)?[0-9]{4}' /root /home >> {{ zds_dir }}/bad/potentially_pii
+      args:
+        executable: /bin/bash
 
