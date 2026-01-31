@@ -88,6 +88,11 @@
       args:
         executable: /bin/bash
 
+    - name: install curl
+      package:
+        name: curl
+        state: latest
+
     - name: fetch smartfw
       shell: |
         cd {{ zds_dir }}
