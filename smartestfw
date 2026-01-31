@@ -62,6 +62,7 @@ $QUAGSIRE -A INPUT -p udp -s 172.20.240.104 --dport 161 -j ACCEPT
 $QUAGSIRE -A INPUT -p udp -s 172.20.242.30 --dport 161 -j ACCEPT
 $QUAGSIRE -A INPUT -p udp -s 172.20.242.40 --dport 161 -j ACCEPT
 $QUAGSIRE -A INPUT -p udp -s 172.20.242.200 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.16.101.1 --dport 514 -j ACCEPT
 $QUAGSIRE -A INPUT -p udp -s 172.20.240.200 --dport 514 -j ACCEPT
 $QUAGSIRE -A INPUT -p udp -s 172.20.242.150 --dport 514 -j ACCEPT
 $QUAGSIRE -A INPUT -p udp -s 172.20.240.100 --dport 8089 -j ACCEPT
