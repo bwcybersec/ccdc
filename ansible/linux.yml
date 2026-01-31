@@ -39,7 +39,7 @@
     - name: set /etc/issue
       shell: echo "This system is property of {{ domain }}. All unauthorized use is strictly prohibited." > /etc/issue
       args:
-      executable: /bin/bash
+        executable: /bin/bash
 
     - name: set /etc/hosts
       shell: |
