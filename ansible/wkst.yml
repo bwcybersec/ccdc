@@ -9,8 +9,10 @@
       args:
         executable: /bin/bash
 
-    - name: set ZDS_TYPE
-      shell: echo "ZDS_TYPE=wkst" >> /etc/profile
+    - name: set env 
+      shell: |
+        echo "ZDS_TYPE=wkst" >> /etc/profile
+        echo "wkst" > /var/zds/zds_type
       args:
         executable: /bin/bash 
 

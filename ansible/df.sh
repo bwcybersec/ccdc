@@ -17,6 +17,7 @@ echo "172.20.242.30     ecom01.allsafe.internal" >> /etc/hosts
 echo "172.20.242.40     webmail01.allsafe.internal" >> /etc/hosts
 echo "172.20.242.200    wkst01.allsafe.internal" >> /etc/hosts
 
+dnf update -y
 dnf install -y epel-release
 dnf install -y ansible
 
@@ -31,5 +32,9 @@ curl -o webmail.yml $WM
 curl -o splunk.yml $SPL
 curl -o forwarders.yml $UF
 
-ansible -i inv.yml -k linux.yml
+ansible -i inv.yml -kK linux.yml
+ansible -i inv.yml -kK splunk.yml
+ansible -i inv.yml -kK wkst.yml
+ansible -i inv.yml -kK ecom.yml
+ansible -i inv.yml -kK webmail.yml
 
