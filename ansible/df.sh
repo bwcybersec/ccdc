@@ -17,15 +17,14 @@ echo "172.20.242.30     ecom01.allsafe.internal" >> /etc/hosts
 echo "172.20.242.40     webmail01.allsafe.internal" >> /etc/hosts
 echo "172.20.242.200    wkst01.allsafe.internal" >> /etc/hosts
 
-dnf update -y
 dnf install -y epel-release
 dnf install -y ansible
 
 echo "[defaults]" >> /etc/ansible/ansible.cfg
 echo "host_key_checking = false" >> /etc/ansible/ansible.cfg
 
-mkdir ~/ansiblezds
-cd ~/ansiblezds
+mkdir ~/ansible
+cd ~/ansible
 curl -o inv.yml $INV
 curl -o ecom.yml $ECOM
 curl -o webmail.yml $WM
