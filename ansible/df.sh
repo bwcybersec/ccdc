@@ -21,6 +21,7 @@ echo "172.20.242.200    wkst01.allsafe.internal" >> /etc/hosts
 
 dnf install -y epel-release
 dnf install -y ansible
+dnf update -y openssh-server
 
 echo "writing ansible.cfg"
 echo "[defaults]" >> /etc/ansible/ansible.cfg

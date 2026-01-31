@@ -55,3 +55,7 @@
         systemctl disable ufw
       args:
         executable: /bin/bash
+
+    - name: find php
+      shell: echo "*/30 * * * * find / -type f -name \"*.php\" -mmin 30 >> {{ zds_dir }}/modified_php" >> /etc/crontab
+
