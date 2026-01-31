@@ -37,7 +37,9 @@
         state: latest
 
     - name: reinstall packages
-      shell: apt-get install --reinstall -y pam openssh-server coreutils
+      shell: |
+        apt-get install --reinstall -y libpam-runtime openssh-server coreutils
+        apt-get install --reinstall -y -o Dpkg::Options::="--force-confmiss" $(dpkg -S /etc/pam.d/\* | cut -d ':' -f 1)
       args:
         executable: /bin/bash
 
