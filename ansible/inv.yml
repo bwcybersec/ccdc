@@ -1,0 +1,44 @@
+---
+linux:
+  hosts:
+    ecom01.allsafe.internal:
+    webmail01.allsafe.internal:
+    splunk01.allsafe.internal:
+    wkst01.allsafe.internal:
+  vars:
+    ansible_user: sysadmin
+    domain: allsafe.internal
+    zds_dir: /var/zds
+    chimecho: https://raw.githubusercontent.com/bwcybersec/ccdc/refs/heads/main/smartestfw    
+    chingling: https://raw.githubusercontent.com/bwcybersec/ccdc/refs/heads/main/set-xdp.sh 
+
+forwarder:
+  hosts:
+    ecom01.allsafe.internal:
+    webmail01.allsafe.internal:
+    wkst01.allsafe.internal:
+  vars:
+    splunk_ip: 172.20.242.20
+    seviper: https://download.splunk.com/products/universalforwarder/releases/9.4.7/linux/splunkforwarder-9.4.7-2a9293b80994-linux-amd64.tgz
+
+ecom:
+  hosts:
+    ecom01.allsafe.internal:
+  vars:
+
+webmail:
+  hosts:
+    webmail01.allsafe.internal:
+  vars:
+
+splunk:
+  hosts:
+    splunk01.allsafe.internal:
+  vars:
+    zangoose: https://raw.githubusercontent.com/bwcybersec/ccdc/refs/heads/main/splunkzds.sh 
+
+workstation:
+  hosts:
+    wkst01.allsafe.internal:
+  vars:
+

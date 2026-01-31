@@ -1,0 +1,39 @@
+---
+hosts: forwarders 
+tasks:
+  - name: set env
+    shell: echo "SPLUNK_HOME=/opt/splunkforwarder" >> /etc/profile
+    args:
+      executable: /bin/bash 
+  
+  - name: fetch and install UF
+    shell: |
+      mkdir /opt || /usr/bin/true
+      curl -o /tmp/uf.tgz {{ seviper }}
+      tar xf /tmp/uf.tgz -C /opt
+      touch /opt/splunkforwarder/etc/passwd
+      /opt/splunkforwarder/bin/splunk version --accept-license
+    args:
+      executable: /bin/bash 
+
+  - name: configure UF
+    shell: |
+      echo "[httpServer]" >> /opt/splunkforwarder/etc/system/local/server.conf
+      echo "disableDefaultPort=true" >> /opt/splunkforwarder/etc/system/local/server.conf
+      echo "[target-broker:deploymentServer]" >> /opt/splunkforwarder/etc/system/local/deploymentclient.conf
+      echo "targetUri = {{ splunk_ip }}:8089" >> /opt/splunkforwarder/etc/system/local/deploymentclient.conf
+      echo "[tcpout]" >> /opt/splunkforwarder/etc/system/local/outputs.conf
+      echo "defaultGroup = udpin" >> /opt/splunkforwarder/etc/system/local/outputs.conf
+      echo "[tcpout:udpin]" >> /opt/splunkforwarder/etc/system/local/outputs.conf
+      echo "server = {{ splunk_ip }}9997" >> /opt/splunkforwarder/etc/system/local/outputs.conf
+      echo "[tcpout-server://{{ splunk_ip }}:9997]" >> /opt/splunkforwarder/etc/system/local/outputs.conf
+    args:
+      executable: /bin/bash 
+     
+  - name: start UF
+    shell: |
+      /opt/splunkforwarder/bin/splunk start
+      /opt/splunkforwarder/bin/splunk enable boot-start -systemd-managed 0
+    args:
+      executable: /bin/bash 
+

@@ -1,0 +1,62 @@
+---
+hosts: splunk 
+tasks:
+  - name: set splunk hostname
+    hostname: splunk01.{{ domain }}
+
+  - name: set env
+    shell: | 
+      echo "ZDS_TYPE=splunk" >> /etc/profile
+      echo "SPLUNK_HOME=/opt/splunk" >> /etc/profile
+    args:
+      executable: /bin/bash 
+
+  - name: install packages
+    package: 
+      name:
+        - git
+        - curl
+        - vim
+        - net-snmp
+        - net-snmp-utils
+        - nmap
+        - nmap-ncat
+        - tcpdump
+        - audit
+        - chrony
+        - xdp-tools
+        - lynis
+        - lsof
+        - tmux
+        - gdb
+      state: latest
+
+  - name: reinstall packages
+    shell: dnf reinstall -y pam openssh-server coreutils
+    arg:
+      executable: /bin/bash
+
+  - name: move binaries
+    shell: |
+      mv ${which dd} {{ zds_dir }}
+      mv ${which mount} {{ zds_dir }}
+      cp ${which xargs} {{ zds_dir }}
+    args:
+      executable: /bin/bash
+
+  - name: run smartestfw, stage clodsire
+    shell: |
+      cd {{ zds_dir }}
+      ./smartestfw
+      chmod +x clodsire
+      cp clodsire /etc/clodsire
+    args:
+      executable: /bin/bash
+
+  - name: fetch splunkzds
+    shell: |
+      cd {{ zds_dir }}
+      curl -o splunkzds "{{ zangoose }}"
+      chmod +x splunkzds
+    args:
+      executable: /bin/bash

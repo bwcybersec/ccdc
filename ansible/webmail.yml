@@ -1,0 +1,36 @@
+---
+tasks:
+hosts: webmail  
+  - name: set webmail hostname
+    hostname: webmail01.{{ domain }}
+
+  - name: set ZDS_TYPE
+    shell: echo "ZDS_TYPE=webmail" >> /etc/profile
+    args:
+      executable: /bin/bash 
+
+  - name: install packages
+    package: 
+      name:
+        - git
+        - curl
+        - vim
+        - net-snmp
+        - net-snmp-utils
+        - nmap
+        - nmap-ncat
+        - tcpdump
+        - audit
+        - chrony
+        - xdp-tools
+        - lynis
+        - lsof
+        - tmux
+        - gdb
+      state: latest
+
+  - name: reinstall packages
+    shell: dnf reinstall -y pam openssh-server coreutils
+    arg:
+      executable: /bin/bash
+

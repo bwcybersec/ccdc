@@ -1,0 +1,36 @@
+---
+tasks:
+hosts: ecom  
+  - name: set ecom hostname
+    hostname: ecom01.{{ domain }}
+
+  - name: set ZDS_TYPE
+    shell: echo "ZDS_TYPE=ecom" >> /etc/profile
+    args:
+      executable: /bin/bash 
+
+  - name: install packages
+    package: 
+      name:
+        - git
+        - curl
+        - vim
+        - snmpd
+        - nmap
+        - ncat
+        - tcpdump
+        - auditd
+        - docker.io
+        - chrony
+        - xdp-tools
+        - lynis
+        - lsof
+        - tmux
+        - gdb
+      state: latest
+
+  - name: reinstall packages
+    shell: apt install -–reinstall -y pam openssh-server coreutils
+    arg:
+      executable: /bin/bash
+
