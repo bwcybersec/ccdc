@@ -37,7 +37,7 @@
 
     - name: reinstall packages
       shell: dnf reinstall -y pam openssh-server coreutils
-      arg:
+      args:
         executable: /bin/bash
 
     - name: move binaries
@@ -53,7 +53,7 @@
       shell: |
         systemctl stop --now firewalld
         systemctl disable firewalld
-      arg:
+      args:
         executable: /bin/bash
 
     - name: run smartestfw, stage clodsire
