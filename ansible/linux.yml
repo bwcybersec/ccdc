@@ -36,7 +36,16 @@
       package:
         name: chrony
         state: latest
-    
+   
+    - name: sync time
+      shell: |
+        systemctl stop --now chronyd
+        wait 5
+        chronyd -q 'pool pool.ntp.org iburst'
+        systemctl start chronyd 
+      args:
+        executable: /bin/bash
+
     - name: refresh repos
       package:
         update_cache: true 
@@ -51,7 +60,7 @@
         echo "172.20.242.20    splunk01.{{ domain  }}" >> /etc/hosts
         echo "172.20.242.30    ecom01.{{ domain }}" >> /etc/hosts
         echo "172.20.242.40    webmail01.{{ domain }}" >> /etc/hosts
-        echo "172.20.242.200    wkst01.{{ domain }}" >> /etc/hosts
+        echo "172.20.242.200   wkst01.{{ domain }}" >> /etc/hosts
       args:
         executable: /bin/bash
 

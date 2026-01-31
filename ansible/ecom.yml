@@ -30,7 +30,8 @@
           - lsof
           - tmux
           - gdb
-         - net-tools
+          - net-tools
+          - htop
         state: latest
 
     - name: reinstall packages

@@ -32,6 +32,7 @@
           - lsof
           - tmux
           - gdb
+          - htop
         state: latest
 
     - name: reinstall packages
