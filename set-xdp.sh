@@ -41,29 +41,29 @@ elif [[ $1 == -o || $1 == --off ]]; then
 elif [[ $1 == -p || $1 == --permissive ]]; then
   xdp-filter load $2 -p deny || exit 1
   for i in ${general[@]}; do
-    echo "xdp-filter port $i"
+    echo xdp-filter port $i
   done
 
 elif [[ $1 == -r || $1 == --restrictive ]]; then
   xdp-filter load $2 -p deny || exit 1
   if [[ $ZDS_TYPE == "ecom" ]]; then
     for i in ${ecom[@]}; do
-      echo "xdp-filter port $i"
+      xdp-filter port $i
     done
   
   elif [[ $ZDS_TYPE == "webmail" ]]; then
     for i in ${webmail[@]}; do
-      echo "xdp-filter port $i"
+      xdp-filter port $i
     done
   
   elif [[ $ZDS_TYPE == "splunk" ]]; then
     for i in ${splunk[@]}; do
-      echo "xdp-filter port $i"
+      echo xdp-filter port $i
     done
   
   elif [[ $ZDS_TYPE == "wkst" ]]; then
     for i in ${wkst[@]}; do
-      echo "xdp-filter port $i"
+      echo xdp-filter port $i
     done
   
   else
