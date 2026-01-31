@@ -37,7 +37,7 @@
         state: latest
 
     - name: reinstall packages
-      shell: apt install -–reinstall -y pam openssh-server coreutils
+      shell: apt-get install --reinstall -y pam openssh-server coreutils
       args:
         executable: /bin/bash
 
