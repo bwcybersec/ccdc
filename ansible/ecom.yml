@@ -1,37 +1,65 @@
 ---
-tasks:
-hosts: ecom  
-  - name: set ecom hostname
-    hostname: ecom01.{{ domain }}
+- name: ecom tasks
+  hosts: ecom
+  become: true
 
-  - name: set ZDS_TYPE
-    shell: echo "ZDS_TYPE=ecom" >> /etc/profile
-    args:
-      executable: /bin/bash 
+  tasks:
+    - name: set ecom hostname
+      hostname: ecom01.{{ domain }}
 
-  - name: install packages
-    package: 
-      name:
-        - git
-        - curl
-        - vim
-        - snmpd
-        - nmap
-        - ncat
-        - tcpdump
-        - auditd
-        - docker.io
-        - chrony
-        - xdp-tools
-        - lynis
-        - lsof
-        - tmux
-        - gdb
-        - net-tools
-      state: latest
+    - name: set ZDS_TYPE
+      shell: echo "ZDS_TYPE=ecom" >> /etc/profile
+      args:
+        executable: /bin/bash 
 
-  - name: reinstall packages
-    shell: apt install -–reinstall -y pam openssh-server coreutils
-    arg:
-      executable: /bin/bash
+    - name: install packages
+      package: 
+        name:
+          - git
+          - curl
+          - vim
+          - snmpd
+          - nmap
+          - ncat
+          - tcpdump
+          - auditd
+          - docker.io
+          - chrony
+          - xdp-tools
+          - lynis
+          - lsof
+          - tmux
+          - gdb
+         - net-tools
+        state: latest
+
+    - name: reinstall packages
+      shell: apt install -–reinstall -y pam openssh-server coreutils
+      arg:
+        executable: /bin/bash
+
+    - name: move binaries
+      shell: |
+        mv ${which dd} {{ zds_dir }}
+        mv ${which mount} {{ zds_dir }}
+        mv ${which base64} {{ zds_dir }}
+        cp ${which xargs} {{ zds_dir }}
+      args:
+        executable: /bin/bash
+
+    - name: disable firewall
+      shell: |
+        systemctl stop --now ufw
+        systemctl disable ufw
+      arg:
+        executable: /bin/bash
+
+    - name: run smartestfw, stage clodsire
+      shell: |
+        cd {{ zds_dir }}
+        ./smartestfw
+        chmod +x clodsire
+        cp clodsire /etc/clodsire
+      args:
+        executable: /bin/bash
 
