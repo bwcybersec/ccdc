@@ -516,7 +516,7 @@ Function WinServer{
         netsh advfirewall firewall set rule group="CCDC-Kerberos Key Distribution Center (TCP-In)" new enable=yes  | Out-Null
         netsh advfirewall firewall set rule group="CCDC-Kerberos Key Distribution Center (UDP-In)" new enable=yes  | Out-Null
 
-        netsh advfirewall firewall add rule name="CCDC-NetBIOS" dir=in action=allow enable=yes profile=any localport=445 remoteip=$ADDNS protocol=tcp | Out-Null
+        netsh advfirewall firewall add rule name="CCDC-NetBIOS" dir=in action=allow enable=yes profile=any localport=445 remoteip=172.20.240.0/24 protocol=tcp | Out-Null
     }
                 # DNS 53
     Write-Host "Create Firewall Rules for DNS access for Internet and Intranet" -ForegroundColor Cyan
