@@ -1,0 +1,241 @@
+#!/bin/bash
+# This file was not written by hand. This file is not intended to be edited by
+# hand. If you think you need to edit this by hand, you don't.
+
+QUAGSIRE=$(which iptables)
+CLODSIRE_HOST=$ZDS_TYPE
+
+# weboff
+cat > clodsire << applaud
+#!/bin/bash
+if command -v readlink &> /dev/null
+then
+    SCRIPT=\$(readlink -f \$0)
+    cp \$SCRIPT /usr/local/bin/weboff || echo "Ignore above error if it's about weboff being the same as weboff"
+else
+    cp /etc/clodsire /usr/local/bin/weboff
+fi
+
+$QUAGSIRE -P INPUT ACCEPT
+$QUAGSIRE -P FORWARD DROP
+$QUAGSIRE -P OUTPUT ACCEPT
+
+$QUAGSIRE -F INPUT
+$QUAGSIRE -F OUTPUT
+
+$QUAGSIRE -A INPUT -i lo -j ACCEPT
+$QUAGSIRE -A INPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
+$QUAGSIRE -A INPUT -p icmp -j ACCEPT
+applaud
+
+case $CLODSIRE_HOST in
+wkst)
+cat >> clodsire << applaud
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.100 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.101 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.102 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.104 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.20 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.30 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.40 --dport 161 -j ACCEPT
+applaud
+;;
+ecom)
+cat >> clodsire << applaud
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.100 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.101 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.102 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.104 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.20 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.40 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.200 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p tcp --dport 80 -j ACCEPT
+$QUAGSIRE -A INPUT -p tcp --dport 443 -j ACCEPT
+applaud
+;;
+splunk)
+cat >> clodsire << applaud
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.100 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.101 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.102 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.104 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.30 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.40 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.200 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.200 --dport 514 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.150 --dport 514 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.100 --dport 8089 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.101 --dport 8089 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.102 --dport 8089 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.104 --dport 8089 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.30 --dport 8089 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.40 --dport 8089 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.200 --dport 8089 -j ACCEPT
+$QUAGSIRE -A INPUT -p tcp -s 172.20.240.100 --dport 9997 -j ACCEPT
+$QUAGSIRE -A INPUT -p tcp -s 172.20.240.101 --dport 9997 -j ACCEPT
+$QUAGSIRE -A INPUT -p tcp -s 172.20.240.102 --dport 9997 -j ACCEPT
+$QUAGSIRE -A INPUT -p tcp -s 172.20.240.104 --dport 9997 -j ACCEPT
+$QUAGSIRE -A INPUT -p tcp -s 172.20.242.30 --dport 9997 -j ACCEPT
+$QUAGSIRE -A INPUT -p tcp -s 172.20.242.40 --dport 9997 -j ACCEPT
+$QUAGSIRE -A INPUT -p tcp -s 172.20.242.200 --dport 9997 -j ACCEPT
+$QUAGSIRE -A INPUT -p tcp --dport 8000 -j ACCEPT
+applaud
+;;
+webmail)
+cat >> clodsire << applaud
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.100 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.101 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.102 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.240.104 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.20 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.30 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p udp -s 172.20.242.200 --dport 161 -j ACCEPT
+$QUAGSIRE -A INPUT -p tcp --dport 25 -j ACCEPT
+$QUAGSIRE -A INPUT -p tcp --dport 110 -j ACCEPT
+applaud
+;;
+esac
+cat >> clodsire << applaud
+$QUAGSIRE -A INPUT -m limit --limit 15/minute -j LOG --log-level 4 --log-prefix 'FW DROP [in]: '
+$QUAGSIRE -A INPUT -j DROP
+applaud
+
+# webon
+cat >> clodsire << applaud
+cat > /usr/local/bin/webon << EOF
+$QUAGSIRE -F OUTPUT
+$QUAGSIRE -A OUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
+applaud
+case $CLODSIRE_HOST in
+wkst)
+cat >> clodsire << applaud
+$QUAGSIRE -A OUTPUT -p tcp --dport 22 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp --dport 53 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp --dport 80 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp --dport 123 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp --dport 443 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp --dport 8000 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp --dport 8089 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp --dport 9997 -j ACCEPT
+applaud
+;;
+ecom)
+cat >> clodsire << applaud
+$QUAGSIRE -A OUTPUT -p udp --dport 53 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp --dport 80 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp --dport 123 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp --dport 443 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp --dport 8000 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp --dport 8089 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp --dport 9997 -j ACCEPT
+applaud
+;;
+splunk)
+cat >> clodsire << applaud
+$QUAGSIRE -A OUTPUT -p udp --dport 53 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp --dport 80 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp --dport 123 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp --dport 443 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp --dport 8000 -j ACCEPT
+applaud
+;;
+webmail)
+cat >> clodsire << applaud
+$QUAGSIRE -A OUTPUT -p udp --dport 53 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp --dport 80 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp --dport 123 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp --dport 389 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp --dport 443 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp --dport 636 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp --dport 8000 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp --dport 8089 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp --dport 9997 -j ACCEPT
+applaud
+;;
+esac
+cat >> clodsire << applaud
+EOF
+chmod +x /usr/local/bin/webon
+$QUAGSIRE -A OUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
+$QUAGSIRE -A OUTPUT -o lo -j ACCEPT
+$QUAGSIRE -A OUTPUT -p icmp -j ACCEPT
+applaud
+
+case $CLODSIRE_HOST in
+wkst)
+cat >> clodsire << applaud
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.150 --dport 22 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.102 --dport 53 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.30 --dport 80 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.150 --dport 80 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.100 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.101 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.102 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.104 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.20 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.30 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.40 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.30 --dport 443 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.150 --dport 443 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.20 --dport 8000 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.20 --dport 8089 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.20 --dport 9997 -j ACCEPT
+applaud
+;;
+ecom)
+cat >> clodsire << applaud
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.150 --dport 22 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.102 --dport 53 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.30 --dport 80 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.150 --dport 80 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.100 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.101 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.102 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.104 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.20 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.30 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.40 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.30 --dport 443 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.150 --dport 443 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.20 --dport 8000 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.20 --dport 8089 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.20 --dport 9997 -j ACCEPT
+applaud
+;;
+splunk)
+cat >> clodsire << applaud
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.102 --dport 53 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.100 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.101 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.102 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.104 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.20 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.30 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.40 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.20 --dport 8000 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.20 --dport 8089 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.20 --dport 9997 -j ACCEPT
+applaud
+;;
+webmail)
+cat >> clodsire << applaud
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.102 --dport 53 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.20 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.30 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp -d 172.20.242.200 --dport 161 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.200 --dport 389 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.200 --dport 636 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.20 --dport 8000 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.20 --dport 8089 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.20 --dport 9997 -j ACCEPT
+applaud
+;;
+esac
+cat >> clodsire << applaud
+$QUAGSIRE -A OUTPUT -m limit --limit 15/minute -j LOG --log-uid --log-level 4 --log-prefix 'FW DROP [out]: ACTION=DROP '
+$QUAGSIRE -A OUTPUT -j DROP
+applaud
