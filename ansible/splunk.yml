@@ -49,15 +49,6 @@
       args:
         executable: /bin/bash
 
-    - name: run smartestfw, stage clodsire
-      shell: |
-        cd {{ zds_dir }}
-        ./smartestfw
-        chmod +x clodsire
-        cp clodsire /etc/clodsire
-      args:
-        executable: /bin/bash
-
     - name: fetch splunkzds
       shell: |
         cd {{ zds_dir }}

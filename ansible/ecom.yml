@@ -50,3 +50,7 @@
       args:
         executable: /bin/bash
 
+    - name: reboot
+      shell: shutdown -r now
+      args:
+        executable: /bin/bash
