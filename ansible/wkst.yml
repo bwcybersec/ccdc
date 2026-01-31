@@ -1,0 +1,37 @@
+---
+tasks:
+hosts: workstation  
+  - name: set wkst hostname
+    hostname: wkst01.{{ domain }}
+
+  - name: set ZDS_TYPE
+    shell: echo "ZDS_TYPE=wkst" >> /etc/profile
+    args:
+      executable: /bin/bash 
+
+  - name: install packages
+    package: 
+      name:
+        - git
+        - curl
+        - vim
+        - snmpd
+        - nmap
+        - ncat
+        - tcpdump
+        - auditd
+        - docker.io
+        - chrony
+        - xdp-tools
+        - lynis
+        - lsof
+        - tmux
+        - gdb
+        - net-tools
+      state: latest
+
+  - name: reinstall packages
+    shell: apt install -–reinstall -y pam openssh-server coreutils
+    arg:
+      executable: /bin/bash
+
