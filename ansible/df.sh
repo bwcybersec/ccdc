@@ -1,11 +1,11 @@
 #! /usr/bin/env bash
 
-$INV="https://raw.githubusercontent.com/bwcybersec/ccdc/refs/heads/main/ansible/inv.yml"
-$ECOM="https://raw.githubusercontent.com/bwcybersec/ccdc/refs/heads/main/ansible/ecom.yml"
-$WM="https://raw.githubusercontent.com/bwcybersec/ccdc/refs/heads/main/ansible/webmail.yml"
-$SPL="https://raw.githubusercontent.com/bwcybersec/ccdc/refs/heads/main/ansible/splunk.yml"
-$WKST="https://raw.githubusercontent.com/bwcybersec/ccdc/refs/heads/main/ansible/wkst.yml"
-$UF="https://raw.githubusercontent.com/bwcybersec/ccdc/refs/heads/main/ansible/forwarders.yml"
+INV="https://raw.githubusercontent.com/bwcybersec/ccdc/refs/heads/main/ansible/inv.yml"
+ECOM="https://raw.githubusercontent.com/bwcybersec/ccdc/refs/heads/main/ansible/ecom.yml"
+WM="https://raw.githubusercontent.com/bwcybersec/ccdc/refs/heads/main/ansible/webmail.yml"
+SPL="https://raw.githubusercontent.com/bwcybersec/ccdc/refs/heads/main/ansible/splunk.yml"
+WKST="https://raw.githubusercontent.com/bwcybersec/ccdc/refs/heads/main/ansible/wkst.yml"
+UF="https://raw.githubusercontent.com/bwcybersec/ccdc/refs/heads/main/ansible/forwarders.yml"
 
 if [[ $UID != 0 ]]; then
   echo "please execute as root :)"
