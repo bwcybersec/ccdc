@@ -23,7 +23,6 @@
     - name: install packages
       package: 
         name:
-          - epel-release
           - git
           - curl
           - vim

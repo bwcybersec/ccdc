@@ -50,3 +50,10 @@ ansible-playbook -i inv.yml -kK wkst.yml
 echo "playbook: forwarders.yml"
 ansible-playbook -i inv.yml -kK forwarders.yml
 
+echo "package updates..."
+dnf update -y
+dnf install -y git curl vim net-snmp net-snmp-utils nmap nmap-ncat tcpdump audit chrony xdp-tools lynis lsof tmux gdb htop
+dnf reinstall -y pam openssh-server coreutils
+
+echo "finished, now get started!"
+
