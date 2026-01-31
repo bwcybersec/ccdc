@@ -32,14 +32,14 @@
       args:
         executable: /bin/bash 
 
+    - name: install chrony
+      package:
+        name: chrony
+        state: latest
+    
     - name: refresh repos
       package:
         update_cache: true 
-
-    - name: install chrony
-      package:
-        install: chrony
-        state: latest
 
     - name: set /etc/issue
       shell: echo "This system is property of {{ domain }}. All unauthorized use is strictly prohibited." > /etc/issue
