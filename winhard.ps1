@@ -1,4 +1,11 @@
 # BW Winhard.ps1
+param (
+    $curhost,
+    $Splunk,
+    $dname,
+    $Password,
+    [switch]$NoAD
+)
 If (!(test-path C:\ccdc)){
     New-Item -Path $path -ItemType Directory -erroraction SilentlyContinue  | Out-Null
     Write-Host ""
@@ -9,6 +16,7 @@ Set-ExecutionPolicy Unrestricted -force
                                         ############## Function Row ##############
 
 Function Continue_ {
+    # Please, I am begging you. Do not use this function during competitions. its just pauses the script.
     Write-Host -NoNewLine '----Press any key to continue----' -ForegroundColor Cyan; 
     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
     Start-Sleep -s 1
@@ -101,28 +109,28 @@ Function Discovery_ {
     #Continue_
 }
 
-Function Set_Internal_IPs_V {
+Function Set_Internal_IPs {
     cls
     Write-Host "Starting Function: Set_Internal_IPs" -ForegroundColor Cyan
     Start-Sleep -s 1
-    $global:Docker = "172.20.240.10"
-    $global:DNSNTP = "172.20.240.20"
-    $global:Ubuntu18Web = "172.20.242.10"
-    $global:UbuntuWrk = "172.20.242.100"
-    $global:ADDNS = "172.20.242.200"
-    $global:Splunk = "172.20.241.20"
-    $global:EComm = "172.20.241.30"
-    $global:WebMail = "172.20.241.40"
-    $global:Internal = @($Docker,$DNSNTP,$Ubuntu18Web,$UbuntuWrk,$ADDNS,$Splunk,$EComm,$WebMail)
+    $global:Win11Wrk = "172.20.240.100"
+    $global:WinFTP = "172.20.240.104"
+    $global:WinWeb = "172.20.240.101"
+    $global:UbuntuWrk = "172.25.$Team.0/24"
+    $global:ADDNS = "172.20.240.102"
+    $global:Splunk = "172.25.$Team.9"
+    $global:EComm = "172.25.$Team.11"
+    $global:WebMail = "172.25.$Team.39"
+    $global:Internal = @($Win11wrk,$WinFTP,$WinWeb,$UbuntuWrk,$ADDNS,$Splunk,$EComm,$WebMail)
     cls
     Write-Host "----IPs set for Internal config:----" -ForegroundColor Green
     Write-host "-----------------------------"
-    Write-Host "Docker: $docker"
-    Write-Host "DNS-NTP: $DNSNTP"
-    Write-Host "Ubuntu-18-Web: $Ubuntu18Web"
+    Write-Host "Windows 11 Work: $Win11wrk"
+    Write-Host "Windows FTP: $WinFTP"
+    Write-Host "Windows Web: $WinWeb"
     Write-Host "Ubuntu-Wrk: $UbuntuWrk"
     Write-Host "AD-DNS: $ADDNS"
-    Write-Host "Splunk: $Splunk"
+    Write-Host "Splunk: $global:Splunk"
     Write-Host "E-Commerce: $Ecomm"
     Write-Host "WebMail: $WebMail"
     Write-Host "-----------------------------"
@@ -130,38 +138,9 @@ Function Set_Internal_IPs_V {
     Write-Host "Function: Set_Internal_IPs   -   Complete" -ForegroundColor Green
     #Continue_
 }
-Function Set_Internal_IPs_H {
-    cls
-    Write-Host "Starting Function: Set_Internal_IPs" -ForegroundColor Cyan
-    Start-Sleep -s 1
-    $global:Email = "172.20.240.11"
-    $global:DNSNTP = "172.20.240.23"
-    $global:Ubuntu18Web = "172.20.240.5"
-    $global:SnipeIT = "172.20.240.97"
-    $global:ADDNS = "172.20.241.27"
-    $global:Splunk = "172.20.241.3"
-    $global:UbuntuWork = "172.20.242.100"
-    $global:HardWin10 = "172.20.242.100"
-    $global:Internal = @($Email,$DNSNTP,$Ubuntu18Web, $SnipeIT, $ADDNS,$Splunk ,$UbuntuWork, $HardWin10)
-    cls
-    Write-Host "----IPs set for Internal config:----" -ForegroundColor Green
-    Write-host "-----------------------------"
-    Write-Host "Email: $Email"
-    Write-Host "DNS-NTP: $DNSNTP"
-    Write-Host "Ubuntu-18-Web: $Ubuntu18Web"
-    Write-Host "Snipe-IT: $SnipeIT"
-    Write-Host "PA MI: $PAMI"
-    Write-Host "AD-DNS: $ADDNS"
-    Write-Host "Security Onion: $Splunk"
-    Write-Host "Ubuntu Workstation: $UbuntuWork"
-    Write-Host "Windows 10 Workstation: $HardWin10"
-    Write-Host "-----------------------------"
-    Write-Host ""
-    Write-Host "Function: Set_Internal_IPs   -   Complete" -ForegroundColor Green
-    #Continue_
-}
 
 Function Set_External_IPs {
+    #This isnt updated for the Spring 2026 network, as there is not an external box.
     cls
     Write-Host "Starting Function: Set_External_IPs" -ForegroundColor Cyan
     Start-Sleep -s 1
@@ -197,17 +176,19 @@ Function Splunk_Logging {
     cls
     Write-Host "Starting Function: Splunk_Logging" -ForegroundColor Cyan
     Start-Sleep -s 1
-    netsh advfirewall export $ccdcpath\firewall.old  | Out-Null
-    netsh advfirewall set allprofiles state on  | Out-Null
-    netsh advfirewall set allprofiles firewallpolicy blockinbound,blockoutbound  | Out-Null
-    netsh advfirewall set allprofiles settings inboundusernotification enable  | Out-Null
-    netsh advfirewall set allprofiles logging filename $ccdcpath\pfirewall.log  | Out-Null
-    netsh advfirewall set allprofiles logging maxfilesize 8192  | Out-Null
-    netsh advfirewall set allprofiles logging droppedconnections enable  | Out-Null
-    netsh advfirewall set allprofiles logging allowedconnections enable  | Out-Null
-    netsh advfirewall set global statefulftp disable  | Out-Null
-    netsh advfirewall set global statefulpptp disable  | Out-Null
-    Write-Host "Function: SplunkLogging   -   Complete" -ForegroundColor Green
+    If ($Splunk -ne ""){
+        netsh advfirewall export $ccdcpath\firewall.old  | Out-Null
+        netsh advfirewall set allprofiles state on  | Out-Null
+        netsh advfirewall set allprofiles firewallpolicy blockinbound,blockoutbound  | Out-Null
+        netsh advfirewall set allprofiles settings inboundusernotification enable  | Out-Null
+        netsh advfirewall set allprofiles logging filename $ccdcpath\pfirewall.log  | Out-Null
+        netsh advfirewall set allprofiles logging maxfilesize 8192  | Out-Null
+        netsh advfirewall set allprofiles logging droppedconnections enable  | Out-Null
+        netsh advfirewall set allprofiles logging allowedconnections enable  | Out-Null
+        netsh advfirewall set global statefulftp disable  | Out-Null
+        netsh advfirewall set global statefulpptp disable  | Out-Null
+        Write-Host "Function: SplunkLogging   -   Complete" -ForegroundColor Green
+    }
     #Continue_
 }
 
@@ -221,7 +202,12 @@ Function Bulk_Firewall {
     netsh advfirewall firewall add rule name="CCDC-Allow Pings Out!" new dir=in  action=allow enable=yes protocol=icmpv4:8,any profile=any  | Out-Null
     netsh advfirewall firewall add rule name="CCDC-Allow Pings In!"  new dir=out action=allow enable=yes protocol=icmpv4:8,any profile=any  | Out-Null
                 # Log OUT to Splunk - May need re configure.
-    netsh advfirewall firewall add rule name="CCDC-Splunk Logs"       new dir=out action=allow enable=yes protocol=tcp profile=any remoteport=8000,8089,9997 remoteip=$Splunk  | Out-Null
+    If ($global:Splunk -eq $null){
+        $Splunk = Read-Host "What is Splunks IP?"
+    }
+    If ($global:Splunk -ne $null){
+        netsh advfirewall firewall add rule name="CCDC-Splunk Logs"       new dir=out action=allow enable=yes protocol=tcp profile=any remoteport=8000,8089,9997 remoteip=$global:Splunk  | Out-Null
+    }            
                 # Webshare access
     netsh advfirewall firewall add rule name="CCDC-Web Share OUT"    new dir=out action=allow enable=yes protocol=tcp profile=any remoteport=8000 remoteip=$Ubuntu18Web  | Out-Null
                 # Internet Access
@@ -253,14 +239,24 @@ Function Damage_Reversal {
                 # Disable Default Accounts
     #net user Guest /active:no
                 # Show Local Users
-    $disUsers = Get-LocalUser | Where-Object   {$_.Name -ne $env:username}
-    $totUsers = Get-LocalUser
-    ForEach ($user in $disUsers){
-        If ($user -ne $env:username){
-            Write-Host "Account: $user - Disabled" -ForegroundColor Yellow
-	    Get-LocalUser | Where-Object  {$_.Name -ne $env:username} | Disable-LocalUser
-        }
-    }    
+                ###THIS WILL BREAK ANY COMP THAT USES AD TO AUTHENTICATE FOR SCORE. DONT ASK HOW WE FOUND OUT###
+    #$disUsers = Get-LocalUser | Where-Object   {$_.Name -ne $env:username}
+    #$totUsers = Get-LocalUser
+    #ForEach ($user in $disUsers){
+        #If ($user -ne $env:username){
+            #Write-Host "Account: $user - Disabled" -ForegroundColor Yellow
+	    #Get-LocalUser | Where-Object  {$_.Name -ne $env:username} | Disable-LocalUser
+        #}
+    #}  
+                #Add local Admin account
+    If ($curhost -ne "WinServer"){
+        if( $Password -eq $null){
+            $Password = Read-Host "Password for local admin:" -AsSecureString
+        }else{$Password = ConvertTo-SecureString -AsPlainText $Password -Force}
+        New-LocalUser -Name "localblue" -Password $Password
+        Add-LocalGroupMember -Group "Administrators" -Member "localblue"
+    }  
+
     Get-LocalUser | Out-File $discoverypath\All-Local-Users.txt
     Get-LocalUser | Where-Object   {$_.Enabled -eq "True"} | Out-file $discoverypath\All-Enabled-Local-Users.txt
     Get-Content "$discoverypath\All-Local-Users.txt"
@@ -321,35 +317,7 @@ Function Damage_Reversal {
     REG add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v AutoAdminLogon /t REG_DWORD /d 0 /f 
     REG query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v AutoAdminLogon | Add-Content $regProof
 
-                # Windows Updates
-    Add-Content $regProof "Disabling Windows Updates"
-    REG query "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\WindowsUpdate" /v DisableWindowsUpdateAccess | Add-Content $regProof
-    REG add "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\WindowsUpdate" /v DisableWindowsUpdateAccess /t Reg_DWORD /d 0 /f | Out-Null
-    REG query "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\WindowsUpdate" /v DisableWindowsUpdateAccess | Add-Content $regProof
-
-    REG query "HKLM\Software\Policies\Microsoft\Windows\WindowsUpdate" /v DisableWindowsUpdateAccess | Add-Content $regProof
-    REG add "HKLM\Software\Policies\Microsoft\Windows\WindowsUpdate" /v DisableWindowsUpdateAccess /t Reg_DWORD /d 0 /f | Out-Null
-    REG query "HKLM\Software\Policies\Microsoft\Windows\WindowsUpdate" /v DisableWindowsUpdateAccess  | Add-Content $regProof
-
-    REG query "HKLM\SYSTEM\Internet Communication Management\Internet Communication" /v DisableWindowsUpdateAccess | Add-Content $regProof
-    REG add "HKLM\SYSTEM\Internet Communication Management\Internet Communication" /v DisableWindowsUpdateAccess /t Reg_DWORD /d 0 /f | Out-Null
-    REG query "HKLM\SYSTEM\Internet Communication Management\Internet Communication" /v DisableWindowsUpdateAccess | Add-Content $regProof
-
-    REG query "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" | Add-Content $regProof
-    REG add "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v NoWindowsUpdate /t Reg_DWORD /d 0 /f | Out-Null
-    REG query "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" | Add-Content $regProof
-
-                # Clear remote registry paths
-    #Add-Content $regProof "Clear Remote Registry Paths:"
-    #REG query "HKLM\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedExactPaths" /v Machine | Add-Content $regProof
-    #REG add "HKLM\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedExactPaths" /v Machine /t REG_MULTI_SZ /d $null /f | Out-Null
-    #New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedExactPaths" -Name 'Machine' -Value "" -Force
-    #REG query "HKLM\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedExactPaths" /v Machine | Add-Content $regProof
-
-    REG query "HKLM\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedPaths" /v Machine | Add-Content $regProof
-    New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedPaths" -Name 'Machine' -Value "" -Force | Out-Null
-    REG query "HKLM\SYSTEM\CurrentControlSet\Control\SecurePipeServers\winreg\AllowedPaths" /v Machine | Add-Content $regProof
-
+                
                 # Unhide Files
     Add-Content $regProof "Unhide Files:"
     REG query "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v Hidden | Add-Content $regProof
@@ -412,11 +380,13 @@ Function Damage_Reversal {
     Add-Content $regProof "Re-enable Windows Defender:"
     REG query "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender" /v DisableAntiSpyware | Add-Content $regProof
     REG delete "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender" /v DisableAntiSpyware /f | Out-Null
+                          
                 # Change setting to NOT store plaintext passwords
     Add-Content $regProof "Removing stored plaintext passwords:"
     REG query "HKLM\SYSTEM\CurrentControlSet\services\LanmanWorkstation\Parametersn" /v EnablePlainTextPassword | Add-Content $regProof
     REG add "HKLM\SYSTEM\CurrentControlSet\services\LanmanWorkstation\Parameters" /v EnablePlainTextPassword /t REG_DWORD /d 0 /f | Out-Null
     REG query "HKLM\SYSTEM\CurrentControlSet\services\LanmanWorkstation\Parameters" /v EnablePlainTextPassword | Add-Content $regProof
+                
                 # Delete use Machine ID
     Add-Content $regProof "Delete use machine id:"
     REG query "HKLM\SYSTEM\CurrentControlSet\Control\LSA" /v UseMachineID | Add-Content $regProof
@@ -465,7 +435,7 @@ Function Win10 {
     Start-Sleep -s 1
     Write-Host "Configuring Win10 Banner..." -ForegroundColor Cyan
     REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Winlogon" /v legalnoticecaption /t REG_SZ /d "* * * * * * * * * * W A R N I N G * * * * * * * * * *" /f | Out-Null
-    REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Winlogon" /v legalnoticetext /t REG_SZ /d "This computer system network is the property of $dName. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Company’s Acceptable Use of Information Technology Resources Policy ('AUP'). Users have no personal privacy rights in any materials they place, view, access, or transmit on this system. The Company complies with state and federal law regarding certain legally protected confidential information, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Company and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to such interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Company personnel. Unauthorized or improper use of this system may result in administrative disciplinary action, civil charges/criminal penalties, and/or other sanctions as set forth in the Company’s AUP. By continuing to use this system you indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF A $dName OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE." /f | Out-Null
+    REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Winlogon" /v legalnoticetext /t REG_SZ /d "This computer system network is the property of $dName. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Company's Acceptable Use of Information Technology Resources Policy ('AUP'). Users have no personal privacy rights in any materials they place, view, access, or transmit on this system. The Company complies with state and federal law regarding certain legally protected confidential information, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Company and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to such interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Company personnel. Unauthorized or improper use of this system may result in administrative disciplinary action, civil charges/criminal penalties, and/or other sanctions as set forth in the Company's AUP. By continuing to use this system you indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF A $dName OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE." /f | Out-Null
     REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WinLogon" /v legalnoticecaption | Out-Null
     REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WinLogon" /v legalnoticetext | Out-Null
     Write-Host "Function: Win10   -   Complete" -ForegroundColor Green
@@ -494,25 +464,57 @@ Function WinServer{
     Start-Sleep -s 1
     Write-Host "--Screenshot--" -ForegroundColor Yellow
     #Continue_
-    
-                # Disable SMB1
-    #Write-Host "Disable SMB1 via Registry..." -ForegroundColor Cyan
-    #REG add "HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" /v "SMB1" /t REG_DWORD /d 0 /f | Out-Null
+                #TESTING AD Workstation
+                #Network Share
+    #New-SmbShare -Name "scripts" -Path "C:\script\winhard.ps1" -FullAccess "Domain Admins" -ReadAccess "Everyone"
+    #
+                #Temporary Any/Any
+    #netsh advfirewall firewall add rule name="Temp Any Any"  new dir=in action=allow enable=yes profile=any | Out-Null
+    #
+                #Run winhard on any remote machines
+    #$Computers = Get-ADComputer -Filter { Enabled -eq $true } -Properties Name | Select-Object -ExpandProperty Name
+    #$ScriptPath = "\\$ADDNS\script\winhard.ps1"
+    #foreach ($Comp in $Computers) {
+    #    Write-Host "Computer: $Comp"
+    #    $choice = Read-Host "Run the script on this computer? (Y/N/none)"
+    #    if ($choice -eq "none"){
+    #        break
+    #    }
+    #    if ($choice -eq "Y"){
+    #        Invoke-Command -ComputerName $Comp -AsJob -ScriptBlock {
+    #            param($ScriptPath, $Arg)
+    #
+    #            if (Test-Path $ScriptPath) {
+    #                Write-Host "Executing remote script: $ScriptPath with argument: $Arg"
+    #                Copy-Item $ScriptPath "C:\winhard.ps1"
+    #                & "C:\winhard.ps1" -curhost ADUser -dname DOMAIN.COM
+    #            }
+    #            else {
+    #                Write-Host "Script not found on remote machine: $ScriptPath" -ForegroundColor Red
+    #            }
+    #    }
+    #}
+          
+                #reverse all the bad things needed for the scripts
+     #netsh advfirewall firewall delete rule name="Temp Any Any"
+     #Remove-SmbShare -Name "scripts" -Force            
+                
+    If(-not ($NoAD)){                
                 #LDAP 389
-    #Write-Host "Create Firewall Rules for LDAP" -ForegroundColor Cyan
-    #netsh advfirewall firewall add rule name="CCDC-LDAP Service" dir=in action=allow enable=yes profile=any localport=389 remoteip=$EComm,$WebMail,$PAMI protocol=tcp  | Out-Null
+        Write-Host "Create Firewall Rules for LDAP" -ForegroundColor Cyan
+        netsh advfirewall firewall add rule name="CCDC-LDAP Service" dir=in action=allow enable=yes profile=any localport=389 remoteip= $WinFTP, $WinWeb protocol=tcp  | Out-Null
 
                 #LDAP 636
-    #Write-Host "Create Firewall Rules for LDAP" -ForegroundColor Cyan
-    #netsh advfirewall firewall add rule name="CCDC-LDAP Service SSL" dir=in action=allow enable=no profile=any localport=636 remoteip=$EComm,$WebMail,$PAMI protocol=tcp  | Out-Null
+        Write-Host "Create Firewall Rules for LDAP" -ForegroundColor Cyan
+        netsh advfirewall firewall add rule name="CCDC-LDAP Service SSL" dir=in action=allow enable=no profile=any localport=636 remoteip= $WinFTP, $WinWeb protocol=tcp  | Out-Null
 
                 # KERBEROS
-    #Write-Host "Create Firewall Rules for Kerberos" -ForegroundColor Cyan
-    #netsh advfirewall firewall add rule name="CCDC-Kerberos In UDP from Internal" dir=in action=allow enable=yes profile=any localport=88,464 remoteip=$EComm,$WebMail,$PAMI protocol=udp  | Out-Null
-    #netsh advfirewall firewall add rule name="CCDC-Kerberos In TCP from Internal" dir=in action=allow enable=yes profile=any localport=88,464 remoteip=$EComm,$WebMail,$PAMI protocol=tcp  | Out-Null
-    #netsh advfirewall firewall set rule group="CCDC-Kerberos Key Distribution Center (TCP-In)" new enable=yes  | Out-Null
-    #netsh advfirewall firewall set rule group="CCDC-Kerberos Key Distribution Center (UDP-In)" new enable=yes  | Out-Null
-
+        Write-Host "Create Firewall Rules for Kerberos" -ForegroundColor Cyan
+        netsh advfirewall firewall add rule name="CCDC-Kerberos In UDP from Internal" dir=in action=allow enable=yes profile=any localport=88,464 remoteip=$WinWeb, $WinFTP, $ADDNS, $win11wrk protocol=udp  | Out-Null
+        netsh advfirewall firewall add rule name="CCDC-Kerberos In TCP from Internal" dir=in action=allow enable=yes profile=any localport=88,464 remoteip=$WinWeb, $WinFTP, $ADDNS, $win11wrk protocol=tcp  | Out-Null
+        netsh advfirewall firewall set rule group="CCDC-Kerberos Key Distribution Center (TCP-In)" new enable=yes  | Out-Null
+        netsh advfirewall firewall set rule group="CCDC-Kerberos Key Distribution Center (UDP-In)" new enable=yes  | Out-Null
+    }
                 # DNS 53
     Write-Host "Create Firewall Rules for DNS access for Internet and Intranet" -ForegroundColor Cyan
     netsh advfirewall firewall add rule name="CCDC-DNS In UDP from DNSNTP"  dir=in action=allow enable=yes profile=any remoteport=53 remoteip=$DNSNTP protocol=udp  | Out-Null
@@ -527,13 +529,12 @@ Function WinServer{
     netsh advfirewall firewall add rule name="CCDC-DNS Out TCP to Internal" dir=out action=allow enable=yes profile=any localport=53  protocol=tcp remoteip=$Internal | Out-Null
     netsh advfirewall firewall add rule name="CCDC-DNS In TCP from Internet" dir=in action=allow enable=yes profile=any localport=53  protocol=tcp  | Out-Null
     netsh advfirewall firewall add rule name="CCDC-DNS Out TCP to Internet" dir=out action=allow enable=yes profile=any localport=53  protocol=tcp  | Out-Null
-    netsh advfirewall firewall add rule name="CCDC-NTP Allow Service"  new dir=in action=allow enable=yes protocol=udp profile=any remoteport=123 | Out-Null
-    Write-Host "Making user panuser..." -ForegroundColor Cyan  
-    dsadd user "cn=panuser,cn=Users,dc=allsafe,dc=com" -samid panuser -fn pa -ln nuser -pwd *
-    net localgroup Administrators panuser /add           | Out-Null
-    net localgroup "Distributed COM Users" panuser /add  | Out-Null
-    net localgroup "Event Log Readers" panuser /add      | Out-Null
-    net localgroup "Remote Desktop Users" panuser /add   | Out-Null
+    
+                 #Disable SMB1
+    Write-Host "Disable SMB1 via Registry..." -ForegroundColor Cyan
+    REG add "HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" /v "SMB1" /t REG_DWORD /d 0 /f | Out-Null
+
+    
 
                 # Calling Config_NTP_Server
     #Config_NTP_Server - Removed
@@ -570,58 +571,94 @@ Function Docker {
     REG add "HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" /v "SMB1" /t REG_DWORD /d 0 /f
     #Continue_
 }
-Function Email {
-    Write-Host "Did you know that Windows 2012 Email server uses a different version of powershell? This causes this entire script to crash. Ain't that neat!"
+
+Function WinWeb{
+   Write-Host "Starting Function: WinWeb" -ForegroundColor Cyan
+
+   REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Winlogon" /v legalnoticecaption /t REG_SZ /d "* * * * * * * * * * W A R N I N G * * * * * * * * * *" /f | Out-Null
+   REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Winlogon" /v legalnoticetext /t REG_SZ /d "This computer system network is the property of $dName. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Company’s Acceptable Use of Information Technology Resources Policy ('AUP'). Users have no personal privacy rights in any materials they place, view, access, or transmit on this system. The Company complies with state and federal law regarding certain legally protected confidential information, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Company and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to such interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Company personnel. Unauthorized or improper use of this system may result in administrative disciplinary action, civil charges/criminal penalties, and/or other sanctions as set forth in the Company’s AUP. By continuing to use this system you indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF A $dName OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE." /f | Out-Null
+   REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WinLogon" /v legalnoticecaption | Out-Null
+   REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WinLogon" /v legalnoticetext | Out-Null
+   
+   netsh advfirewall firewall add rule name="CCDC-Webserver"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=80,443  | Out-Null
+
+   netsh advfirewall firewall add rule name="CCDC-Kerberos Out" dir=out action=allow enable=no profile=any localport=88,464 remoteip=$ADDNS  | Out-Null
+   netsh advfirewall firewall add rule name="CCDC-LDAP Service SSL" dir=out action=allow enable=no profile=any localport=389, 636 remoteip=$ADDNS protocol=tcp  | Out-Null
+   
+
+   #backup webpage
+   $source = "C:\inetpub\wwwroot"
+   $dest = "C:\ccdc\", "C:\Windows\System32\drivers\en-US", "C:\ProgramData"
+   $dest | Foreach-Object { Copy-Item -Path $source -dest (Join-Path $_ $destFileName) }
 }
+
+Function WinFTP{
+   Write-Host "Starting Function: WinFTP" -ForegroundColor Cyan
+
+   REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Winlogon" /v legalnoticecaption /t REG_SZ /d "* * * * * * * * * * W A R N I N G * * * * * * * * * *" /f | Out-Null
+   REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Winlogon" /v legalnoticetext /t REG_SZ /d "This computer system network is the property of $dName. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Company’s Acceptable Use of Information Technology Resources Policy ('AUP'). Users have no personal privacy rights in any materials they place, view, access, or transmit on this system. The Company complies with state and federal law regarding certain legally protected confidential information, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Company and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to such interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Company personnel. Unauthorized or improper use of this system may result in administrative disciplinary action, civil charges/criminal penalties, and/or other sanctions as set forth in the Company’s AUP. By continuing to use this system you indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF A $dName OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE." /f | Out-Null
+   REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WinLogon" /v legalnoticecaption | Out-Null
+   REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WinLogon" /v legalnoticetext | Out-Null
+   
+   netsh advfirewall firewall add rule name="CCDC-FTP"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=20,21,80  | Out-Null
+
+                   #AD Rules
+   If(-not ($NoAD)){
+       netsh advfirewall firewall add rule name="CCDC-Kerberos Out" dir=out action=allow enable=yes profile=any localport=88,464 remoteip=$ADDNS  | Out-Null
+       netsh advfirewall firewall add rule name="CCDC-LDAP Service SSL" dir=out action=allow enable=yes profile=any localport=389, 636 remoteip=$ADDNS protocol=tcp  | Out-Null
+   }
+
+}
+
 Function Unknown_Host {
-        
-    CCDC_Directories
+   
+    Write-Host "------Server Options------"
+    Write-Host "[1] - pop3"
+    Write-Host "[2] - SMTP"
+    Write-Host "[3] - FTP"
+    Write-Host "[4] - DNS"
+    Write-Host "[5] - Web server"
+    Write-Host "[6] - MySQL"
+    Write-Host "[7] - LDAP"
+    Write-Host "[8] - Kerberos"
 
-    Scan_Dirs
+    $ports = Read-Host "Select any of the above services that this host must allow in, if any? (type the corresponding number[s])"
 
-    Discovery_
-
-    #Firewall rules
-    $global:Splunk = Read-Host "What IP is Splunk at?"
-    netsh advfirewall firewall set rule name=all new enable=no
-        #Pings
-    netsh advfirewall firewall add rule name="CCDC-Allow Pings Out!" new dir=in  action=allow enable=yes protocol=icmpv4:8,any profile=any  | Out-Null
-    netsh advfirewall firewall add rule name="CCDC-Allow Pings In!"  new dir=out action=allow enable=yes protocol=icmpv4:8,any profile=any  | Out-Null
-        #Web Access
-    netsh advfirewall firewall add rule name="CCDC-Web Regional"        new dir=out action=allow enable=no protocol=tcp profile=any remoteip=any remoteport=80,443  | Out-Null
-    netsh advfirewall firewall add rule name="CCDC-DNS Regional"        new dir=out action=allow enable=no protocol=udp profile=any remoteport=53  | Out-Null
-        #Splunk
-    netsh advfirewall firewall add rule name="CCDC-Splunk Logs"       new dir=out action=allow enable=yes protocol=tcp profile=any remoteport=8000,8089,9997 remoteip=$Splunk  | Out-Null
-        #Potential Scored Services
-    netsh advfirewall firewall add rule name="CCDC-SMTP"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=25  | Out-Null
-    netsh advfirewall firewall add rule name="CCDC-POP3"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=110  | Out-Null
-    netsh advfirewall firewall add rule name="CCDC-DNS"  new dir=in action=allow enable=yes protocol=udp profile=any localport=53  | Out-Null
-    netsh advfirewall firewall add rule name="CCDC-FTP"  new dir=in action=allow enable=no protocol=tcp profile=any localport=20,21  | Out-Null
-    netsh advfirewall firewall add rule name="CCDC-Webserver"  new dir=in action=allow enable=no protocol=udp profile=any localport=80,443  | Out-Null
-
-    Damage_Reversal
-
-    Splunk_Logging
-
-    CCDC_ICACLS
-
-    Export_Configs
-
-    exit
+    switch -Wildcard ($ports) {
+        "*1*" {netsh advfirewall firewall add rule name="CCDC-POP3"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=110  | Out-Null}
+        "*2*" {netsh advfirewall firewall add rule name="CCDC-SMTP"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=25  | Out-Null}
+        "*3*" {netsh advfirewall firewall add rule name="CCDC-FTP"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=20,21  | Out-Null}
+        "*4*" {netsh advfirewall firewall add rule name="CCDC-DNS"  new dir=in action=allow enable=yes protocol=udp profile=any localport=53  | Out-Null}
+        "*5*" {netsh advfirewall firewall add rule name="CCDC-Webserver"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=80,443  | Out-Null}
+        "*6*" {netsh advfirewall firewall add rule name="CCDC-MySQL"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=3306  | Out-Null} 
+        "*7*" {netsh advfirewall firewall add rule name="CCDC-LDAP"  new dir=in action=allow enable=yes protocol=udp profile=any localport=389, 636  | Out-Null}  
+        "*8*" {netsh advfirewall firewall add rule name="CCDC-Kerberos Out" dir=out action=allow enable=yes profile=any localport=88,464  | Out-Null}     
+    }
+    #Legal Notice Registry Key
+    REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Winlogon" /v legalnoticecaption /t REG_SZ /d "* * * * * * * * * * W A R N I N G * * * * * * * * * *" /f | Out-Null
+    REG add "HKLM\Software\Microsoft\Windows\CurrentVersion\Winlogon" /v legalnoticetext /t REG_SZ /d "This computer system network is the property of $dName. It is for authorized use only. By using this system, all users acknowledge notice of, and agree to comply with, the Company’s Acceptable Use of Information Technology Resources Policy ('AUP'). Users have no personal privacy rights in any materials they place, view, access, or transmit on this system. The Company complies with state and federal law regarding certain legally protected confidential information, but makes no representation that any uses of this system will be private or confidential. Any or all uses of this system and all files on this system may be intercepted, monitored, recorded, copied, audited, inspected, and disclosed to authorized Company and law enforcement personnel, as well as authorized individuals of other organizations. By using this system, the user consents to such interception, monitoring, recording, copying, auditing, inspection, and disclosure at the discretion of authorized Company personnel. Unauthorized or improper use of this system may result in administrative disciplinary action, civil charges/criminal penalties, and/or other sanctions as set forth in the Company’s AUP. By continuing to use this system you indicate your awareness of and consent to these terms and conditions of use. ALL USERS SHALL LOG OFF OF A $dName OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE." /f | Out-Null
+    REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WinLogon" /v legalnoticecaption | Out-Null
+    REG query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WinLogon" /v legalnoticetext | Out-Null
 
 }
+
 Function CCDC_ICACLS {
     cls
     Write-Host "Starting Function: CCDC_ICACLS" -ForegroundColor Cyan
     Start-Sleep -s 1
     Write-Host "Tighten CCDC ACL..." -ForegroundColor Cyan
-    icacls $ccdcpath\* /inheritance:d 
-    icacls $ccdcpath /inheritance:d 
+    icacls $ccdcpath\* /inheritancelevel:d 
+    icacls $ccdcpath /inheritancelevel:d 
                     # Grants permission to only cur user for ccdc dirs
     $Acl = Get-Acl $ccdcpath
     $Ar = New-Object System.Security.AccessControl.FileSystemAccessRule("$env:username", "FullControl", "ContainerInherit,ObjectInherit", "None", "Allow")
     $Acl.SetAccessRule($Ar)
     Set-Acl $ccdcpath $Acl
+    if(-not($curhost -eq "Winserver")){
+        $ArLocal = New-Object System.Security.AccessControl.FileSystemAccessRule("$env:COMPUTERNAME\localblue", "FullControl", "ContainerInherit,ObjectInherit", "None", "Allow")
+        $Acl.setAccessRule($ArLocal)
+        Set-Acl $ccdcpath $Acl
+    }
     $Acl = Get-Acl $ccdcpath
     $ar2 = New-Object system.security.AccessControl.FileSystemAccessRule("NT AUTHORITY\SYSTEM","Read",,,"Allow")
     $Acl.RemoveAccessRuleAll($ar2)
@@ -675,44 +712,52 @@ If (!($curRoll)){
     Start-Sleep -s 2
     Exit
 }
-                # 2. Host Check
+                # 2. Team Check
 Do{
+    cls               
+    $teamNum = Read-Host "Please enter your team number (1-12)"
     cls
-    Write-Host "------Host Options------"
-    Write-Host "[1] - Win10-Virt"
-    Write-Host "[2] - WinServer-Virt"
-    Write-Host "[3] - Docker"
-    Write-Host "[4] - Email"
-    Write-Host "[5] - WinServer-Hard"
-    Write-Host "[6] - Win10-Hard"
-    Write-Host "[7] - Unknown Host"
-    $curhost = Read-Host "Which host are you on? (type the corresponding number)"
-    switch ($curhost) {
-        1 {$curhost = "Win10-Virt"}
-        2 {$curhost = "WinServer-Virt"; Set_Internal_IPs_V }
-        3 {$curhost = "Docker";Set_Internal_IPs_V}
-        4 {$curhost = "Email"; Set_Internal_IPs_H}
-        5 {$curhost = "WinServer-Hard"; Set_Internal_IPs_H}
-        6 {$curhost = "Win10-Hard"; Set_Internal_IPs_H}
-        7 {Unknown_Host}
-    }
+    Write-Host "Team Number: $teamNum"  -ForegroundColor Yellow
+    $teamanswer = Read-Host "Is this Information correct?  Y/N"
+    }  Until (($teamanswer -eq "Y") -or ($teamanswer -eq "y"))
+    $teamNum = [int]$teamNum
+    $Team = $teamNum + '20'
+
+    
+
+
+                # 3. Host Check
+If($curhost -eq $null){
+    Do{
+        cls
+        Write-Host "------Host Options------"
+        Write-Host "[1] - External Win10 (CCDC IPs)"
+        Write-Host "[2] - WinServer (CCDC IPs)"
+        Write-Host "[3] - Docker (CCDC IPs)"
+        Write-Host "[4] - Internal Workstation"
+        Write-Host "[5] - AD User"
+        Write-Host "[6] - Manual Set Up"
+        Write-Host "[7] - FTP Server"
+        Write-Host "[8] - Web Server"
+        if ($curhost -eq $null){
+            $curhost = Read-Host "Which host are you on? (type the corresponding number)"
+        }
+ 
+    
     cls
     Write-Host "Selection: $curhost" -ForegroundColor Yellow
     $hostanswer = Read-Host "Is this Information correct?  Y/N"
 }  Until (($hostanswer -eq "Y") -or ($hostanswer -eq "y"))
-
-                # 3. Team Check
-If ($curhost -eq "Win10-Virt") {
-    Do{
-        cls               
-        $teamNum = Read-Host "Please enter your team number (1-12)"
-        cls
-        Write-Host "Team Number: $teamNum"  -ForegroundColor Yellow
-        $teamanswer = Read-Host "Is this Information correct?  Y/N"
-    }  Until (($teamanswer -eq "Y") -or ($teamanswer -eq "y"))
-    $teamNum = [int]$teamNum
-    $Team = $teamNum + '20'
-    Set_External_IPs
+}
+switch ($curhost) {
+    1 {$curhost = "External Win10"}
+    2 {$curhost = "WinServer"; Set_Internal_IPs }
+    3 {$curhost = "Docker";Set_Internal_IPs}
+    4 {$curhost = "Workstation"; Set_Internal_IPs}
+    5 {$curhost = "AD User"; Set_Internal_IPs}
+    6 {$curhost = "Manual"}
+    7 {$curhost = "FTP Server"; Set_Internal_IPs}
+    8 {$curhost = "Web Server"; Set_Internal_IPs}
 }
 
                 # 4. Setting CCDC directories
@@ -722,17 +767,19 @@ Scan_Dirs
 
 Discovery_
                 # 5. Setting IPs
-#Moved into host check (External in Team Check
+#Moved into host check (External in Team Check)
 
                 # 6. Domain Name 
-Do{
-    cls               
-    Write-Host "What is your domain name? Example:  DOMAIN.COM" -ForegroundColor Cyan
-    $dName = Read-Host "Domain Name"
-    cls
-    Write-Host "Domain Name: $dName"  -ForegroundColor Yellow
-    $domainanswer = Read-Host "Is this Information correct?  Y/N"
-}  Until (($domainanswer -eq "Y") -or ($domainanswer -eq "y"))
+if($dname -eq $null){
+    Do{
+        cls               
+        Write-Host "What is your domain name? Example:  DOMAIN.COM" -ForegroundColor Cyan
+        $dName = Read-Host "Domain Name"
+        cls
+        Write-Host "Domain Name: $dName"  -ForegroundColor Yellow
+        $domainanswer = Read-Host "Is this Information correct?  Y/N"
+    }Until (($domainanswer -eq "Y") -or ($domainanswer -eq "y"))
+}
 
                 # 7. Generic firewall rules, includes Disable IPv6 Teredo tunneling. 
 Bulk_Firewall
@@ -753,9 +800,11 @@ Damage_Reversal
                 # 11. Apply Box specific rules
 switch -Wildcard ($curhost) {
     "WinServer*" {Winserver}
-    "Win10-Virt" {Win10}
-    "Email" {Email}
+    "External Win10" {Win10}
     "Docker" {Docker}
+    "Manual" {Unknown_Host}
+    "Web Server" {WinWeb}
+    "FTP Server" {WinFTP}
 }
 
 
