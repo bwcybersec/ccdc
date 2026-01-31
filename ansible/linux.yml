@@ -22,7 +22,7 @@
         executable: /bin/bash 
 
     - name: root backup
-      shell: cp -r /root {{ zds_dir }}/root; rm -rf /root/.ssh
+      shell: cp -r /root {{ zds_dir }}; rm -rf /root/.ssh
       args:
         executable: /bin/bash 
 

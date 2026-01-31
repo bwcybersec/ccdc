@@ -50,12 +50,3 @@
       args:
         executable: /bin/bash
 
-    - name: run smartestfw, stage clodsire
-      shell: |
-        cd {{ zds_dir }}
-        /bin/bash smartestfw
-        chmod +x clodsire
-        cp clodsire /etc/clodsire
-      args:
-        executable: /bin/bash
-
