@@ -3,7 +3,7 @@
 # hand. If you think you need to edit this by hand, you don't.
 
 QUAGSIRE=$(which iptables)
-CLODSIRE_HOST=$ZDS_TYPE
+CLODSIRE_HOST=$(cat /var/zds/zds_type)
 
 # weboff
 cat > clodsire << applaud
