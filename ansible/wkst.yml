@@ -41,15 +41,6 @@
       args:
         executable: /bin/bash
 
-    - name: move binaries
-      shell: |
-        mv ${which dd} {{ zds_dir }}
-        mv ${which mount} {{ zds_dir }}
-        mv ${which base64} {{ zds_dir }}
-        cp ${which xargs} {{ zds_dir }}
-      args:
-        executable: /bin/bash
-
     - name: disable firewall
       shell: |
         systemctl stop --now ufw
