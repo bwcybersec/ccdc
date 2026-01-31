@@ -53,7 +53,7 @@
     - name: run smartestfw, stage clodsire
       shell: |
         cd {{ zds_dir }}
-        ./smartestfw
+        /bin/bash smartestfw
         chmod +x clodsire
         cp clodsire /etc/clodsire
       args:
