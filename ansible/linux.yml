@@ -11,7 +11,7 @@
 
     - name: make directories
       shell: | 
-        mkdir -p {{ zds_dir }}/{etc,bad,home,root,{{ ansible_user }}}
+        mkdir -p {{ zds_dir }}/{etc,bad,home,root,integrity,{{ ansible_user }}}
         mkdir -p /var/log/zds
       args:
         executable: /bin/bash 
@@ -31,24 +31,6 @@
         cp -r /home/{{ ansible_user }} {{ zds_dir }}/{{ ansible_user }}
       args:
         executable: /bin/bash 
-
-    - name: install chrony
-      package:
-        name: chrony
-        state: latest
-   
-    - name: sync time
-      shell: |
-        systemctl stop --now chronyd
-        wait 5
-        chronyd -q 'pool pool.ntp.org iburst'
-        systemctl start chronyd 
-      args:
-        executable: /bin/bash
-
-    - name: refresh repos
-      package:
-        update_cache: true 
 
     - name: set /etc/issue
       shell: echo "This system is property of {{ domain }}. All unauthorized use is strictly prohibited." > /etc/issue
@@ -102,6 +84,7 @@
         touch /etc/clodsire
         echo "@reboot root /etc/clodsire" >> /etc/crontab
         echo '*/5 * * * * find / -type f -name "*.img" | xargs mv {{ zds_dir }}/bad' >> /etc/crontab
+        echo "*/5 * * * * find / -type f -perm /6000 > {{ zds_dir }}/suid" >> /etc/crontab
       args:
         executable: /bin/bash
 

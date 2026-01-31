@@ -13,8 +13,13 @@
       shell: |
         echo "ZDS_TYPE=ecom" >> /etc/profile
         echo "ecom" > /var/zds/zds_type
+        chattr +i /var/zds/zds_type
       args:
         executable: /bin/bash 
+
+    - name: refresh repos
+      package:
+        update_cache: true
 
     - name: install packages
       package: 

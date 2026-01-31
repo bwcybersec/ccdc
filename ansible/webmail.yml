@@ -13,12 +13,18 @@
       shell: |
         echo "ZDS_TYPE=webmail" >> /etc/profile
         echo "webmail" > /var/zds/zds_type
+        chattr +i /var/zds/zds_type
       args:
         executable: /bin/bash 
+
+    - name: refresh repos
+      package:
+        update_cache: true
 
     - name: install packages
       package: 
         name:
+          - epel-release
           - git
           - curl
           - vim
