@@ -11,7 +11,7 @@
 
     - name: make directories
       shell: | 
-        mkdir -p {{ zds_dir }}{etc,bad,home,root,{{ ansible_user }}}
+        mkdir -p {{ zds_dir }}/{etc,bad,home,root,{{ ansible_user }}}
         mkdir -p /var/log/zds
       args:
         executable: /bin/bash 
