@@ -1,6 +1,6 @@
 ---
 - name: install UFs
-  hosts: forwarders 
+  hosts: forwarder 
   become: true
   
   tasks:
