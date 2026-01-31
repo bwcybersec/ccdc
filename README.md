@@ -1,15 +1,12 @@
 # ccdc
 
-This is BWCyberSec's CCDC repository for 2023 States.
+This is BWCyberSec's CCDC repository.
 
- * PAConfig.txt - Used to configure PANOS from commandline
+ * PAConfig.txt - used to configure PANOS from cli
+ * ScriptV5.txt - used to configure Windows 2012/2016 Server
+ * Windows7_prep.txt - used to configure Windows 7 machines
+ * linuxzds - used to configure all Linux systems(?)
+ * lxcm - Linux container script (on steroids)
+ * setup_* - various docker setup scripts
 
- * ScriptV5.txt - Used to configure Windows 2012 and Windows 2016 Server
-
- * Windows7_prep.txt - Used to configure Win7/Win10 workstation
-
- * linuxzds - Used to configure all Linux systems
-
- * lxcm - Linux Container Script (on steroids)
-
- * setup_* - Various docker setup scripts
+Happy hunting!
