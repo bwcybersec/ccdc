@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # download zds
-if [ ! -e "./linuxzds" ]; then
-	curl https://raw.githubusercontent.com/bwcybersec/ccdc/main/linuxzds
-fi
+# if [ ! -e "./linuxzds" ]; then
+# 	curl https://raw.githubusercontent.com/bwcybersec/ccdc/main/linuxzds
+# fi
 
 # download Splunk, make sure to update the link over time
 if [ ! -e "./splunk.tgz" ]; then
@@ -267,3 +267,5 @@ EOF
 /opt/splunk/bin/splunk add index syslognt
 /opt/splunk/bin/splunk reload deploy-server
 /opt/splunk/bin/splunk enable listen 9997
+
+touch /opt/splunk/etc/.ui_login
