@@ -5,7 +5,9 @@
 
   tasks:
     - name: set ecom hostname
-      hostname: ecom01.{{ domain }}
+      shell: echo "ecom01.{{ domain }}" > /etc/hostname
+      args:
+        executable: /bin/bash
 
     - name: set ZDS_TYPE
       shell: echo "ZDS_TYPE=ecom" >> /etc/profile

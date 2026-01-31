@@ -5,7 +5,9 @@
 
   tasks:
     - name: set splunk hostname
-      hostname: splunk01.{{ domain }}
+      shell: echo "splunk01.{{ domain }}" > /etc/hostname
+      args:
+        executable: /bin/bash
 
     - name: set env
       shell: | 

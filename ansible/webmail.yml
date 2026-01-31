@@ -5,7 +5,9 @@
 
   tasks:
     - name: set webmail hostname
-      hostname: webmail01.{{ domain }}
+      shell: echo "webmail01.{{ domain }}" > /etc/hostname
+      args:
+        executable: /bin/bash
 
     - name: set ZDS_TYPE
       shell: echo "ZDS_TYPE=webmail" >> /etc/profile

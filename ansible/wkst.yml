@@ -5,7 +5,9 @@
 
   tasks:
     - name: set wkst hostname
-      hostname: wkst01.{{ domain }}
+      shell: echo "wkst01.{{ domain }}" > /etc/hostname
+      args:
+        executable: /bin/bash
 
     - name: set ZDS_TYPE
       shell: echo "ZDS_TYPE=wkst" >> /etc/profile
