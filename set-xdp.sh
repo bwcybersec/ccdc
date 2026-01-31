@@ -20,8 +20,6 @@ function help {
   echo ""
 }
 
-echo $ZDS_TYPE
-
 if [[ ! -x $(which xdp-filter) ]]; then
   echo "Error: xdp-filter not present, verify xdp-tools is installed"
   exit 1
@@ -47,7 +45,7 @@ elif [[ $1 == -p || $1 == --permissive ]]; then
   done
 
 elif [[ $1 == -r || $1 == --restrictive ]]; then
-  #xdp-filter load $2 -p deny || exit 1
+  xdp-filter load $2 -p deny || exit 1
   if [[ $ZDS_TYPE == "ecom" ]]; then
     for i in ${ecom[@]}; do
       echo "xdp-filter port $i"
