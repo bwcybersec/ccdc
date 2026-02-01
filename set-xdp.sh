@@ -8,7 +8,7 @@ webmail=(25 110 161 993 995 8089 9997)
 splunk=(161 514 8000 8089 8191 9997)
 wkst=(161 8089 9997)
 
-MACHINE=$(cat /var/zds/zds_type)
+MACHINE=$ZDS_TYPE
 
 function help {
   echo "Usage: $(basename $0) [option] [interface] - simple xdp-filter helper script"
@@ -43,7 +43,7 @@ elif [[ $1 == -o || $1 == --off ]]; then
 elif [[ $1 == -p || $1 == --permissive ]]; then
   xdp-filter load $2 -p deny || exit 1
   for i in ${general[@]}; do
-    echo xdp-filter port $i
+    xdp-filter port $i
   done
 
 elif [[ $1 == -r || $1 == --restrictive ]]; then
@@ -60,12 +60,12 @@ elif [[ $1 == -r || $1 == --restrictive ]]; then
   
   elif [[ $MACHINE == "splunk" ]]; then
     for i in ${splunk[@]}; do
-      echo xdp-filter port $i
+      xdp-filter port $i
     done
   
   elif [[ $MACHINEE == "wkst" ]]; then
     for i in ${wkst[@]}; do
-      echo xdp-filter port $i
+      xdp-filter port $i
     done
   
   else
