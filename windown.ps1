@@ -12,6 +12,10 @@ Invoke-WebRequest "https://raw.githubusercontent.com/bwcybersec/ccdc/main/webon.
 Write-Output "Download: NMap.exe"
 Invoke-WebRequest https://nmap.org/dist/nmap-7.94-setup.exe -Outfile nmap.exe
 
+Write-Output "Download: Splunk"
+Invoke-WebRequest https://download.splunk.com/products/universalforwarder/releases/9.4.7/windows/splunkforwarder-9.4.7-2a9293b80994-windows-x64.msi -Outfile splunkforwarder.msi
+
+
 Write-Output "Download: Firefox.exe"
 Invoke-WebRequest "https://download.mozilla.org/?product=firefox-stub&os=win&lang=en-US&attribution_code=c291cmNlPXd3dy5nb29nbGUuY29tJm1lZGl1bT1yZWZlcnJhbCZjYW1wYWlnbj0obm90IHNldCkmY29udGVudD0obm90IHNldCkmZXhwZXJpbWVudD0obm90IHNldCkmdmFyaWF0aW9uPShub3Qgc2V0KSZ1YT1jaHJvbWUmY2xpZW50X2lkPShub3Qgc2V0KSZzZXNzaW9uX2lkPShub3Qgc2V0KSZkbHNvdXJjZT1tb3pvcmc.&attribution_sig=8050a714514346fdc6eb8a04a5cf8bad6805f8964fec63b63a8e91e7962fa0f7" -Outfile Firefox.exe
 
@@ -28,11 +32,11 @@ Start-Sleep -s 1
 
 Write-Output "Download: ProcessMonitor.zip"
 Invoke-WebRequest https://download.sysinternals.com/files/ProcessMonitor.zip -Outfile ProcessMonitor.zip
-Expand-Archive .\ProcessMonitor.zip c:\ccdc -Force
+Expand-Archive .\ProcessMonitor.zip c:\download -Force
 
 Write-Output "Download: TCPView.zip"
 Invoke-WebRequest https://download.sysinternals.com/files/TCPView.zip -Outfile TCPView.zip
-Expand-Archive .\TCPView.zip c:\ccdc -Force
+Expand-Archive .\TCPView.zip c:\download -Force
 
 Write-Output "Download: Putty.msi"
 Invoke-WebRequest https://the.earth.li/~sgtatham/putty/0.80/w64/putty-64bit-0.80-installer.msi -Outfile putty.msi
@@ -46,19 +50,19 @@ Write-Output "Download: WinSCP.exe"
 
 Write-Output "Download: Autoruns.zip"
 Invoke-WebRequest https://download.sysinternals.com/files/Autoruns.zip -Outfile Autoruns.zip
-Expand-Archive .\Autoruns.zip c:\ccdc -Force
+Expand-Archive .\Autoruns.zip c:\download -Force
 
 Write-Output "Download: ProcessExplorer.zip"
 Invoke-WebRequest https://download.sysinternals.com/files/ProcessExplorer.zip -Outfile ProcessExplorer.zip
-Expand-Archive .\ProcessExplorer.zip c:\ccdc -Force
+Expand-Archive .\ProcessExplorer.zip c:\download -Force
 
-Write-Output "Download: Splunk"
-Invoke-WebRequest https://download.splunk.com/products/universalforwarder/releases/9.4.7/windows/splunkforwarder-9.4.7-2a9293b80994-windows-x64.msi -Outfile splunkforwarder.msi
 
 
 # Get BlueSpawn after disabling Windows Defender
 #Invoke-WebRequest https://github.com/ION28/BLUESPAWN/releases/download/v0.5.1-alpha/BLUESPAWN-client-x64.exe -Outfile BLUESPAWN-client-x64.exe
 #Invoke-WebRequest https://www.winpcap.org/windump/install/bin/windump_3_9_5/WinDump.exe -Outfile Windump.exe
+
+Start-Process -FilePath "C:\download\weboff.cmd"
 Set-ExecutionPolicy Restricted -force
 
 
