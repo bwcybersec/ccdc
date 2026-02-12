@@ -10,7 +10,7 @@ Write-Output "Download: webon"
 Invoke-WebRequest "https://raw.githubusercontent.com/bwcybersec/ccdc/main/webon.cmd" -Outfile webon.cmd
 
 Write-Output "Download: Watchhog"
-Invoke-WebRequest "https://raw.githubusercontent.com/bwcybersec/ccdc/main/watchhog.ps1" -Outfile watchhog.ps1
+Invoke-WebRequest "https://raw.githubusercontent.com/bwcybersec/ccdc/main/Watchhog.ps1" -Outfile watchhog.ps1
 
 Write-Output "Download: NMap.exe"
 Invoke-WebRequest https://nmap.org/dist/nmap-7.94-setup.exe -Outfile nmap.exe
@@ -67,5 +67,6 @@ Expand-Archive .\ProcessExplorer.zip c:\download -Force
 
 Start-Process -FilePath "C:\download\weboff.cmd"
 Set-ExecutionPolicy Restricted -force
+
 
 
