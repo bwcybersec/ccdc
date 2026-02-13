@@ -496,24 +496,8 @@ Function WinServer{
      #Remove-SmbShare -Name "scripts" -Force            
                 
     If(-not ($NoAD)){                
-                #LDAP 389
-        Write-Host "Create Firewall Rules for LDAP" -ForegroundColor Cyan
-        netsh advfirewall firewall add rule name="CCDC-LDAP Service" dir=in action=allow enable=yes profile=any localport=389 remoteip= $WinFTP,$WinWeb,$win11wrk protocol=tcp  | Out-Null
-
-                #LDAP 636
-        Write-Host "Create Firewall Rules for LDAP" -ForegroundColor Cyan
-        netsh advfirewall firewall add rule name="CCDC-LDAP Service SSL" dir=in action=allow enable=no profile=any localport=636 remoteip= $WinFTP, $WinWeb,$win11wrk protocol=tcp  | Out-Null
-
-                # KERBEROS
-        Write-Host "Create Firewall Rules for Kerberos" -ForegroundColor Cyan
-        netsh advfirewall firewall add rule name="CCDC-Kerberos In UDP from Internal" dir=in action=allow enable=yes profile=any localport=88,464 remoteip=$WinWeb,$WinFTP,$ADDNS,$win11wrk protocol=udp  | Out-Null
-        netsh advfirewall firewall add rule name="CCDC-Kerberos In TCP from Internal" dir=in action=allow enable=yes profile=any localport=88,464 remoteip=$WinWeb,$WinFTP,$ADDNS,$win11wrk protocol=tcp  | Out-Null
-        netsh advfirewall firewall set rule group="CCDC-Kerberos Key Distribution Center (TCP-In)" new enable=yes  | Out-Null
-        netsh advfirewall firewall set rule group="CCDC-Kerberos Key Distribution Center (UDP-In)" new enable=yes  | Out-Null
-
-        netsh advfirewall firewall add rule name="CCDC-NetBIOS" dir=in action=allow enable=no profile=any localport=445 remoteip=172.20.240.0/24 protocol=tcp | Out-Null
-
-        netsh advfirewall firewall add rule name="CCDC-RPC In" dir=in action=allow enable=yes profile=any protocol=tcp remoteport=49152-65535 remoteip=localsubnet | Out-Null
+        netsh advfirewall firewall add rule name="CCDC-DomainContoller TCP In" dir=in action=allow profile=any protocol=TCP localport=53,88,135,389,445,3268,49152-65535 remoteip=localsubnet
+        netsh advfirewall firewall add rule name="CCDC-DomainController UDP In" dir=in action=allow profile=domain protocol=UDP localport=53,88,123 remoteip=localsubnet
     }
                 # DNS 53
     Write-Host "Create Firewall Rules for DNS access for Internet and Intranet" -ForegroundColor Cyan
@@ -587,10 +571,8 @@ Function WinWeb{
    netsh advfirewall firewall add rule name="CCDC-Webserver"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=80,443  | Out-Null
    
    If(-not ($NoAD)){
-        netsh advfirewall firewall add rule name="CCDC-Kerberos Out" dir=out action=allow enable=yes profile=any localport=88,464 remoteip=$ADDNS protocol=tcp | Out-Null
-        netsh advfirewall firewall add rule name="CCDC-RPC" dir=out action=allow enable=yes profile=any protocol=tcp localport=49152-65535 remoteip=$ADDNS |Out-Null
-        netsh advfirewall firewall add rule name="CCDC-SMB" dir=out action=allow enable=yes profile=any protocol=tcp localport=135,445 remoteip=$ADDNS |Out-Null
-        netsh advfirewall firewall add rule name="CCDC-LDAP Service SSL" dir=out action=allow enable=yes profile=any localport=389,636 remoteip=$ADDNS protocol=tcp  | Out-Null
+       netsh advfirewall firewall add rule name="CCDC-AD TCP" dir=out action=allow profile=any protocol=TCP remoteip=172.20.240.102 remoteport=53,88,135,389,445,3268,49152-65535
+       netsh advfirewall firewall add rule name="CCDC-AD UDP" dir=out action=allow profile=domain protocol=UDP remoteip=172.20.240.102 remoteport=53,88,123
    }
 
    #backup webpage
@@ -614,10 +596,8 @@ Function WinFTP{
 
                    #AD Rules
    If(-not ($NoAD)){
-       netsh advfirewall firewall add rule name="CCDC-Kerberos Out" dir=out action=allow enable=yes profile=any localport=88,464 remoteip=$ADDNS protocol=tcp  | Out-Null
-       netsh advfirewall firewall add rule name="CCDC-LDAP Service SSL" dir=out action=allow enable=yes profile=any localport=389,636 remoteip=$ADDNS protocol=tcp  | Out-Null
-       netsh advfirewall firewall add rule name="CCDC-SMB" dir=out action=allow enable=yes profile=any protocol=tcp localport=135,445 remoteip=$ADDNS |Out-Null
-       netsh advfirewall firewall add rule name="CCDC-RPC" dir=out action=allow enable=yes profile=any protocol=tcp remoteport=49152-65535 remoteip=$ADDNS |Out-Null
+       netsh advfirewall firewall add rule name="CCDC-AD TCP" dir=out action=allow profile=any protocol=TCP remoteip=172.20.240.102 remoteport=53,88,135,389,445,3268,49152-65535
+       netsh advfirewall firewall add rule name="CCDC-AD UDP" dir=out action=allow profile=domain protocol=UDP remoteip=172.20.240.102 remoteport=53,88,123
    }
    $source = "C:\inetpub\wwwroot"
    $dest = "C:\ccdc\", "C:\Windows\System32\drivers\en-US", "C:\ProgramData"
@@ -635,10 +615,8 @@ Function AD_User{
 
                    #AD Rules
    If(-not ($NoAD)){
-       netsh advfirewall firewall add rule name="CCDC-Kerberos Out" dir=out action=allow enable=yes profile=any localport=88,464 remoteip=$ADDNS protocol=tcp  | Out-Null
-       netsh advfirewall firewall add rule name="CCDC-LDAP Service SSL" dir=out action=allow enable=yes profile=any localport=389,636 remoteip=$ADDNS protocol=tcp  | Out-Null
-       netsh advfirewall firewall add rule name="CCDC-SMB" dir=out action=allow enable=yes profile=any protocol=tcp localport=135,445 remoteip=$ADDNS |Out-Null
-       netsh advfirewall firewall add rule name="CCDC-RPC" dir=out action=allow enable=yes profile=any protocol=tcp remoteport=49152-65535 remoteip=$ADDNS |Out-Null
+       netsh advfirewall firewall add rule name="CCDC-AD TCP" dir=out action=allow profile=any protocol=TCP remoteip=172.20.240.102 remoteport=53,88,135,389,445,3268,49152-65535
+       netsh advfirewall firewall add rule name="CCDC-AD UDP" dir=out action=allow profile=domain protocol=UDP remoteip=172.20.240.102 remoteport=53,88,123
    }
 
 }
