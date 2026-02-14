@@ -497,7 +497,7 @@ Function WinServer{
                 
     If(-not ($NoAD)){                
         netsh advfirewall firewall add rule name="CCDC-DomainContoller TCP In" dir=in action=allow profile=any protocol=TCP localport=53,88,135,389,445,3268,49152-65535 remoteip=localsubnet
-        netsh advfirewall firewall add rule name="CCDC-DomainController UDP In" dir=in action=allow profile=domain protocol=UDP localport=53,88,123 remoteip=localsubnet
+        netsh advfirewall firewall add rule name="CCDC-DomainController UDP In" dir=in action=allow profile=any protocol=UDP localport=53,88,123 remoteip=localsubnet
     }
                 # DNS 53
     Write-Host "Create Firewall Rules for DNS access for Internet and Intranet" -ForegroundColor Cyan
@@ -513,6 +513,9 @@ Function WinServer{
     netsh advfirewall firewall add rule name="CCDC-DNS Out TCP to Internal" dir=out action=allow enable=yes profile=any localport=53  protocol=tcp remoteip=$Internal | Out-Null
     netsh advfirewall firewall add rule name="CCDC-DNS In TCP from Internet" dir=in action=allow enable=yes profile=any localport=53  protocol=tcp  | Out-Null
     netsh advfirewall firewall add rule name="CCDC-DNS Out TCP to Internet" dir=out action=allow enable=yes profile=any localport=53  protocol=tcp  | Out-Null
+    netsh advfirewall firewall add rule name="CCDC-DNS to DNS TCP" dir=out action=allow enable=yes profile=any remoteport=53  protocol=tcp  | Out-Null
+    netsh advfirewall firewall add rule name="CCDC-DNS to DNS UDP" dir=out action=allow enable=yes profile=any remoteport=53  protocol=udp  | Out-Null
+    
     dnscmd /zoneexport $dName "$dName.dns"
                  #Disable SMB1
     Write-Host "Disable SMB1 via Registry..." -ForegroundColor Cyan
