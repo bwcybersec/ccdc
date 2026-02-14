@@ -143,9 +143,6 @@ EOF
 # nothing good
 echo "" > /etc/ld.so.conf
 rm -rf /etc/ld.so.conf.d
-mv /etc/rc[0-9].d $zds_dir/bad
-mv /etc/rc.d $zds_dir/bad
-mv /etc/rc.local $zds_dir/bad
 
 # putting away the welcome mat
 cat << EOF > /etc/issue.net
