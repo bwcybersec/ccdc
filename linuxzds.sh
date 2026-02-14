@@ -7,6 +7,10 @@ zds_dir="/var/zds"
 domain="allsafe.internal"
 valid_dist=("ubuntu" "fedora" "oracle")
 valid_zds_type=("ecom" "webmail" "splunk" "wkst")
+zangoose="https://raw.githubusercontent.com/bwcybersec/ccdc/refs/heads/main/smartestfw"
+seviper="https://raw.githubusercontent.com/bwcybersec/ccdc/refs/heads/main/set-xdp.sh"
+chimecho="https://raw.githubusercontent.com/bwcybersec/ccdc/refs/heads/main/splunkzds.sh"
+chingling="https://raw.githubusercontent.com/bwcybersec/ccdc/refs/heads/main/ufzds.sh"
 
 snapshot() {
   echo "$(date +%s)" > $zds_dir/state/$1
@@ -194,17 +198,76 @@ exit 1
 EOF
 chmod +x /usr/local/bin/dummy
 
+# base
+cat << EOF > $zds_dir/postscript
+#! /usr/bin/env bash
+zangoose=$zangoose
+seviper=$seviper
+chimecho=$chimecho
+chingling=$chingling
+
+EOF
+echo 'curl -o smartestfw $zangoose' >> $zds_dir/postscript
+echo 'curl -o set-xdp $seviper' >> $zds_dir/postscript
+cat << EOF > $zds/postscript
+
+chmod +x smartestfw
+./smartestfw
+cp clodsire /etc
+chmod +x clodsire /etc/clodsire
+/etc/clodsire
+
+chmod +x set-xdp
+cp set-xdp /usr/local/bin
+chmod +x set-xdp /usr/local/bin/set-xdp
+
+EOF
+chmod +x $zds_dir/postscript
+
 # continuation
 if [[ $3 == "ecom" ]]; then
   echo "writing subscripts for archetype \"$3\"..."
+  
+  echo 'systemctl disable ufw' >> $zds_dir/postscript
+  echo 'systemctl stop --now ufw' >> $zds_dir/postscript
+  echo 'apt install -y git curl vim snmpd nmap ncat tcpdump auditd docker.io chrony xdp-tools lynis lsof tmux gdb' >> $zds_dir/postscript
+  echo 'apt install --reinstall libpam-runtime openssh-server coreutils' >> $zds_dir/postscript
+  echo 'apt-get install --reinstall -y -o Dpkg::Options::="--force-confmiss" $(dpkg -S /etc/pam.d/\* | cut -d ':' -f 1)' >> $zds_dir/postscript
+  echo 'curl -o ufzds $chingling' >> $zds_dir/postscript
+  echo 'chmod +x ufzds' >> $zds_dir/postscript
+
 elif [[ $3 == "webmail" ]]; then 
   echo "writing subscripts for archetype \"$3\"..."
+  
+  echo 'systemctl disable firewalld' >> $zds_dir/postscript
+  echo 'systemctl stop --now firewalld' >> $zds_dir/postscript
+  echo 'dnf install -y git curl vim net-snmp net-snmp-utils nmap nmap-ncat tcpdump audit chrony xdp-tools lynis lsof tmux gdb' >> $zds_dir/postscript
+  echo 'curl -o ufzds $chingling' >> $zds_dir/postscript
+  echo 'chmod +x ufzds' >> $zds_dir/postscript
+
 elif [[ $3 == "splunk" ]]; then 
   echo "writing subscripts for archetype \"$3\"..."
+  
+  echo 'systemctl disable firewalld' >> $zds_dir/postscript
+  echo 'systemctl stop --now firewalld' >> $zds_dir/postscript
+  echo 'dnf install -y git curl vim net-snmp net-snmp-utils nmap tcpdump nmap-ncat audit chrony xdp-tools lynis lsof tmux gdb' >> $zds_dir/postscript
+  echo 'curl -o splunkzds $chimecho' >> $zds_dir/postscript
+  echo 'chmod +x splunkds' >> $zds_dir/postscript
+
 elif [[ $3 == "wkst" ]]; then 
   echo "writing subscripts for archetype \"$3\"..."
+  
+  echo 'systemctl disable ufw' >> $zds_dir/postscript
+  echo 'systemctl stop --now ufw' >> $zds_dir/postscript
+  echo 'apt install -y git curl vim snmpd nmap ncat tcpdump auditd docker.io chrony xdp-tools lynis lsof tmux gdb' >> $zds_dir/postscript
+  echo 'apt install --reinstall libpam-runtime openssh-server coreutils' >> $zds_dir/postscript
+  echo 'apt-get install --reinstall -y -o Dpkg::Options::="--force-confmiss" $(dpkg -S /etc/pam.d/\* | cut -d ':' -f 1)' >> $zds_dir/postscript
+  echo 'curl -o ufzds $chingling' >> $zds_dir/postscript
+  echo 'chmod +x ufzds' >> $zds_dir/postscript
+
 else
   echo "Error: did not match input \"$3\" with any established zds archetype; you should never see this error"
+
 fi
 
 echo "$(basename $0) finished; check dropflag procedure and scripts in $zds_dir for what to do next"
