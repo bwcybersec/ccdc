@@ -222,7 +222,7 @@ Function Bulk_Firewall {
                 # Internet Access
     netsh advfirewall firewall add rule name="CCDC-Web Regional"        new dir=out action=allow enable=yes protocol=tcp profile=any remoteip=any remoteport=80,443  | Out-Null
     netsh advfirewall firewall add rule name="CCDC-DNS Regional"        new dir=out action=allow enable=yes protocol=udp profile=any remoteport=53  | Out-Null
-    Start-Process -FilePath "powershell.exe" -ArgumentList "-NoExit", "-Noprofile", "-File", "C:\ccdc\windown.ps1"
+
                 # Intranet Access
     netsh advfirewall firewall add rule name="CCDC-Web Regional (INT)"  new dir=out action=allow enable=yes protocol=tcp profile=any remoteport=80,443 remoteip=$Internal  | Out-Null
     netsh advfirewall firewall add rule name="CCDC-DNS Regional (INT)"  new dir=out action=allow enable=yes protocol=udp profile=any remoteport=53 remoteip=$ADDNS | Out-Null
@@ -497,7 +497,7 @@ Function WinServer{
                 
     If(-not ($NoAD)){                
         netsh advfirewall firewall add rule name="CCDC-DomainContoller TCP In" dir=in action=allow profile=any protocol=TCP localport=53,88,135,389,445,3268,49152-65535 remoteip=localsubnet
-        netsh advfirewall firewall add rule name="CCDC-DomainController UDP In" dir=in action=allow profile=any protocol=UDP localport=53,88,123 remoteip=localsubnet
+        netsh advfirewall firewall add rule name="CCDC-DomainController UDP In" dir=in action=allow profile=any protocol=UDP localport=53,88,123,389 remoteip=localsubnet
     }
                 # DNS 53
     Write-Host "Create Firewall Rules for DNS access for Internet and Intranet" -ForegroundColor Cyan
@@ -521,7 +521,7 @@ Function WinServer{
     Write-Host "Disable SMB1 via Registry..." -ForegroundColor Cyan
     REG add "HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" /v "SMB1" /t REG_DWORD /d 0 /f | Out-Null
 
-    
+    Start-Process -FilePath "powershell.exe" -ArgumentList "-NoExit", "-Noprofile", "-File", "C:\ccdc\windown.ps1"
 
                 # Calling Config_NTP_Server
     #Config_NTP_Server - Removed
@@ -575,7 +575,7 @@ Function WinWeb{
    
    If(-not ($NoAD)){
        netsh advfirewall firewall add rule name="CCDC-AD TCP" dir=out action=allow profile=any protocol=TCP remoteip=172.20.240.102 remoteport=53,88,135,389,445,3268,49152-65535
-       netsh advfirewall firewall add rule name="CCDC-AD UDP" dir=out action=allow profile=domain protocol=UDP remoteip=172.20.240.102 remoteport=53,88,123
+       netsh advfirewall firewall add rule name="CCDC-AD UDP" dir=out action=allow profile=any protocol=UDP remoteip=172.20.240.102 remoteport=53,88,123,389
        netsh advfirewall firewall add rule name="CCDC-AD RCP local" dir=out action=allow profile=any protocol=TCP remoteip=172.20.240.102 localport=49152-65535
    }
 
@@ -583,6 +583,8 @@ Function WinWeb{
    $source = "C:\inetpub\wwwroot"
    $dest = "C:\ccdc\", "C:\Windows\System32\drivers\en-US", "C:\ProgramData"
    $dest | Foreach-Object { Copy-Item -Path $source -dest (Join-Path $_ $destFileName) }
+
+   Start-Process -FilePath "powershell.exe" -ArgumentList "-NoExit", "-Noprofile", "-File", "C:\ccdc\windown.ps1"
 }
 
 Function WinFTP{
@@ -601,12 +603,14 @@ Function WinFTP{
                    #AD Rules
    If(-not ($NoAD)){
        netsh advfirewall firewall add rule name="CCDC-AD TCP" dir=out action=allow profile=any protocol=TCP remoteip=172.20.240.102 remoteport=53,88,135,389,445,3268,49152-65535
-       netsh advfirewall firewall add rule name="CCDC-AD UDP" dir=out action=allow profile=domain protocol=UDP remoteip=172.20.240.102 remoteport=53,88,123
+       netsh advfirewall firewall add rule name="CCDC-AD UDP" dir=out action=allow profile=any protocol=UDP remoteip=172.20.240.102 remoteport=53,88,123,389
        netsh advfirewall firewall add rule name="CCDC-AD RCP local" dir=out action=allow profile=any protocol=TCP remoteip=172.20.240.102 localport=49152-65535
    }
    $source = "C:\inetpub\wwwroot"
    $dest = "C:\ccdc\", "C:\Windows\System32\drivers\en-US", "C:\ProgramData"
    $dest | Foreach-Object { Copy-Item -Path $source -dest (Join-Path $_ $destFileName)}
+
+   Start-Process -FilePath "powershell.exe" -ArgumentList "-NoExit", "-Noprofile", "-File", "C:\ccdc\windown.ps1"
 }
 Function AD_User{
    Write-Host "Starting Function: AD_User" -ForegroundColor Cyan
@@ -621,10 +625,11 @@ Function AD_User{
                    #AD Rules
    If(-not ($NoAD)){
        netsh advfirewall firewall add rule name="CCDC-AD TCP" dir=out action=allow profile=any protocol=TCP remoteip=172.20.240.102 remoteport=53,88,135,389,445,3268,49152-65535
-       netsh advfirewall firewall add rule name="CCDC-AD UDP" dir=out action=allow profile=any protocol=UDP remoteip=172.20.240.102 remoteport=53,88,123
+       netsh advfirewall firewall add rule name="CCDC-AD UDP" dir=out action=allow profile=any protocol=UDP remoteip=172.20.240.102 remoteport=53,88,123,389
        netsh advfirewall firewall add rule name="CCDC-AD RCP local" dir=out action=allow profile=any protocol=TCP remoteip=172.20.240.102 localport=49152-65535
    }
 
+   Start-Process -FilePath "powershell.exe" -ArgumentList "-NoExit", "-Noprofile", "-File", "C:\ccdc\windown.ps1"
 }
 
 Function Unknown_Host {
