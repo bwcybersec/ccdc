@@ -1,0 +1,378 @@
+set network profiles interface-management-profile traffic http no
+set network profiles interface-management-profile traffic https no
+set network profiles interface-management-profile traffic http-ocsp no
+set network profiles interface-management-profile traffic ssh no
+set network profiles interface-management-profile traffic snmp no
+set network profiles interface-management-profile traffic userid-service yes
+set network profiles interface-management-profile traffic userid-syslog-listener-ssl no
+set network profiles interface-management-profile traffic userid-syslog-listener-udp no
+set network profiles interface-management-profile traffic ping yes
+set network profiles interface-management-profile traffic response-pages yes
+set network profiles interface-management-profile traffic telnet no
+set network profiles interface-management-profile traffic permitted-ip 0.0.0.0/0 
+set network profiles zone-protection-profile Default_Protection flood tcp-syn red alarm-rate 10000
+set network profiles zone-protection-profile Default_Protection flood tcp-syn red activate-rate 10000
+set network profiles zone-protection-profile Default_Protection flood tcp-syn red maximal-rate 40000
+set network profiles zone-protection-profile Default_Protection flood tcp-syn enable yes
+set network profiles zone-protection-profile Default_Protection flood udp red alarm-rate 10000
+set network profiles zone-protection-profile Default_Protection flood udp red activate-rate 10000
+set network profiles zone-protection-profile Default_Protection flood udp red maximal-rate 40000
+set network profiles zone-protection-profile Default_Protection flood udp enable yes
+set network profiles zone-protection-profile Default_Protection flood icmp red alarm-rate 10000
+set network profiles zone-protection-profile Default_Protection flood icmp red activate-rate 10000
+set network profiles zone-protection-profile Default_Protection flood icmp red maximal-rate 40000
+set network profiles zone-protection-profile Default_Protection flood icmp enable yes
+set network profiles zone-protection-profile Default_Protection flood icmpv6 red alarm-rate 10000
+set network profiles zone-protection-profile Default_Protection flood icmpv6 red activate-rate 10000
+set network profiles zone-protection-profile Default_Protection flood icmpv6 red maximal-rate 40000
+set network profiles zone-protection-profile Default_Protection flood icmpv6 enable yes
+set network profiles zone-protection-profile Default_Protection flood other-ip red alarm-rate 10000
+set network profiles zone-protection-profile Default_Protection flood other-ip red activate-rate 10000
+set network profiles zone-protection-profile Default_Protection flood other-ip red maximal-rate 40000
+set network profiles zone-protection-profile Default_Protection flood other-ip enable yes
+set network profiles zone-protection-profile Default_Protection net-inspection rule 
+set network ike crypto-profiles ike-crypto-profiles default encryption [ aes-128-cbc 3des ]
+set network ike crypto-profiles ike-crypto-profiles default hash sha1
+set network ike crypto-profiles ike-crypto-profiles default dh-group group2
+set network ike crypto-profiles ike-crypto-profiles default lifetime hours 8
+set network ike crypto-profiles ike-crypto-profiles Suite-B-GCM-128 encryption aes-128-cbc
+set network ike crypto-profiles ike-crypto-profiles Suite-B-GCM-128 hash sha256
+set network ike crypto-profiles ike-crypto-profiles Suite-B-GCM-128 dh-group group19
+set network ike crypto-profiles ike-crypto-profiles Suite-B-GCM-128 lifetime hours 8
+set network ike crypto-profiles ike-crypto-profiles Suite-B-GCM-256 encryption aes-256-cbc
+set network ike crypto-profiles ike-crypto-profiles Suite-B-GCM-256 hash sha384
+set network ike crypto-profiles ike-crypto-profiles Suite-B-GCM-256 dh-group group20
+set network ike crypto-profiles ike-crypto-profiles Suite-B-GCM-256 lifetime hours 8
+set network ike crypto-profiles ipsec-crypto-profiles default esp encryption [ aes-128-cbc 3des ]
+set network ike crypto-profiles ipsec-crypto-profiles default esp authentication sha1
+set network ike crypto-profiles ipsec-crypto-profiles default dh-group group2
+set network ike crypto-profiles ipsec-crypto-profiles default lifetime hours 1
+set network ike crypto-profiles ipsec-crypto-profiles Suite-B-GCM-128 esp encryption aes-128-gcm
+set network ike crypto-profiles ipsec-crypto-profiles Suite-B-GCM-128 esp authentication none
+set network ike crypto-profiles ipsec-crypto-profiles Suite-B-GCM-128 dh-group group19
+set network ike crypto-profiles ipsec-crypto-profiles Suite-B-GCM-128 lifetime hours 1
+set network ike crypto-profiles ipsec-crypto-profiles Suite-B-GCM-256 esp encryption aes-256-gcm
+set network ike crypto-profiles ipsec-crypto-profiles Suite-B-GCM-256 esp authentication none
+set network ike crypto-profiles ipsec-crypto-profiles Suite-B-GCM-256 dh-group group20
+set network ike crypto-profiles ipsec-crypto-profiles Suite-B-GCM-256 lifetime hours 1
+set network ike crypto-profiles global-protect-app-crypto-profiles default encryption aes-128-cbc
+set network ike crypto-profiles global-protect-app-crypto-profiles default authentication sha1
+set network qos profile default class-bandwidth-type mbps class class1 priority real-time
+set network qos profile default class-bandwidth-type mbps class class2 priority high
+set network qos profile default class-bandwidth-type mbps class class3 priority high
+set network qos profile default class-bandwidth-type mbps class class4 priority medium
+set network qos profile default class-bandwidth-type mbps class class5 priority medium
+set network qos profile default class-bandwidth-type mbps class class6 priority low
+set network qos profile default class-bandwidth-type mbps class class7 priority low
+set network qos profile default class-bandwidth-type mbps class class8 priority low
+set network virtual-router default protocol bgp enable no
+set network virtual-router default protocol bgp dampening-profile default cutoff 1.25
+set network virtual-router default protocol bgp dampening-profile default reuse 0.5
+set network virtual-router default protocol bgp dampening-profile default max-hold-time 900
+set network virtual-router default protocol bgp dampening-profile default decay-half-life-reachable 300
+set network virtual-router default protocol bgp dampening-profile default decay-half-life-unreachable 900
+set network virtual-router default protocol bgp dampening-profile default enable yes
+set network virtual-router default protocol bgp routing-options graceful-restart enable yes
+set network virtual-router default protocol rip enable no
+set network virtual-router default protocol ospf enable no
+set network virtual-router default protocol ospfv3 enable no
+set network virtual-router default ecmp algorithm ip-modulo 
+set network virtual-router default routing-table ip static-route default nexthop ip-address 172.16.101.1
+set network virtual-router default routing-table ip static-route default bfd profile None
+set network virtual-router default routing-table ip static-route default interface ethernet1/1
+set network virtual-router default routing-table ip static-route default metric 10
+set network virtual-router default routing-table ip static-route default destination 0.0.0.0/0
+set network virtual-router default routing-table ip static-route default route-table unicast 
+set network virtual-router default interface [ ethernet1/1 ethernet1/2 ]
+set shared application 
+set shared application-group 
+set shared service 
+set shared service-group 
+set shared botnet configuration http dynamic-dns enabled yes
+set shared botnet configuration http dynamic-dns threshold 5
+set shared botnet configuration http malware-sites enabled yes
+set shared botnet configuration http malware-sites threshold 5
+set shared botnet configuration http recent-domains enabled yes
+set shared botnet configuration http recent-domains threshold 5
+set shared botnet configuration http ip-domains enabled yes
+set shared botnet configuration http ip-domains threshold 10
+set shared botnet configuration http executables-from-unknown-sites enabled yes
+set shared botnet configuration http executables-from-unknown-sites threshold 5
+set shared botnet configuration other-applications irc yes
+set shared botnet configuration unknown-applications unknown-tcp destinations-per-hour 10
+set shared botnet configuration unknown-applications unknown-tcp sessions-per-hour 10
+set shared botnet configuration unknown-applications unknown-tcp session-length maximum-bytes 100
+set shared botnet configuration unknown-applications unknown-tcp session-length minimum-bytes 50
+set shared botnet configuration unknown-applications unknown-udp destinations-per-hour 10
+set shared botnet configuration unknown-applications unknown-udp sessions-per-hour 10
+set shared botnet configuration unknown-applications unknown-udp session-length maximum-bytes 100
+set shared botnet configuration unknown-applications unknown-udp session-length minimum-bytes 50
+set shared botnet report topn 100
+set shared botnet report scheduled yes
+set shared log-settings syslog Splunk server Splunk transport UDP
+set shared log-settings syslog Splunk server Splunk port 514
+set shared log-settings syslog Splunk server Splunk format BSD
+set shared log-settings syslog Splunk server Splunk server 172.20.242.20
+set shared log-settings syslog Splunk server Splunk facility LOG_USER
+set zone external network layer3 ethernet1/1
+set zone external network zone-protection-profile Default_Protection
+set zone internal network layer3 ethernet1/2
+set zone internal network enable-packet-buffer-protection yes
+set zone internal network zone-protection-profile Default_Protection
+set service-group 
+set service ftp protocol tcp port 20,21
+set service ftp protocol tcp override no 
+set service imap protocol tcp port 143
+set service imap protocol tcp override no 
+set service pop3 protocol tcp port 110
+set service pop3 protocol tcp override no 
+set service smtp protocol tcp port 25
+set service smtp protocol tcp override no 
+set service ssh protocol tcp port 22
+set service ssh protocol tcp override no 
+set service splunk protocol tcp port 9997,8089,8000
+set service splunk protocol tcp override no 
+set service snmp protocol tcp port 161
+set service snmp protocol tcp override no 
+set service syslog protocol tcp port 514
+set service syslog protocol tcp override no 
+set service all-web protocol tcp port 8000,80,443
+set service all-web protocol tcp override no 
+set schedule 
+set rulebase security rules Any2Any to any
+set rulebase security rules Any2Any from any
+set rulebase security rules Any2Any source any
+set rulebase security rules Any2Any destination any
+set rulebase security rules Any2Any source-user any
+set rulebase security rules Any2Any category any
+set rulebase security rules Any2Any application any
+set rulebase security rules Any2Any service any
+set rulebase security rules Any2Any source-hip any
+set rulebase security rules Any2Any destination-hip any
+set rulebase security rules Any2Any action allow
+set rulebase security rules Any2Any log-start yes
+set rulebase security rules Any2Any log-setting Forward
+set rulebase security rules Any2Any disabled yes
+set rulebase security rules ALL_OUTBOUND to external
+set rulebase security rules ALL_OUTBOUND from internal
+set rulebase security rules ALL_OUTBOUND source any
+set rulebase security rules ALL_OUTBOUND destination any
+set rulebase security rules ALL_OUTBOUND source-user any
+set rulebase security rules ALL_OUTBOUND category any
+set rulebase security rules ALL_OUTBOUND application any
+set rulebase security rules ALL_OUTBOUND service any
+set rulebase security rules ALL_OUTBOUND source-hip any
+set rulebase security rules ALL_OUTBOUND destination-hip any
+set rulebase security rules ALL_OUTBOUND action allow
+set rulebase security rules ALL_OUTBOUND log-start yes
+set rulebase security rules ALL_OUTBOUND log-setting Forward
+set rulebase security rules ALL_OUTBOUND profile-setting group Secure
+set rulebase security rules ALL_OUTBOUND disabled yes
+set rulebase security rules BLOCK_WINDOWS_INTERNAL to internal
+set rulebase security rules BLOCK_WINDOWS_INTERNAL from external
+set rulebase security rules BLOCK_WINDOWS_INTERNAL source Windows
+set rulebase security rules BLOCK_WINDOWS_INTERNAL destination any
+set rulebase security rules BLOCK_WINDOWS_INTERNAL source-user any
+set rulebase security rules BLOCK_WINDOWS_INTERNAL category any
+set rulebase security rules BLOCK_WINDOWS_INTERNAL application any
+set rulebase security rules BLOCK_WINDOWS_INTERNAL service any
+set rulebase security rules BLOCK_WINDOWS_INTERNAL source-hip any
+set rulebase security rules BLOCK_WINDOWS_INTERNAL destination-hip any
+set rulebase security rules BLOCK_WINDOWS_INTERNAL action deny
+set rulebase security rules BLOCK_WINDOWS_INTERNAL log-start yes
+set rulebase security rules BLOCK_WINDOWS_INTERNAL log-setting Forward
+set rulebase security rules BLOCK_WINDOWS_INTERNAL profile-setting group Secure
+set rulebase security rules BLOCK_WINDOWS_INTERNAL disabled yes
+set rulebase security rules Anti-Propagation to internal
+set rulebase security rules Anti-Propagation from internal
+set rulebase security rules Anti-Propagation source [ Fedora_Webmail Splunk Ubuntu_Ecom Ubuntu_Wkst ]
+set rulebase security rules Anti-Propagation destination [ Fedora_Webmail Splunk Ubuntu_Ecom Ubuntu_Wkst ]
+set rulebase security rules Anti-Propagation source-user any
+set rulebase security rules Anti-Propagation category any
+set rulebase security rules Anti-Propagation application ssh
+set rulebase security rules Anti-Propagation service ssh
+set rulebase security rules Anti-Propagation source-hip any
+set rulebase security rules Anti-Propagation destination-hip any
+set rulebase security rules Anti-Propagation action deny
+set rulebase security rules Anti-Propagation log-start yes
+set rulebase security rules Anti-Propagation log-setting Forward
+set rulebase security rules Anti-Propagation profile-setting group Secure
+set rulebase security rules Anti-Propagation disabled yes
+set rulebase security rules Internal_to_Internal profile-setting group Secure
+set rulebase security rules Internal_to_Internal to internal
+set rulebase security rules Internal_to_Internal from internal
+set rulebase security rules Internal_to_Internal source any
+set rulebase security rules Internal_to_Internal destination any
+set rulebase security rules Internal_to_Internal source-user any
+set rulebase security rules Internal_to_Internal category any
+set rulebase security rules Internal_to_Internal application any
+set rulebase security rules Internal_to_Internal service any
+set rulebase security rules Internal_to_Internal source-hip any
+set rulebase security rules Internal_to_Internal destination-hip any
+set rulebase security rules Internal_to_Internal action allow
+set rulebase security rules Internal_to_Internal log-start yes
+set rulebase security rules Internal_to_Internal log-setting Forward
+set rulebase security rules Internal_to_Internal disabled yes
+set rulebase security rules External_to_Ecom to internal
+set rulebase security rules External_to_Ecom from external
+set rulebase security rules External_to_Ecom source any
+set rulebase security rules External_to_Ecom destination Ubuntu_Ecom
+set rulebase security rules External_to_Ecom source-user any
+set rulebase security rules External_to_Ecom category any
+set rulebase security rules External_to_Ecom application [ ping web-browsing ]
+set rulebase security rules External_to_Ecom service [ service-http service-https ]
+set rulebase security rules External_to_Ecom source-hip any
+set rulebase security rules External_to_Ecom destination-hip any
+set rulebase security rules External_to_Ecom action allow
+set rulebase security rules External_to_Ecom log-start yes
+set rulebase security rules External_to_Ecom log-setting Forward
+set rulebase security rules External_to_Ecom profile-setting group Secure
+set rulebase security rules External_to_Ecom disabled yes
+set rulebase security rules External_to_Fedora_Webmail to internal
+set rulebase security rules External_to_Fedora_Webmail from external
+set rulebase security rules External_to_Fedora_Webmail source any
+set rulebase security rules External_to_Fedora_Webmail destination Fedora_Webmail
+set rulebase security rules External_to_Fedora_Webmail source-user any
+set rulebase security rules External_to_Fedora_Webmail category any
+set rulebase security rules External_to_Fedora_Webmail application [ imap ping pop3 smtp web-browsing ]
+set rulebase security rules External_to_Fedora_Webmail service application-default
+set rulebase security rules External_to_Fedora_Webmail source-hip any
+set rulebase security rules External_to_Fedora_Webmail destination-hip any
+set rulebase security rules External_to_Fedora_Webmail action allow
+set rulebase security rules External_to_Fedora_Webmail log-start yes
+set rulebase security rules External_to_Fedora_Webmail log-setting Forward
+set rulebase security rules External_to_Fedora_Webmail profile-setting group Secure
+set rulebase security rules External_to_Fedora_Webmail disabled yes
+set rulebase security rules Logs profile-setting group Secure
+set rulebase security rules Logs to internal
+set rulebase security rules Logs from external
+set rulebase security rules Logs source [ AD_Pub Windows11_Pub WindowsFTP_Pub WindowsWeb_Pub ]
+set rulebase security rules Logs destination Splunk
+set rulebase security rules Logs source-user any
+set rulebase security rules Logs category any
+set rulebase security rules Logs application Log_Apps
+set rulebase security rules Logs service [ all-web splunk ]
+set rulebase security rules Logs source-hip any
+set rulebase security rules Logs destination-hip any
+set rulebase security rules Logs action allow
+set rulebase security rules Logs log-start yes
+set rulebase security rules Logs log-setting Forward
+set rulebase security rules Logs disabled yes
+set rulebase security rules External_to_Splunk to internal
+set rulebase security rules External_to_Splunk from external
+set rulebase security rules External_to_Splunk source any
+set rulebase security rules External_to_Splunk destination Splunk
+set rulebase security rules External_to_Splunk source-user any
+set rulebase security rules External_to_Splunk category any
+set rulebase security rules External_to_Splunk application [ ping ssl web-browsing ]
+set rulebase security rules External_to_Splunk service [ service-http service-https ]
+set rulebase security rules External_to_Splunk source-hip any
+set rulebase security rules External_to_Splunk destination-hip any
+set rulebase security rules External_to_Splunk action allow
+set rulebase security rules External_to_Splunk log-start yes
+set rulebase security rules External_to_Splunk log-setting Forward
+set rulebase security rules External_to_Splunk profile-setting group Secure
+set rulebase security rules External_to_Splunk disabled yes
+set rulebase security rules External_to_Wkst to internal
+set rulebase security rules External_to_Wkst from external
+set rulebase security rules External_to_Wkst source any
+set rulebase security rules External_to_Wkst destination Ubuntu_Wkst
+set rulebase security rules External_to_Wkst source-user any
+set rulebase security rules External_to_Wkst category any
+set rulebase security rules External_to_Wkst application any
+set rulebase security rules External_to_Wkst service application-default
+set rulebase security rules External_to_Wkst source-hip any
+set rulebase security rules External_to_Wkst destination-hip any
+set rulebase security rules External_to_Wkst action allow
+set rulebase security rules External_to_Wkst profile-setting group Secure
+set rulebase security rules External_to_Wkst disabled yes
+set rulebase security rules DENY_ALL to any
+set rulebase security rules DENY_ALL from any
+set rulebase security rules DENY_ALL source any
+set rulebase security rules DENY_ALL destination any
+set rulebase security rules DENY_ALL source-user any
+set rulebase security rules DENY_ALL category any
+set rulebase security rules DENY_ALL application any
+set rulebase security rules DENY_ALL service any
+set rulebase security rules DENY_ALL source-hip any
+set rulebase security rules DENY_ALL destination-hip any
+set rulebase security rules DENY_ALL action deny
+set rulebase security rules DENY_ALL log-start yes
+set rulebase security rules DENY_ALL log-setting Forward
+set rulebase security rules DENY_ALL profile-setting group Secure
+set rulebase security rules DENY_ALL disabled yes
+set rulebase nat rules ECom to external
+set rulebase nat rules ECom from internal
+set rulebase nat rules ECom source 172.20.242.30
+set rulebase nat rules ECom destination any
+set rulebase nat rules ECom service any
+set rulebase nat rules ECom source-translation static-ip translated-address 172.25.XX.11
+set rulebase nat rules ECom source-translation static-ip bi-directional yes
+set rulebase nat rules ECom disabled yes
+set rulebase nat rules Webmail source-translation static-ip translated-address 172.25.XX.39
+set rulebase nat rules Webmail source-translation static-ip bi-directional yes
+set rulebase nat rules Webmail to external
+set rulebase nat rules Webmail from internal
+set rulebase nat rules Webmail source 172.20.242.40
+set rulebase nat rules Webmail destination any
+set rulebase nat rules Webmail service any
+set rulebase nat rules Webmail disabled yes
+set rulebase nat rules Splunk source-translation static-ip translated-address 172.25.XX.9
+set rulebase nat rules Splunk source-translation static-ip bi-directional yes
+set rulebase nat rules Splunk to external
+set rulebase nat rules Splunk from internal
+set rulebase nat rules Splunk source 172.20.242.20
+set rulebase nat rules Splunk destination any
+set rulebase nat rules Splunk service any
+set rulebase nat rules Splunk disabled yes
+set rulebase nat rules "Default NAT" source-translation dynamic-ip-and-port translated-address 172.25.XX.5
+set rulebase nat rules "Default NAT" to external
+set rulebase nat rules "Default NAT" from internal
+set rulebase nat rules "Default NAT" source any
+set rulebase nat rules "Default NAT" destination any
+set rulebase nat rules "Default NAT" service any
+set rulebase nat rules "Default NAT" disabled yes
+set rulebase nat rules "Default NAT-1" source-translation dynamic-ip-and-port interface-address interface ethernet1/1
+set rulebase nat rules "Default NAT-1" to external
+set rulebase nat rules "Default NAT-1" from internal
+set rulebase nat rules "Default NAT-1" source any
+set rulebase nat rules "Default NAT-1" destination any
+set rulebase nat rules "Default NAT-1" service any
+set rulebase nat rules "Default NAT-1" to-interface ethernet1/1
+set rulebase default-security-rules rules interzone-default action allow
+set rulebase default-security-rules rules interzone-default log-start no
+set rulebase default-security-rules rules interzone-default log-end no
+set rulebase dos rules Protection from zone external
+set rulebase dos rules Protection to zone internal
+set rulebase dos rules Protection protection 
+set rulebase dos rules Protection source any
+set rulebase dos rules Protection destination any
+set rulebase dos rules Protection source-user any
+set rulebase dos rules Protection service any
+set rulebase dos rules Protection action deny 
+set rulebase dos rules Protection disabled yes
+set profile-group Secure virus default
+set profile-group Secure spyware strict
+set profile-group Secure vulnerability strict
+set profile-group Secure url-filtering default
+set profile-group Secure file-blocking "basic file blocking"
+set profile-group Secure wildfire-analysis default
+set import network interface [ ethernet1/1 ethernet1/2 ]
+set application-group Outbound_Apps members [ web-browsing ssl apt-get yum git-base github google-base ms-update pastebin sourceforge subversion ping ocsp paloalto-updates pan-db-cloud dns soap dns-base ]
+set application-group Internal_Apps members [ ntp ssh ping web-browsing ssl mysql splunk snmp snmp-trap imap pop3 smtp ]
+set application-group Log_Apps members [ splunk ssl web-browsing syslog ]
+set application 
+set address-group Internal static [ Fedora_Webmail Splunk Ubuntu_Ecom Ubuntu_Wkst ]
+set address-group PAN_GWs static [ PAN_External_GW PAN_Internal_GW ]
+set address Ubuntu_Ecom ip-netmask 172.20.242.30
+set address Fedora_Webmail ip-netmask 172.20.242.40
+set address Splunk ip-netmask 172.20.242.20
+set address Ubuntu_Wkst ip-netmask 172.20.242.200
+set address PAN_Internal_GW ip-netmask 172.20.242.254
+set address PAN_External_GW ip-netmask 172.16.101.254
+set address PAN_Management ip-netmask 172.20.242.150
+set address Windows ip-netmask 172.20.240.0/24
+set address Windows11_Pub ip-netmask 172.25.XX.144
+set address WindowsWeb_Pub ip-netmask 172.25.XX.140
+set address WindowsFTP_Pub ip-netmask 172.25.XX.162
+set address AD_Pub ip-netmask 172.25.XX.155
