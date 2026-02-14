@@ -170,7 +170,7 @@ case $CLODSIRE_HOST in
 wkst)
 cat >> clodsire << applaud
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.150 --dport 22 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.102 --dport 53 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp --dport 53 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.30 --dport 80 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.150 --dport 80 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.240.100 --dport 161 -j ACCEPT
@@ -190,7 +190,7 @@ applaud
 ecom)
 cat >> clodsire << applaud
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.150 --dport 22 -j ACCEPT
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.102 --dport 53 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp --dport 53 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.30 --dport 80 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p tcp -d 172.20.242.150 --dport 80 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.240.100 --dport 161 -j ACCEPT
@@ -209,7 +209,7 @@ applaud
 ;;
 splunk)
 cat >> clodsire << applaud
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.102 --dport 53 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp --dport 53 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.240.100 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.240.101 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.240.102 --dport 161 -j ACCEPT
@@ -224,7 +224,7 @@ applaud
 ;;
 webmail)
 cat >> clodsire << applaud
-$QUAGSIRE -A OUTPUT -p udp -d 172.20.240.102 --dport 53 -j ACCEPT
+$QUAGSIRE -A OUTPUT -p udp --dport 53 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.242.20 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.242.30 --dport 161 -j ACCEPT
 $QUAGSIRE -A OUTPUT -p udp -d 172.20.242.200 --dport 161 -j ACCEPT
