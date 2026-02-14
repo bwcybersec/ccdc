@@ -75,9 +75,9 @@ cp -r /opt $zds_dir
 cp /root/.bash* $zds_dir/root
 mv /root/.ssh $zds_dir/root
 for i in /home/*; do
-  mkdir $zds_dir/home/$i
-  cp $i/.bash* $zds_dir/home/$i
-  mv $i/.ssh $zds_dir/home/$i
+  mkdir $zds_dir/$i
+  cp $i/.bash* $zds_dir/$i
+  mv $i/.ssh $zds_dir/$i
 done
 
 # env
@@ -91,7 +91,7 @@ echo "setting hostname, DNS..."
 echo "$1.$domain" > /etc/hostname
 
 # rising action, climax, falling action, resolution
-cat << EOF >> /etc/resolv.conf
+cat << EOF > /etc/resolv.conf
 nameserver 8.8.8.8
 nameserver 8.8.4.4
 nameserver 1.1.1.1
@@ -177,7 +177,7 @@ echo "writing subscripts..."
 
 echo '#! /usr/bin/env bash' > /usr/local/bin/zds-state
 echo 'timestamp=$(date +%s)' >> /usr/local/bin/zds-state
-echo 'persistent="$zds_dir/state/$timestamp.state' >> /usr/local/bin/zds-state
+echo "persistent=$zds_dir/state/\$timestamp.state" >> /usr/local/bin/zds-state
 echo 'echo "$timestamp" > $persistent' >> /usr/local/bin/zds-state
 echo 'echo "---" >> $persistent' >> /usr/local/bin/zds-state
 echo 'uname -a >> $persistent' >> /usr/local/bin/zds-state
