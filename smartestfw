@@ -2,8 +2,8 @@
 # This file was not written by hand. This file is not intended to be edited by
 # hand. If you think you need to edit this by hand, you don't.
 
-QUAGSIRE=$(which iptables)
-CLODSIRE_HOST=$(cat /var/zds/zds_type)
+QUAGSIRE=$(/bin/which iptables)
+CLODSIRE_HOST=$ZDS_TYPE
 
 # weboff
 cat > clodsire << applaud
