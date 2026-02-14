@@ -120,14 +120,13 @@ pkill -9 sshd
 
 # rainier
 echo "setting configs, moving things..."
-mv $(/bin/which sshd) $zds_dir/bin
 mv $(/bin/which dd) $zds_dir/bin
 mv $(/bin/which mount) $zds_dir/bin
 mv $(/bin/which base64) $zds_dir/bin
 cp $(/bin/which xargs) $zds_dir/bin
 cp $(/bin/which tee) $zds_dir/bin
 
-# rainiest
+# I heard you like rain
 sed -i 's/#\?\(PermitRootLogin\s*\).*$/\1 no/' /etc/ssh/sshd_config
 
 # it is and always will be 1998
@@ -179,16 +178,20 @@ snapshot "post"
 # future snapshots
 echo "writing subscripts..."
 
-echo '#! /usr/bin/env bash' > /usr/local/bin/zds-state
-echo 'timestamp=$(date +%s)' >> /usr/local/bin/zds-state
-echo "persistent=$zds_dir/state/\$timestamp.state" >> /usr/local/bin/zds-state
-echo 'echo "$timestamp" > $persistent' >> /usr/local/bin/zds-state
-echo 'echo "---" >> $persistent' >> /usr/local/bin/zds-state
-echo 'uname -a >> $persistent' >> /usr/local/bin/zds-state
-echo 'echo "---" >> $persistent' >> /usr/local/bin/zds-state
-echo 'ps aux >> $persistent' >> /usr/local/bin/zds-state
-echo 'echo "---" >> $persistent' >> /usr/local/bin/zds-state
-echo 'ss -tualpon >> $persistent' >> /usr/local/bin/zds-state
+cat << EOF > /usr/local/bin/zds-state
+#! /usr/bin/env bash
+
+timestamp=\$(date +%s)
+persistent=$zds_dir/state/\$timestamp.state
+
+echo "\$timestamp" > \$persistent
+echo "---" >> \$persistent
+uname -a >> \$persistent
+echo "---" >> \$persistent
+ps aux >> \$persistent
+echo "---" >> \$persistent
+ss -tualpon >> \$persistent
+EOF
 chmod +x /usr/local/bin/zds-state
 
 # you tricky, tricky trickster
@@ -206,8 +209,8 @@ seviper="$seviper"
 chimecho="$chimecho"
 chingling="$chingling"
 
-curl -o smartestfw \$zangoose'
-curl -o set-xdp \$seviper'
+curl -o smartestfw \$zangoose
+curl -o set-xdp \$seviper
 
 chmod +x smartestfw
 ./smartestfw
@@ -223,37 +226,43 @@ EOF
 chmod +x $zds_dir/postscript
 
 # continuation
-echo "modifying subscript for distro \"$2\"..."
+echo "modifying postscript for distro \"$2\"..."
+
 if [[ $2 == "fedora" ]]; then
   echo 'systemctl disable firewalld' >> $zds_dir/postscript
   echo 'systemctl stop --now firewalld' >> $zds_dir/postscript
   echo 'dnf install -y git curl vim net-snmp net-snmp-utils nmap nmap-ncat tcpdump audit chrony xdp-tools lynis lsof tmux gdb' >> $zds_dir/postscript
   echo 'dnf reinstall -y pam openssh-server coreutils' >> $zds_dir/postscript
-  echo "mv \$(/bin/which sshd) $zds_dir/bin" >> $zds_dir/postscript
 elif [[ $2 == "oracle" ]]; then
   echo 'systemctl disable firewalld' >> $zds_dir/postscript
   echo 'systemctl stop --now firewalld' >> $zds_dir/postscript
   echo 'dnf install -y git curl vim net-snmp net-snmp-utils nmap tcpdump nmap-ncat audit chrony xdp-tools lsof tmux gdb' >> $zds_dir/postscript
   echo 'dnf reinstall -y pam openssh-server coreutils' >> $zds_dir/postscript
-  echo "mv \$(/bin/which sshd) $zds_dir/bin" >> $zds_dir/postscript
 elif [[ $2 == "ubuntu" ]]; then
   echo 'systemctl disable ufw' >> $zds_dir/postscript
   echo 'systemctl stop --now ufw' >> $zds_dir/postscript
   echo 'apt install -y git curl vim snmpd nmap ncat tcpdump auditd docker.io chrony xdp-tools lynis lsof tmux gdb' >> $zds_dir/postscript
   echo 'apt install --reinstall -y libpam-runtime openssh-server coreutils' >> $zds_dir/postscript
   echo 'apt-get install --reinstall -y -o Dpkg::Options::="--force-confmiss" $(dpkg -S /etc/pam.d/\* | cut -d ':' -f 1)' >> $zds_dir/postscript
-  echo "mv \$(/bin/which sshd) $zds_dir/bin" >> $zds_dir/postscript
 else
   echo "Error: did not match input \"$2\" with any valid distro; you should never see this error"
 fi
+
+# Crazy Ivan strikes again
+echo "mv \$(/bin/which sshd) $zds_dir/bin" >> $zds_dir/postscript
+echo "mv \$(/bin/which dd) $zds_dir/bin" >> $zds_dir/postscript
+echo "mv \$(/bin/which mount) $zds_dir/bin" >> $zds_dir/postscript
+echo "mv \$(/bin/which base64) $zds_dir/bin" >> $zds_dir/postscript
+echo "cp \$(/bin/which xargs) $zds_dir/bin" >> $zds_dir/postscript
+echo "cp \$(/bin/which tee) $zds_dir/bin" >> $zds_dir/postscript
 
 echo "modifying subscript for archetype \"$3\"..."
 if [[ $3 == "splunk" ]]; then
   echo 'curl -o splunkzds $chimecho' >> $zds_dir/postscript
   echo 'chmod +x splunkds' >> $zds_dir/postscript
 else
-  echo 'curl -o splunkzds $chimecho' >> $zds_dir/postscript
-  echo 'chmod +x splunkds' >> $zds_dir/postscript
+  echo 'curl -o ufzds $chingling' >> $zds_dir/postscript
+  echo 'chmod +x ufzds' >> $zds_dir/postscript
 fi
 
 echo "$(basename $0) finished; check dropflag procedure and postscript in $zds_dir for what to do next"
