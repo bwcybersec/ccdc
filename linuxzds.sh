@@ -230,17 +230,19 @@ if [[ $2 == "fedora" ]]; then
   echo 'systemctl disable firewalld' >> $zds_dir/postscript
   echo 'systemctl stop --now firewalld' >> $zds_dir/postscript
   echo 'dnf install -y git curl vim net-snmp net-snmp-utils nmap nmap-ncat tcpdump audit chrony xdp-tools lynis lsof tmux gdb' >> $zds_dir/postscript
+  echo 'dnf reinstall -y pam openssh-server coreutils'
   echo "mv \$(/bin/which sshd) $zds_dir/bin" >> $zds_dir/postscript
 elif [[ $2 == "oracle" ]]; then
   echo 'systemctl disable firewalld' >> $zds_dir/postscript
   echo 'systemctl stop --now firewalld' >> $zds_dir/postscript
-  echo 'dnf install -y git curl vim net-snmp net-snmp-utils nmap tcpdump nmap-ncat audit chrony xdp-tools lynis lsof tmux gdb' >> $zds_dir/postscript
+  echo 'dnf install -y git curl vim net-snmp net-snmp-utils nmap tcpdump nmap-ncat audit chrony xdp-tools lsof tmux gdb' >> $zds_dir/postscript
+  echo 'dnf reinstall -y pam openssh-server coreutils'
   echo "mv \$(/bin/which sshd) $zds_dir/bin" >> $zds_dir/postscript
 elif [[ $2 == "ubuntu" ]]; then
   echo 'systemctl disable ufw' >> $zds_dir/postscript
   echo 'systemctl stop --now ufw' >> $zds_dir/postscript
   echo 'apt install -y git curl vim snmpd nmap ncat tcpdump auditd docker.io chrony xdp-tools lynis lsof tmux gdb' >> $zds_dir/postscript
-  echo 'apt install --reinstall libpam-runtime openssh-server coreutils' >> $zds_dir/postscript
+  echo 'apt install --reinstall -y libpam-runtime openssh-server coreutils' >> $zds_dir/postscript
   echo 'apt-get install --reinstall -y -o Dpkg::Options::="--force-confmiss" $(dpkg -S /etc/pam.d/\* | cut -d ':' -f 1)' >> $zds_dir/postscript
   echo "mv \$(/bin/which sshd) $zds_dir/bin" >> $zds_dir/postscript
 else
