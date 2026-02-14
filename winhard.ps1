@@ -576,6 +576,7 @@ Function WinWeb{
    If(-not ($NoAD)){
        netsh advfirewall firewall add rule name="CCDC-AD TCP" dir=out action=allow profile=any protocol=TCP remoteip=172.20.240.102 remoteport=53,88,135,389,445,3268,49152-65535
        netsh advfirewall firewall add rule name="CCDC-AD UDP" dir=out action=allow profile=domain protocol=UDP remoteip=172.20.240.102 remoteport=53,88,123
+       netsh advfirewall firewall add rule name="CCDC-AD RCP local" dir=out action=allow profile=any protocol=TCP remoteip=172.20.240.102 localport=49152-65535
    }
 
    #backup webpage
@@ -601,6 +602,7 @@ Function WinFTP{
    If(-not ($NoAD)){
        netsh advfirewall firewall add rule name="CCDC-AD TCP" dir=out action=allow profile=any protocol=TCP remoteip=172.20.240.102 remoteport=53,88,135,389,445,3268,49152-65535
        netsh advfirewall firewall add rule name="CCDC-AD UDP" dir=out action=allow profile=domain protocol=UDP remoteip=172.20.240.102 remoteport=53,88,123
+       netsh advfirewall firewall add rule name="CCDC-AD RCP local" dir=out action=allow profile=any protocol=TCP remoteip=172.20.240.102 localport=49152-65535
    }
    $source = "C:\inetpub\wwwroot"
    $dest = "C:\ccdc\", "C:\Windows\System32\drivers\en-US", "C:\ProgramData"
@@ -619,7 +621,8 @@ Function AD_User{
                    #AD Rules
    If(-not ($NoAD)){
        netsh advfirewall firewall add rule name="CCDC-AD TCP" dir=out action=allow profile=any protocol=TCP remoteip=172.20.240.102 remoteport=53,88,135,389,445,3268,49152-65535
-       netsh advfirewall firewall add rule name="CCDC-AD UDP" dir=out action=allow profile=domain protocol=UDP remoteip=172.20.240.102 remoteport=53,88,123
+       netsh advfirewall firewall add rule name="CCDC-AD UDP" dir=out action=allow profile=any protocol=UDP remoteip=172.20.240.102 remoteport=53,88,123
+       netsh advfirewall firewall add rule name="CCDC-AD RCP local" dir=out action=allow profile=any protocol=TCP remoteip=172.20.240.102 localport=49152-65535
    }
 
 }
