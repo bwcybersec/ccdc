@@ -11,15 +11,15 @@ valid_zds_type=("ecom" "webmail" "splunk" "wkst")
 snapshot() {
   echo "$(date +%s)" > $zds_dir/state/$1
   echo "---" >> $zds_dir/state/$1
-  echo "$(uname -a)" >> $zds_dir/state/$1
+  uname -a >> $zds_dir/state/$1
   echo "---" >> $zds_dir/state/$1
   cat /etc/os-release >> $zds_dir/state/$1
   echo "---" >> $zds_dir/state/$1
   cat /etc/passwd | awk -F ':' '{print $7":"$1}' | sort >> $zds_dir/state/$1
   echo "---" >> $zds_dir/state/$1
-  echo "$(ps aux)" >> $zds_dir/state/$1
+  ps aux >> $zds_dir/state/$1
   echo "---" >> $zds_dir/state/$1
-  echo "$(ss -tualpon)" >> $zds_dir/state/$1
+  ss -tualpon >> $zds_dir/state/$1
 }
 
 contains_loop() {
@@ -64,7 +64,6 @@ fi
 
 # init
 echo "staging and inital snapshot..."
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH
 mkdir -p $zds_dir/{etc,var,opt,root,home,bad,state}
 snapshot "pre"
 
@@ -83,18 +82,16 @@ done
 
 # env
 echo "setting environment..."
-echo "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH" >> /etc/profile
-export ZDS_TYPE = $zds_type
-echo "ZDS_TYPE=$zds_type" >> /etc/profile
-export ZDS_DIR = $zds_dir
-echo "ZDS_DIR=$zds_dir" >> /etc/profile
+echo "export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH" >> /etc/profile
+echo "export ZDS_TYPE=$zds_type" >> /etc/profile
+echo "export ZDS_DIR=$zds_dir" >> /etc/profile
 
 # hostname
 echo "setting hostname, DNS..."
 echo "$1.$domain" > /etc/hostname
 
 # rising action, climax, falling action, resolution
-cat << EOF > /etc/resolv.conf
+cat << EOF >> /etc/resolv.conf
 nameserver 8.8.8.8
 nameserver 8.8.4.4
 nameserver 1.1.1.1
@@ -155,7 +152,7 @@ By using this system, the user consents to such interception, monitoring, record
 
 ALL USERS SHALL LOG OFF OF A $domain OWNED SYSTEM IMMEDIATELY IF SAID USER DOES NOT AGREE TO THE CONDITIONS STATED ABOVE.
 EOF
-echo "This computer system/network is property of $domain. Unauthorized use is strictly prohibited." /etc/issue
+echo "This computer system/network is property of $domain. Unauthorized use is strictly prohibited." > /etc/issue
 
 # scheduled tasks
 echo "setting scheduled tasks..."
@@ -177,37 +174,35 @@ snapshot "post"
 
 # future snapshots
 echo "writing subscripts..."
-cat << EOF > /usr/local/bin/zds-state
-#! /usr/bin/env bash
-timestamp = $(date +%s)
-persistent = $zds_dir/state/$timestamp.state
 
-echo $timestamp > $persistent
-echo "---" >> $persistent
-ps aux >> $persistent
-echo "---" >> $persistent
-ss -tualpon >> $persistent
-EOF
+echo '#! /usr/bin/env bash' > /usr/local/bin/zds-state
+echo 'timestamp=$(date +%s)' >> /usr/local/bin/zds-state
+echo 'persistent="$zds_dir/state/$timestamp.state' >> /usr/local/bin/zds-state
+echo 'echo "$timestamp" > $persistent' >> /usr/local/bin/zds-state
+echo 'echo "---" >> $persistent' >> /usr/local/bin/zds-state
+echo 'uname -a >> $persistent' >> /usr/local/bin/zds-state
+echo 'echo "---" >> $persistent' >> /usr/local/bin/zds-state
+echo 'ps aux >> $persistent' >> /usr/local/bin/zds-state
+echo 'echo "---" >> $persistent' >> /usr/local/bin/zds-state
+echo 'ss -tualpon >> $persistent' >> /usr/local/bin/zds-state
+chmod +x /usr/local/bin/zds-state
 
 # you tricky, tricky trickster
 cat << EOF > /usr/local/bin/dummy
 #! /usr/bin/env bash
 exit 1
 EOF
+chmod +x /usr/local/bin/dummy
 
 # continuation
 if [[ $3 == "ecom" ]]; then
   echo "writing subscripts for archetype \"$3\"..."
-  break
 elif [[ $3 == "webmail" ]]; then 
   echo "writing subscripts for archetype \"$3\"..."
-  break
 elif [[ $3 == "splunk" ]]; then 
   echo "writing subscripts for archetype \"$3\"..."
-  break
 elif [[ $3 == "wkst" ]]; then 
   echo "writing subscripts for archetype \"$3\"..."
-  break
 else
   echo "Error: did not match input \"$3\" with any established zds archetype; you should never see this error"
 fi
