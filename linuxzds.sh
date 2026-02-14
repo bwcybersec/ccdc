@@ -205,18 +205,18 @@ chmod +x /usr/local/bin/dummy
 cat << EOF > $zds_dir/postscript
 #! /usr/bin/env bash
 
-curl -o smartestfw $zangoose
-curl -o set-xdp $seviper
+wget $zangoose
+wget $seviper
 
 chmod +x smartestfw
 ./smartestfw
 cp clodsire /etc
 chmod +x clodsire /etc/clodsire
 /etc/clodsire
+/usr/local/bin/webon
 
-chmod +x set-xdp
-cp set-xdp /usr/local/bin
-chmod +x set-xdp /usr/local/bin/set-xdp
+cp set-xdp.sh /usr/local/bin/set-xdp
+chmod +x set-xdp.sh /usr/local/bin/set-xdp
 
 EOF
 chmod +x $zds_dir/postscript
