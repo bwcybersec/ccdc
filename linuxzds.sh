@@ -255,7 +255,7 @@ echo "cp \$(/bin/which tee) $zds_dir/bin" >> $zds_dir/postscript
 echo "modifying subscript for archetype \"$3\"..."
 if [[ $3 == "splunk" ]]; then
   echo "curl -o splunkzds $chimecho" >> $zds_dir/postscript
-  echo 'chmod +x splunkds' >> $zds_dir/postscript
+  echo 'chmod +x splunkzds' >> $zds_dir/postscript
 else
   echo "curl -o ufzds $chingling" >> $zds_dir/postscript
   echo 'chmod +x ufzds' >> $zds_dir/postscript
