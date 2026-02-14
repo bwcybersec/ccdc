@@ -60,7 +60,19 @@ fi
 # init
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH
 mkdir -p $zds_dir/{etc,var,opt,root,home,bad,state}
-snapshot() > $zds_dir/state/pre
+
+echo "$(date +%s)" > $zds_dir/state/pre
+echo "---" >> $zds_dir/state/pre
+echo "$(uname -a)" >> $zds_dir/state/pre
+echo "---" >> $zds_dir/state/pre
+cat /etc/os-release >> $zds_dir/state/pre
+echo "---" >> $zds_dir/state/pre
+cat /etc/passwd | awk -F ':' '{print $7":"$1}' | sort >> $zds_dir/state/pre
+echo "---" >> $zds_dir/state/pre
+echo "$(ps aux)" >> $zds_dir/state/pre
+echo "---" >> $zds_dir/state/pre
+echo "$(ss -tualpon)" >> $zds_dir/state/pre
+
 
 # backups
 cp -r /etc $zds_dir/etc
