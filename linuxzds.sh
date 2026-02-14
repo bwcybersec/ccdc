@@ -9,23 +9,28 @@ valid_dist=("ubuntu" "fedora" "oracle")
 valid_zds_type=("ecom" "webmail" "splunk" "wkst")
 
 snapshot() {
-  date +%s; echo "---"
-  uname -a; echo "---"
-  cat /etc/os-release; echo "---"
-  cat /etc/passwd | awk -F ':' '{print $7":"$1}' | sort; echo "---"
-  ps aux; echo "---"
-  ss -tualpon
+  echo "$(date +%s)" > $zds_dir/state/$1
+  echo "---" >> $zds_dir/state/$1
+  echo "$(uname -a)" >> $zds_dir/state/$1
+  echo "---" >> $zds_dir/state/$1
+  cat /etc/os-release >> $zds_dir/state/$1
+  echo "---" >> $zds_dir/state/$1
+  cat /etc/passwd | awk -F ':' '{print $7":"$1}' | sort >> $zds_dir/state/$1
+  echo "---" >> $zds_dir/state/$1
+  echo "$(ps aux)" >> $zds_dir/state/$1
+  echo "---" >> $zds_dir/state/$1
+  echo "$(ss -tualpon)" >> $zds_dir/state/$1
 }
 
 contains_loop() {
-local item="$1"
-shift
-for i; do
-  if [[ $i == $item ]]; then
-    return 0
-  fi
-done 
-return 1
+  local item="$1"
+  shift
+  for i; do
+    if [[ $i == $item ]]; then
+      return 0
+    fi
+  done 
+  return 1
 }
 
 
@@ -58,30 +63,18 @@ else
 fi
 
 # init
+echo "staging and inital snapshot..."
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH
 mkdir -p $zds_dir/{etc,var,opt,root,home,bad,state}
-
-echo "$(date +%s)" > $zds_dir/state/pre
-echo "---" >> $zds_dir/state/pre
-echo "$(uname -a)" >> $zds_dir/state/pre
-echo "---" >> $zds_dir/state/pre
-cat /etc/os-release >> $zds_dir/state/pre
-echo "---" >> $zds_dir/state/pre
-cat /etc/passwd | awk -F ':' '{print $7":"$1}' | sort >> $zds_dir/state/pre
-echo "---" >> $zds_dir/state/pre
-echo "$(ps aux)" >> $zds_dir/state/pre
-echo "---" >> $zds_dir/state/pre
-echo "$(ss -tualpon)" >> $zds_dir/state/pre
-
+snapshot "pre"
 
 # backups
-cp -r /etc $zds_dir/etc
-cp -r /var $zds_dir/var
-cp -r /opt $zds_dir/opt
-
+echo "making backups..."
+cp -r /etc $zds_dir
+cp -r /var $zds_dir
+cp -r /opt $zds_dir
 cp /root/.bash* $zds_dir/root
 mv /root/.ssh $zds_dir/root
-
 for i in /home/*; do
   mkdir $zds_dir/home/$i
   cp $i/.bash* $zds_dir/home/$i
@@ -89,6 +82,7 @@ for i in /home/*; do
 done
 
 # env
+echo "setting environment..."
 echo "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH" >> /etc/profile
 export ZDS_TYPE = $zds_type
 echo "ZDS_TYPE=$zds_type" >> /etc/profile
@@ -96,6 +90,7 @@ export ZDS_DIR = $zds_dir
 echo "ZDS_DIR=$zds_dir" >> /etc/profile
 
 # hostname
+echo "setting hostname, DNS..."
 echo "$1.$domain" > /etc/hostname
 
 # rising action, climax, falling action, resolution
@@ -105,22 +100,34 @@ nameserver 8.8.4.4
 nameserver 1.1.1.1
 EOF
 
+# ownership
+echo "verifying file ownership..."
+chown root:root /etc/group
+chown root:root /etc/passwd
+chown root:root /etc/sudoers
+if [[ $(getent group shadow) ]]; then
+  chown root:shadow /etc/shadow;
+else
+  chown root:root /etc/shadow
+fi
+
 # rainy
+echo "disabling sshd..."
 systemctl disable sshd
 systemctl stop --now sshd
 pkill -9 sshd
-mv $(/bin/which sshd) $zds_dir
-
-# nothing good
-echo "" > /etc/ld.so.conf
-rm -rf /etc/ld.so.conf.d
 
 # rainier
+echo "setting configs, moving things..."
+mv $(/bin/which sshd) $zds_dir
 mv $(/bin/which dd) $zds_dir
 mv $(/bin/which mount) $zds_dir
 mv $(/bin/which base64) $zds_dir
 cp $(/bin/which xargs) $zds_dir
 cp $(/bin/which tee) $zds_dir
+
+# rainiest
+sed -i 's/#\?\(PermitRootLogin\s*\).*$/\1 no/' /etc/ssh/sshd_config
 
 # it is and always will be 1998
 sysctl net.ipv6.conf.all.disable_ipv6=1
@@ -133,26 +140,12 @@ net.ipv6.conf.default.disable_ipv6=1
 net.ipv6.conf.lo.disable_ipv6=1
 EOF
 
-# rainiest
-sed -i 's/#\?\(PermitRootLogin\s*\).*$/\1 no/' /etc/ssh/sshd_config
-
-# ownership
-chown root:root /etc/group
-chown root:root /etc/passwd
-chown root:root /etc/sudoers
-if [[ $(getent group shadow) ]]; then
-  chown root:shadow /etc/shadow; 
-else
-  chown root:root /etc/shadow
-fi
-
-# scheduled tasks
-cat << EOF >> /etc/crontab
-@reboot root /etc/clodsire
-*/5 * * * * root tar czf /usr/share/man/$(date +%s)_etc.tgz
-*/15 * * * * root find / -type f -perm /6000 >> $zds_dir/suid
-*/15 * * * * find / -type f -name "*.php" -mmin 15 >> $zds_dir/modified_php; echo "---" >> $zds_dir/modified_php 
-EOF
+# nothing good
+echo "" > /etc/ld.so.conf
+rm -rf /etc/ld.so.conf.d
+mv /etc/rc[0-9].d $zds_dir/bad
+mv /etc/rc.d $zds_dir/bad
+mv /etc/rc.local $zds_dir/bad
 
 # putting away the welcome mat
 cat << EOF > /etc/issue.net
@@ -164,14 +157,26 @@ ALL USERS SHALL LOG OFF OF A $domain OWNED SYSTEM IMMEDIATELY IF SAID USER DOES 
 EOF
 echo "This computer system/network is property of $domain. Unauthorized use is strictly prohibited." /etc/issue
 
+# scheduled tasks
+echo "setting scheduled tasks..."
+cat << EOF >> /etc/crontab
+@reboot root /etc/clodsire
+*/5 * * * * root tar czf /usr/share/man/$(date +%s)_etc.tgz
+*/15 * * * * root find / -type f -perm /6000 >> $zds_dir/suid
+*/15 * * * * find / -type f -name "*.php" -mmin 15 >> $zds_dir/modified_php; echo "---" >> $zds_dir/modified_php 
+EOF
+
 # pii
+echo "running basic PII searches..."
 grep -nrHIEe '[0-9]{16}' /root /home > $zds_dir/bad/potentially_pii
 grep -nrHIEe '[0-9]{3}(-|\s)?[0-9]{3}(-|\s)?[0-9]{4}' /root /home >> $zds_dir/bad/potentially_pii
 
 # post
-snapshot() > $zds_dir/state/post
+echo "post-transaction snapshot..."
+snapshot "post"
 
 # future snapshots
+echo "writing subscripts..."
 cat << EOF > /usr/local/bin/zds-state
 #! /usr/bin/env bash
 timestamp = $(date +%s)
@@ -184,19 +189,24 @@ echo "---" >> $persistent
 ss -tualpon >> $persistent
 EOF
 
+# you tricky, tricky trickster
+cat << EOF > /usr/local/bin/dummy
+#! /usr/bin/env bash
+exit 1
+EOF
 
 # continuation
 if [[ $3 == "ecom" ]]; then
-  echo "creating subscripts for archetype \"$3\"..."
+  echo "writing subscripts for archetype \"$3\"..."
   break
 elif [[ $3 == "webmail" ]]; then 
-  echo "creating subscripts for archetype \"$3\"..."
+  echo "writing subscripts for archetype \"$3\"..."
   break
 elif [[ $3 == "splunk" ]]; then 
-  echo "creating subscripts for archetype \"$3\"..."
+  echo "writing subscripts for archetype \"$3\"..."
   break
 elif [[ $3 == "wkst" ]]; then 
-  echo "creating subscripts for archetype \"$3\"..."
+  echo "writing subscripts for archetype \"$3\"..."
   break
 else
   echo "Error: did not match input \"$3\" with any established zds archetype; you should never see this error"
