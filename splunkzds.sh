@@ -11,6 +11,7 @@ if [ ! -e "./splunk.tgz" ]; then
 fi
 
 # rm -rf /opt/splunk
+/opt/splunk/bin/splunk stop
 pkill -9 splunkd
 mv /opt/splunk /opt/splunk.init
 tar xvzf splunk.tgz -C /opt
@@ -27,9 +28,7 @@ mkdir -p /opt/splunk/etc/deployment-apps/uf_limits_unlimited/local
 mkdir -p /opt/splunk/etc/system/local
 mkdir -p /opt/splunk/etc/deployment-apps/Splunk_TA_stream/local
 
-cat <<EOF >/opt/splunk
-
-#conf file set up for TA *nix
+#conf file setup for TA *nix
 cat <<EOF >/opt/splunk/etc/deployment-apps/ccdc_linux_inputs/local/inputs.conf
 [monitor:///var/log/zds/*]
 index=main
@@ -115,7 +114,7 @@ sourcetype = bash_history
 
 EOF
 
-#conf file set up for Windows
+# conf file setup for Windows
 cat <<EOF >/opt/splunk/etc/deployment-apps/ccdc_windows_inputs/local/inputs.conf
 [WinEventLog://Application]
 index = main
@@ -137,7 +136,7 @@ sourcetype = winfw
 
 EOF
 
-#conf file set up for PAN
+# conf file setup for PAN
 cat <<EOF >/opt/splunk/etc/apps/Splunk_TA_paloalto/local/inputs.conf
 [udp://514]
 connection_host = ip
@@ -146,14 +145,14 @@ sourcetype = pan:log
 
 EOF
 
-#conf file set up for uf limits
+# conf file setup for uf limits
 cat <<EOF >/opt/splunk/etc/deployment-apps/uf_limits_unlimited/local/inputs.conf
 [thruput]
 maxKBps = 0
 
 EOF
 
-#conf for serverclasses
+# conf for serverclasses
 cat <<EOF >/opt/splunk/etc/system/local/serverclass.conf
 [serverClass:all]
 whitelist.0 = *
@@ -190,10 +189,10 @@ login_content = This computer system/network is the property of allsafe. It is f
 EOF
 fi
 
-#start splunk
-/opt/splunk/bin/splunk start --accept-license
+# start splunk
+/opt/splunk/bin/splunk start --accept-license --answer-yes --no-prompt
 
-#Hurricane labs has this available freely, allows for app download via cli
+# Hurricane labs has this available freely, allows for app download via cli
 
 # if type apt-get &>/dev/null; then
 # 	apt-get install -y git
@@ -205,48 +204,57 @@ fi
 # 	/opt/splunk/bin/splunk cmd python -mpip install wheel
 # 	/opt/splunk/bin/splunk cmd python -mpip install svn+https://github.com/HurricaneLabs/sbclient/trunk
 # fi
-
-git config --global http.sslVerify false
-/opt/splunk/bin/splunk cmd python -mpip install wheel
-/opt/splunk/bin/splunk cmd python -mpip install git+https://github.com/HurricaneLabs/sbclient
-
+#
+#git config --global http.sslVerify false
+#/opt/splunk/bin/splunk cmd python -mpip install wheel
+#/opt/splunk/bin/splunk cmd python -mpip install git+https://github.com/HurricaneLabs/sbclient
+#
 # undocumented api gaming
-sed -i 's/apps.splunk/splunkbase.splunk/' /opt/splunk/lib/python*/site-packages/sbclient.py
-
+#sed -i 's/apps.splunk/splunkbase.splunk/' /opt/splunk/lib/python*/site-packages/sbclient.py
+#
 # entering your Splunkbase username and password to make sbclient work
-while :; do
-	read -p 'Splunkbase Username:' uservar
-	read -sp 'Splunkbase Password:' passvar
-	export SPLUNKBASE_USERNAME=$uservar
-	export SPLUNKBASE_PASSWORD=$passvar
-
-	if /opt/splunk/bin/splunk cmd sbclient get-app-info Splunk_TA_nix; then
-		echo "Login works"
-		break
-	else
-		echo "Login doesn't work (or DNS is broke, it's always DNS)"
-	fi
-done
-
+#while :; do
+#	read -p 'Splunkbase Username:' uservar
+#	read -sp 'Splunkbase Password:' passvar
+#	export SPLUNKBASE_USERNAME=$uservar
+#	export SPLUNKBASE_PASSWORD=$passvar
+#
+#	if /opt/splunk/bin/splunk cmd sbclient get-app-info Splunk_TA_nix; then
+#		echo "Login works"
+#		break
+#	else
+#		echo "Login doesn't work (or DNS is broke, it's always DNS)"
+#	fi
+#done
+#
 #makes temp folder, moves you into it, and downloads all the apps
-mkdir /opt/splunk/drop
-cd /opt/splunk/drop
-/opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_nix
-/opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_windows
-/opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_paloalto
-/opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_stream
-/opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_microsoft_sysmon
-/opt/splunk/bin/splunk cmd sbclient download-app splunk_app_stream
-/opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_stream_wire_data
-/opt/splunk/bin/splunk cmd sbclient download-app TA_netfilter
-/opt/splunk/bin/splunk cmd sbclient download-app TA-winfw
+#mkdir /opt/splunk/drop
+#cd /opt/splunk/drop
+#/opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_nix
+#/opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_windows
+#/opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_paloalto
+#/opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_stream
+#/opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_microsoft_sysmon
+#/opt/splunk/bin/splunk cmd sbclient download-app splunk_app_stream
+#/opt/splunk/bin/splunk cmd sbclient download-app Splunk_TA_stream_wire_data
+#/opt/splunk/bin/splunk cmd sbclient download-app TA_netfilter
+#/opt/splunk/bin/splunk cmd sbclient download-app TA-winfw
 
-#untar our newly downloaded app files from our temp folder to the correct place
+# cheap trick
+git config --global http.sslVerify false
+cd /tmp
+git clone https://github.com/xlhashbrown/splunk-apps
+cd splunk-apps
+mkdir /opt/splunk/drop
+mv *.tgz /opt/splunk/drop
+cd /opt/splunk/drop
+
+# untar our newly downloaded app files from our temp folder to the correct place
 for filename in *; do
 	tar xvzf $filename -C /opt/splunk/etc/apps
 done
 
-#post app install set up
+# post app install set up
 cp -r /opt/splunk/etc/apps/Splunk_TA_microsoft_sysmon /opt/splunk/etc/deployment-apps
 cp -r /opt/splunk/etc/apps/Splunk_TA_stream /opt/splunk/etc/deployment-apps
 cp -r /opt/splunk/etc/deployment-apps/ccdc_linux_inputs /opt/splunk/etc/apps
