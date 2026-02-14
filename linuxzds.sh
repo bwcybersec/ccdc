@@ -230,13 +230,13 @@ if [[ $2 == "fedora" ]]; then
   echo 'systemctl disable firewalld' >> $zds_dir/postscript
   echo 'systemctl stop --now firewalld' >> $zds_dir/postscript
   echo 'dnf install -y git curl vim net-snmp net-snmp-utils nmap nmap-ncat tcpdump audit chrony xdp-tools lynis lsof tmux gdb' >> $zds_dir/postscript
-  echo 'dnf reinstall -y pam openssh-server coreutils'
+  echo 'dnf reinstall -y pam openssh-server coreutils' >> $zds_dir/postscript
   echo "mv \$(/bin/which sshd) $zds_dir/bin" >> $zds_dir/postscript
 elif [[ $2 == "oracle" ]]; then
   echo 'systemctl disable firewalld' >> $zds_dir/postscript
   echo 'systemctl stop --now firewalld' >> $zds_dir/postscript
   echo 'dnf install -y git curl vim net-snmp net-snmp-utils nmap tcpdump nmap-ncat audit chrony xdp-tools lsof tmux gdb' >> $zds_dir/postscript
-  echo 'dnf reinstall -y pam openssh-server coreutils'
+  echo 'dnf reinstall -y pam openssh-server coreutils' >> $zds_dir/postscript
   echo "mv \$(/bin/which sshd) $zds_dir/bin" >> $zds_dir/postscript
 elif [[ $2 == "ubuntu" ]]; then
   echo 'systemctl disable ufw' >> $zds_dir/postscript
