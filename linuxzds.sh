@@ -226,26 +226,23 @@ chmod +x $zds_dir/postscript
 
 # continuation
 echo "modifying subscript for distro \"$2\"..."
-if [[ $3 == "fedora" ]]
+if [[ $2 == "fedora" ]]
   echo 'systemctl disable firewalld' >> $zds_dir/postscript
   echo 'systemctl stop --now firewalld' >> $zds_dir/postscript
   echo 'dnf install -y git curl vim net-snmp net-snmp-utils nmap nmap-ncat tcpdump audit chrony xdp-tools lynis lsof tmux gdb' >> $zds_dir/postscript
   echo "mv \$(/bin/which sshd) $zds_dir/bin" >> $zds_dir/postscript
-
-elif [[ $3 == "oracle" ]]
+elif [[ $2 == "oracle" ]]
   echo 'systemctl disable firewalld' >> $zds_dir/postscript
   echo 'systemctl stop --now firewalld' >> $zds_dir/postscript
   echo 'dnf install -y git curl vim net-snmp net-snmp-utils nmap tcpdump nmap-ncat audit chrony xdp-tools lynis lsof tmux gdb' >> $zds_dir/postscript
   echo "mv \$(/bin/which sshd) $zds_dir/bin" >> $zds_dir/postscript
-
-elif [[ $3 == "ubuntu" ]]
+elif [[ $2 == "ubuntu" ]]
   echo 'systemctl disable ufw' >> $zds_dir/postscript
   echo 'systemctl stop --now ufw' >> $zds_dir/postscript
   echo 'apt install -y git curl vim snmpd nmap ncat tcpdump auditd docker.io chrony xdp-tools lynis lsof tmux gdb' >> $zds_dir/postscript
   echo 'apt install --reinstall libpam-runtime openssh-server coreutils' >> $zds_dir/postscript
   echo 'apt-get install --reinstall -y -o Dpkg::Options::="--force-confmiss" $(dpkg -S /etc/pam.d/\* | cut -d ':' -f 1)' >> $zds_dir/postscript
   echo "mv \$(/bin/which sshd) $zds_dir/bin" >> $zds_dir/postscript
-
 else
   echo "Error: did not match input \"$2\" with any valid distro; you should never see this error"
 fi
@@ -254,11 +251,9 @@ echo "modifying subscript for archetype \"$3\"..."
 if [[ $3 == "splunk" ]]; then
   echo 'curl -o splunkzds $chimecho' >> $zds_dir/postscript
   echo 'chmod +x splunkds' >> $zds_dir/postscript
-
 else
   echo 'curl -o splunkzds $chimecho' >> $zds_dir/postscript
   echo 'chmod +x splunkds' >> $zds_dir/postscript
-
 fi
 
 echo "$(basename $0) finished; check dropflag procedure and postscript in $zds_dir for what to do next"
