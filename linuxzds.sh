@@ -68,7 +68,7 @@ fi
 
 # init
 echo "staging and inital snapshot..."
-mkdir -p $zds_dir/{etc,var,opt,root,home,bad,state}
+mkdir -p $zds_dir/{etc,var,opt,root,home,bin,bad,state}
 snapshot "pre"
 
 # backups
@@ -120,12 +120,12 @@ pkill -9 sshd
 
 # rainier
 echo "setting configs, moving things..."
-mv $(/bin/which sshd) $zds_dir
-mv $(/bin/which dd) $zds_dir
-mv $(/bin/which mount) $zds_dir
-mv $(/bin/which base64) $zds_dir
-cp $(/bin/which xargs) $zds_dir
-cp $(/bin/which tee) $zds_dir
+mv $(/bin/which sshd) $zds_dir/bin
+mv $(/bin/which dd) $zds_dir/bin
+mv $(/bin/which mount) $zds_dir/bin
+mv $(/bin/which base64) $zds_dir/bin
+cp $(/bin/which xargs) $zds_dir/bin
+cp $(/bin/which tee) $zds_dir/bin
 
 # rainiest
 sed -i 's/#\?\(PermitRootLogin\s*\).*$/\1 no/' /etc/ssh/sshd_config
@@ -225,51 +225,42 @@ EOF
 chmod +x $zds_dir/postscript
 
 # continuation
-if [[ $3 == "ecom" ]]; then
-  echo "writing subscripts for archetype \"$3\"..."
-  
-  echo 'systemctl disable ufw' >> $zds_dir/postscript
-  echo 'systemctl stop --now ufw' >> $zds_dir/postscript
-  echo 'apt install -y git curl vim snmpd nmap ncat tcpdump auditd docker.io chrony xdp-tools lynis lsof tmux gdb' >> $zds_dir/postscript
-  echo 'apt install --reinstall libpam-runtime openssh-server coreutils' >> $zds_dir/postscript
-  echo 'apt-get install --reinstall -y -o Dpkg::Options::="--force-confmiss" $(dpkg -S /etc/pam.d/\* | cut -d ':' -f 1)' >> $zds_dir/postscript
-  echo 'curl -o ufzds $chingling' >> $zds_dir/postscript
-  echo 'chmod +x ufzds' >> $zds_dir/postscript
-
-elif [[ $3 == "webmail" ]]; then 
-  echo "writing subscripts for archetype \"$3\"..."
-  
+echo "modifying subscript for distro \"$2\"..."
+if [[ $3 == "fedora" ]]
   echo 'systemctl disable firewalld' >> $zds_dir/postscript
   echo 'systemctl stop --now firewalld' >> $zds_dir/postscript
   echo 'dnf install -y git curl vim net-snmp net-snmp-utils nmap nmap-ncat tcpdump audit chrony xdp-tools lynis lsof tmux gdb' >> $zds_dir/postscript
-  echo 'curl -o ufzds $chingling' >> $zds_dir/postscript
-  echo 'chmod +x ufzds' >> $zds_dir/postscript
+  echo "mv \$(/bin/which sshd) $zds_dir/bin" >> $zds_dir/postscript
 
-elif [[ $3 == "splunk" ]]; then 
-  echo "writing subscripts for archetype \"$3\"..."
-  
+elif [[ $3 == "oracle" ]]
   echo 'systemctl disable firewalld' >> $zds_dir/postscript
   echo 'systemctl stop --now firewalld' >> $zds_dir/postscript
   echo 'dnf install -y git curl vim net-snmp net-snmp-utils nmap tcpdump nmap-ncat audit chrony xdp-tools lynis lsof tmux gdb' >> $zds_dir/postscript
-  echo 'curl -o splunkzds $chimecho' >> $zds_dir/postscript
-  echo 'chmod +x splunkds' >> $zds_dir/postscript
+  echo "mv \$(/bin/which sshd) $zds_dir/bin" >> $zds_dir/postscript
 
-elif [[ $3 == "wkst" ]]; then 
-  echo "writing subscripts for archetype \"$3\"..."
-  
+elif [[ $3 == "ubuntu" ]]
   echo 'systemctl disable ufw' >> $zds_dir/postscript
   echo 'systemctl stop --now ufw' >> $zds_dir/postscript
   echo 'apt install -y git curl vim snmpd nmap ncat tcpdump auditd docker.io chrony xdp-tools lynis lsof tmux gdb' >> $zds_dir/postscript
   echo 'apt install --reinstall libpam-runtime openssh-server coreutils' >> $zds_dir/postscript
   echo 'apt-get install --reinstall -y -o Dpkg::Options::="--force-confmiss" $(dpkg -S /etc/pam.d/\* | cut -d ':' -f 1)' >> $zds_dir/postscript
-  echo 'curl -o ufzds $chingling' >> $zds_dir/postscript
-  echo 'chmod +x ufzds' >> $zds_dir/postscript
+  echo "mv \$(/bin/which sshd) $zds_dir/bin" >> $zds_dir/postscript
 
 else
-  echo "Error: did not match input \"$3\" with any established zds archetype; you should never see this error"
+  echo "Error: did not match input \"$2\" with any valid distro; you should never see this error"
+fi
+
+echo "modifying subscript for archetype \"$3\"..."
+if [[ $3 == "splunk" ]]; then
+  echo 'curl -o splunkzds $chimecho' >> $zds_dir/postscript
+  echo 'chmod +x splunkds' >> $zds_dir/postscript
+
+else
+  echo 'curl -o splunkzds $chimecho' >> $zds_dir/postscript
+  echo 'chmod +x splunkds' >> $zds_dir/postscript
 
 fi
 
-echo "$(basename $0) finished; check dropflag procedure and scripts in $zds_dir for what to do next"
+echo "$(basename $0) finished; check dropflag procedure and postscript in $zds_dir for what to do next"
 exit 0
 
