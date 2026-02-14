@@ -204,13 +204,9 @@ chmod +x /usr/local/bin/dummy
 # base
 cat << EOF > $zds_dir/postscript
 #! /usr/bin/env bash
-zangoose="$zangoose"
-seviper="$seviper"
-chimecho="$chimecho"
-chingling="$chingling"
 
-curl -o smartestfw \$zangoose
-curl -o set-xdp \$seviper
+curl -o smartestfw $zangoose
+curl -o set-xdp $seviper
 
 chmod +x smartestfw
 ./smartestfw
@@ -258,10 +254,10 @@ echo "cp \$(/bin/which tee) $zds_dir/bin" >> $zds_dir/postscript
 
 echo "modifying subscript for archetype \"$3\"..."
 if [[ $3 == "splunk" ]]; then
-  echo 'curl -o splunkzds $chimecho' >> $zds_dir/postscript
+  echo "curl -o splunkzds $chimecho" >> $zds_dir/postscript
   echo 'chmod +x splunkds' >> $zds_dir/postscript
 else
-  echo 'curl -o ufzds $chingling' >> $zds_dir/postscript
+  echo "curl -o ufzds $chingling" >> $zds_dir/postscript
   echo 'chmod +x ufzds' >> $zds_dir/postscript
 fi
 
