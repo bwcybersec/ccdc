@@ -201,15 +201,13 @@ chmod +x /usr/local/bin/dummy
 # base
 cat << EOF > $zds_dir/postscript
 #! /usr/bin/env bash
-zangoose="$zangoose"
-seviper="$seviper"
-chimecho="$chimecho"
-chingling="$chingling"
+zangoose="\$zangoose"
+seviper="\$seviper"
+chimecho="\$chimecho"
+chingling="\$chingling"
 
-EOF
-echo 'curl -o smartestfw $zangoose' >> $zds_dir/postscript
-echo 'curl -o set-xdp $seviper' >> $zds_dir/postscript
-cat << EOF > $zds/postscript
+echo 'curl -o smartestfw \$zangoose' >> $zds_dir/postscript
+echo 'curl -o set-xdp \$seviper' >> $zds_dir/postscript
 
 chmod +x smartestfw
 ./smartestfw
