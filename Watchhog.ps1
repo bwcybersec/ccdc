@@ -1,13 +1,11 @@
 ﻿
 
 Function Unwanted_Service {
-
-
         #Start-Process does not parse quotes well. Encrypting and decrypting gets around this. Any changes should be made to the $Script varible
     $script = @'
 write-host "Starting Terminal: Unwanted Services"
 while ($true) {
-    $BadServices = @("sshd","ssh-agent","tlntsvr")
+    $BadServices = @("sshd","ssh-agent","tlntsvr", "qemu-img")
     foreach ($n in $BadServices) {
         $s = Get-Service -Name $n -ErrorAction SilentlyContinue
         if ($s -and $s.Status -eq "Running") {
@@ -95,11 +93,11 @@ Function FTP_tshark{
         Write-Host "Starting tshark capture..."
 
         & "C:\Program Files\Wireshark\tshark.exe" `
-        #-i ethernet `
+        -i __IFACE__ 
         -Y “ftp.request.command contains USER$addparam”
 
 '@
-
+    $script = $script.Replace("__IFACE__",  $interface)
     $bytes   = [System.Text.Encoding]::Unicode.GetBytes($script)
     $encoded = [Convert]::ToBase64String($bytes)
 
@@ -107,32 +105,39 @@ Function FTP_tshark{
 }
 
 Function DNS_tshark{
-    $script = @'
+ 
 
+    
+    $script = @'
         Write-Host "Starting tshark capture..."
+        
 
         & "C:\Program Files\Wireshark\tshark.exe" `
-        -i ethernet `
-        -f "dst port 53 and not (src net 172.20.240.0/24 or src host 1.1.1.1)" -n -T fields -e dns.qry.name -e ip.dst -e ip.src -e frame.time
+        -i __IFACE__ `
+        -f "dst port 53 and not (src net __SUBNET__ or src host 1.1.1.1)" -n -T fields -e dns.qry.name -e ip.dst -e ip.src -e frame.time
 '@
 
+    
+    $script = $script.Replace("__LSUBNET__", $localsubnet)
+    $script = $script.Replace("__IFACE__",  $interface)
     $bytes   = [System.Text.Encoding]::Unicode.GetBytes($script)
     $encoded = [Convert]::ToBase64String($bytes)
 
     Start-Process powershell.exe -ArgumentList "-NoExit", "-EncodedCommand", $encoded
 }
 
-Function HTTP_tshark{
+Function Bad_HTTP_tshark{
     $script = @'
 
         Write-Host "Starting tshark capture..."
 
         & "C:\Program Files\Wireshark\tshark.exe" `
-        -i ethernet `
+        -i __IFACE__
         -Y 'http.request.uri contains \"c=\" or http.request.uri contains \"cmd=*\"' 
 
 '@
 
+    $script = $script.Replace("__IFACE__",  $interface)
     $bytes   = [System.Text.Encoding]::Unicode.GetBytes($script)
     $encoded = [Convert]::ToBase64String($bytes)
 
@@ -155,8 +160,53 @@ Function High_CPU{
     Start-Process powershell.exe -ArgumentList "-NoExit", "-EncodedCommand", $encoded
 }
 
+Function HTTP_tshark{
+ 
+
+    
+    $script = @'
+        Write-Host "Starting tshark capture..."
+        
+
+        & "C:\Program Files\Wireshark\tshark.exe" `
+        -i __IFACE__ `
+        -f "dst port 80 and dst net __SUBNET__ " -n -T fields  -e ip.dst -e ip.src -e frame.time
+'@
+
+    
+    $script = $script.Replace("__LSUBNET__", $localsubnet)
+    $script = $script.Replace("__IFACE__",  $interface)
+    $bytes   = [System.Text.Encoding]::Unicode.GetBytes($script)
+    $encoded = [Convert]::ToBase64String($bytes)
+
+    Start-Process powershell.exe -ArgumentList "-NoExit", "-EncodedCommand", $encoded
+}
+
+Function Mail_tshark{
+ 
+
+    
+    $script = @'
+        Write-Host "Starting tshark capture..."
+        
+
+        & "C:\Program Files\Wireshark\tshark.exe" `
+        -i __IFACE__ `
+        -f "(dst port 110 or dst port 143) and dst net __SUBNET__ " -n -T fields  -e ip.dst -e ip.src -e frame.time
+'@
+
+    
+    $script = $script.Replace("__LSUBNET__", $localsubnet)
+    $script = $script.Replace("__IFACE__",  $interface)
+    $bytes   = [System.Text.Encoding]::Unicode.GetBytes($script)
+    $encoded = [Convert]::ToBase64String($bytes)
+
+    Start-Process powershell.exe -ArgumentList "-NoExit", "-EncodedCommand", $encoded
+}
 
         #### End of Function Row ####
+$localsubnet   = "172.20.240.0/24"
+$interface    = "ethernet"
 
 Do{
     Write-Host "------Terminal Options------" -BackgroundColor Black -ForegroundColor White
@@ -166,17 +216,20 @@ Do{
     Write-Host "[4] - DNS tshark"
     Write-Host "[5] - Malicious HTTP traffic tshark"
     Write-Host "[6] - High CPU usage"
+    Write-Host "[7] - HTTP traffic"
+    Write-Host "[8] - Mail traffic"
     
     $choice = Read-Host "What terminal do you want? (DONE to end script)"
 
     switch ($choice) {
-    1 {Unwanted_Service}
-    2 {Wanted_Service}
-    3 {FTP_tshark}
-    4 {DNS_tshark}
-    5 {HTTP_tshark}
-    6 {High_CPU}
-    
+        1 {Unwanted_Service}
+        2 {Wanted_Service}
+        3 {FTP_tshark}
+        4 {DNS_tshark}
+        5 {Bad_HTTP_tshark}
+        6 {High_CPU}
+        7 {HTTP_traffic}
+        8 {Mail_traffic}
     }
     
 }until($choice -eq "DONE")
