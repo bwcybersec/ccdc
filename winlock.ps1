@@ -84,20 +84,24 @@ Write-Host "[5] - Web server"
 Write-Host "[6] - MySQL"
 Write-Host "[7] - AD User"
 Write-Host "[8] - AD Domain Controller"
+Write-Host "[9] - WinRM"
+Write-Host "[8] - LDAP"
 
 $ports = Read-Host "Select any of the above services that this host must allow in, if any? (type the corresponding number[s])"
 
 switch -Wildcard ($ports) {
-    "*1*" {netsh advfirewall firewall add rule name="LOCK-POP3"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=110  | Out-Null}
-    "*2*" {netsh advfirewall firewall add rule name="LOCK-SMTP"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=25  | Out-Null}
-    "*3*" {netsh advfirewall firewall add rule name="LOCK-FTP"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=20,21  | Out-Null}
-    "*4*" {netsh advfirewall firewall add rule name="LOCK-DNS"  new dir=in action=allow enable=yes protocol=udp profile=any localport=53  | Out-Null}
-    "*5*" {netsh advfirewall firewall add rule name="LOCK-Webserver"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=80,443  | Out-Null}
-    "*6*" {netsh advfirewall firewall add rule name="LOCK-MySQL"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=3306  | Out-Null} 
+    "*1*" {netsh advfirewall firewall add rule name="LOCK-POP3"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=110 }
+    "*2*" {netsh advfirewall firewall add rule name="LOCK-SMTP"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=25 }
+    "*3*" {netsh advfirewall firewall add rule name="LOCK-FTP"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=20,21 }
+    "*4*" {netsh advfirewall firewall add rule name="LOCK-DNS"  new dir=in action=allow enable=yes protocol=udp profile=any localport=53 }
+    "*5*" {netsh advfirewall firewall add rule name="LOCK-Webserver"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=80,443  }
+    "*6*" {netsh advfirewall firewall add rule name="LOCK-MySQL"  new dir=in action=allow enable=yes protocol=tcp profile=any localport=3306 } 
     "*7*" {netsh advfirewall firewall add rule name="LOCK-AD TCP" dir=out action=allow profile=any protocol=TCP remoteip=localsubnet remoteport=53,88,135,389,445,3268,49152-65535
            netsh advfirewall firewall add rule name="LOCK-AD UDP" dir=out action=allow profile=any protocol=UDP remoteip=localsubnet remoteport=53,88,123,389}  
     "*8*" {netsh advfirewall firewall add rule name="LOCK-DomainContoller TCP In" dir=in action=allow profile=any protocol=TCP localport=53,88,135,389,445,3268,49152-65535 remoteip=localsubnet
            netsh advfirewall firewall add rule name="LOCK-DomainController UDP In" dir=in action=allow profile=any protocol=UDP localport=53,88,123,389 remoteip=localsubnet}     
+    "*9*" {netsh advfirewall firewall add rule name="LOCK-WinRM" dir=in action=allow profile=any protocol=TCP localport=5985,5986 }
+    "*0*" {netsh advfirewall firewall add rule name="LOCK-LDAP" dir=in action=allow profile=any protocol=TCP localport=389 }
 }
     #Legal Notice Registry Key
 REG delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v legalnoticecaption /f 
